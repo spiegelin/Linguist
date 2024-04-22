@@ -54,7 +54,10 @@ Para ejecutar localmente el proyecto, sigue estos pasos:
 
 ## Créditos
 
-Lingüíst es creado y mantenido por [Diego Espejo](https://github.com/Spiegelin).
+Lingüíst es creado y mantenido por 
+- [Diego Espejo](https://github.com/Spiegelin).
+- [Santos Arellano](https://github.com/Santos-Arellano)
+- [Marcela De La Rosa](https://github.com/MARCHELUKI)
 
 ## Licencia
 
