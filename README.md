@@ -58,4 +58,4 @@ Lingüíst es creado y mantenido por [Diego Espejo](https://github.com/Spiegelin
 
 ## Licencia
 
-Este proyecto está bajo la Licencia MIT. Consulta el archivo [`LICENSE`](https://github.com/Spiegelin/Linguist/blob/main/LICENSE) para obtener más detalles.
+Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para obtener más detalles.
