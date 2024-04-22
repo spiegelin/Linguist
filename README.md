@@ -31,6 +31,7 @@ Para ejecutar localmente el proyecto, sigue estos pasos:
     npm install
     ```
 3. Configura la base de datos PostgreSQL y actualiza las credenciales de conexión en el archivo `server/config/db.js`.
+
 4. Ejecuta el servidor y el cliente en terminales separadas:
     ```bash
     # En el directorio 'server'
@@ -39,7 +40,7 @@ Para ejecutar localmente el proyecto, sigue estos pasos:
     # En el directorio 'client'
     npm start
     ```
-6. Abre tu navegador web y navega a `http://localhost:3000` para ver la aplicación en funcionamiento.
+5. Abre tu navegador web y navega a `http://localhost:3000` para ver la aplicación en funcionamiento.
 
 ## Contribuir
 
