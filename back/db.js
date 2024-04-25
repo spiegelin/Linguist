@@ -15,12 +15,32 @@ db.connect();
 
 
 // DB query
+/*
 try {
     const res = await db.query("SELECT * FROM users");
     console.log(res.rows);
 } catch (err) {
     console.error("Error executing query: ", err);
 }
+*/
+
+// Test
+const test = async (body, conversation_id, user_id) => {
+    try {
+        // Query for the DB
+        const query = `INSERT INTO messages (conversation_id, sender_id, body) VALUES (${conversation_id}, ${user_id}, '${body}')`;
+
+        // Send message to the DB
+        await db.query(query);
+
+        return true;
+    } catch (err) {
+        console.error("Error sending message: ", err);
+        return false;
+    }
+    db.end();
+}
+
+export default test;
 
 
-db.end();
