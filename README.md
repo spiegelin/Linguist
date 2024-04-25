@@ -55,7 +55,8 @@ Para ejecutar localmente el proyecto, sigue estos pasos:
 ## Créditos
 
 Lingüíst es creado y mantenido por 
-- [Diego Espejo](https://github.com/Spiegelin).
+- [Diego Espejo](https://github.com/Spiegelin)
+- [Pablo Heredia](https://github.com/Pablo389)
 - [Santos Arellano](https://github.com/Santos-Arellano)
 - [Marcela De La Rosa](https://github.com/MARCHELUKI)
 
