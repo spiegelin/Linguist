@@ -1,8 +1,13 @@
-{/*import React from "react";
+import React, { useState } from "react";
 import "./App.css";
-import "./script.js";
 
 const App = () => {
+  const [isSignInActive, setIsSignInActive] = useState(false);
+
+  const toggleSignIn = () => {
+    setIsSignInActive(!isSignInActive);
+  };
+
   return (
     <>
       <head>
@@ -15,7 +20,7 @@ const App = () => {
         <title>Linguist</title>
       </head>
 
-      <div className="container" id="container">
+      <div className={`container ${isSignInActive ? "active" : ""}`}>
         <header></header>
         <div className="form-container sign-up">
           <div
@@ -52,7 +57,7 @@ const App = () => {
                 <i className="fa-brands fa-linkedin-in" />
               </a>
             </div>
-            <span>or use your email for registeration</span>
+            <span>or use your email for registration</span>
             <input type="text" placeholder="Name" />
             <input type="email" placeholder="Email" />
             <input type="password" placeholder="Password" />
@@ -101,16 +106,14 @@ const App = () => {
             <div className="toggle-panel toggle-left">
               <h1>Welcome Back!</h1>
               <p>Enter your personal details to use all of site features</p>
-              <button className="hidden" id="login">
+              <button className="hidden" onClick={toggleSignIn}>
                 Sign In
               </button>
             </div>
             <div className="toggle-panel toggle-right">
               <h1>Hello, Friend!</h1>
-              <p>
-                Register with your personal details to use all of site features
-              </p>
-              <button className="hidden" id="register">
+              <p>Register with your personal details to use all of site features</p>
+              <button className="hidden" onClick={toggleSignIn}>
                 Sign Up
               </button>
             </div>
@@ -123,4 +126,3 @@ const App = () => {
 };
 
 export default App;
-*/}
