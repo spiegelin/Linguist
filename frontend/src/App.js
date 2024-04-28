@@ -1,4 +1,4 @@
-import React from "react";
+{/*import React from "react";
 import "./App.css";
 import "./script.js";
 
@@ -123,3 +123,4 @@ const App = () => {
 };
 
 export default App;
+*/}
