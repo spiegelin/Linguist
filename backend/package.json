@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Diego Espejo & Fiablo Heredia",
+  "author": "Diego Espejo & Pablo Heredia",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.2",
