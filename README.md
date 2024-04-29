@@ -59,7 +59,7 @@ Lingüíst es creado y mantenido por
 - [Pablo Heredia](https://github.com/Pablo389)
 - [Santos Arellano](https://github.com/Santos-Arellano)
 - [Marcela De La Rosa](https://github.com/MARCHELUKI)
-
+- [Julieta Arteaga](https://github.com/julietarteaga)
 ## Licencia
 
 Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para obtener más detalles.
