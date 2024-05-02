@@ -1,15 +1,24 @@
 import "dotenv/config"
 import express from "express";
 import bodyParser from "body-parser";
-import test from "./db.js";
+import http from 'http';
+import { Server as WebSocketServer } from 'socket.io';
 
 // Server startup
 const app = express();
-const port = process.env.APP_PORT || 3000;
+const server = http.createServer(app);
+const io = new WebSocketServer(server, {
+    cors: {
+        origin: "http://localhost:3000",
+    }
+});
+const PORT = process.env.APP_PORT || 3002;
 
 // Middlewares (server plug-ins)
 //app.use(cors());
 app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Test endpoint
 app.post("/api/test", (req, res) => {
@@ -18,34 +27,24 @@ app.post("/api/test", (req, res) => {
     });
 });
 
-// Send message
-app.post("/api/sendMessage", async (req, res) => {
-    try {
-        // Get message from the request
-        const message = req.body.message;
-        const conversation_id = req.body.conversation_id;
-        const user_id = req.body.user_id;
-        console.log("Message received: ", message);
+// Manejar conexiones de Socket.IO
+io.on('connection', (socket) => {
+    console.log('A user connected: ' + socket.id);
+    
+    // Manejar el evento de recibir un mensaje del cliente
+    socket.on('message', message => {
+        console.log('Mensaje recibido:', message);
 
-        // Query for the DB
-        let result = await test(message, conversation_id, user_id);
+        // Reenviar el mensaje a todos los clientes conectados
+        io.emit('message', message);
+    });
 
-        // Send response to the user
-        if (result == true) {
-            res.json({
-                message: "Message sent successfully!"
-            });
-        } else {
-            res.json({
-                message: "Error sending message!"
-            });
-        }
-        
-    } catch (err) {
-        console.error("Error sending message: ", err);
-    }
+    // Manejar la desconexión del cliente
+    socket.on('disconnect', () => {
+        console.log('User disconnected: ' + socket.id);
+    });
 });
 
-app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
