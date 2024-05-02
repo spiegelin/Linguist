@@ -41,6 +41,24 @@ const test = async (body, conversation_id, user_id) => {
     db.end();
 }
 
-export default test;
+// Add users
+const addUser = async (username, email, password) => {
+    try {
+        // Query for the DB
+        const query = `INSERT INTO users (username, email, password) VALUES ('${username}', '${email}', '${password}')`;
+
+        // Send message to the DB
+        await db.query(query);
+
+        db.end();
+        return true;
+    } catch (err) {
+        console.error("Error adding user: ", err);
+        db.end();
+        return false;
+    }
+}
+
+export { test, addUser };
 
 
