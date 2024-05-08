@@ -59,6 +59,5 @@ const addUser = async (username, email, password) => {
     }
 }
 
-export { test, addUser };
-
+export { test, addUser as default };
 

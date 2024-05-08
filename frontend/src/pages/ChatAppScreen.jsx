@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import io from "socket.io-client";
 import { MainContainer, ChatContainer } from '../styles/ChatTheme'; // Ajustar importaciones
 import Messages from "./Chat/Messages"; // Ajustar importación
-import ContactDetails from "./Chat/ContactDetails"; // Ajustar importación
 
 const socket = io("http://localhost:3002");
 
@@ -30,7 +29,6 @@ export function ChatAppScreen() {
 
   return (
     <MainContainer>
-      <ContactDetails /> {/* Componente de detalles del contacto */}
       <ChatContainer>
         <h1>Linguist</h1>
         <Messages 
