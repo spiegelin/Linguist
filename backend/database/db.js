@@ -13,17 +13,6 @@ const db = new pg.Client({
 
 db.connect();
 
-
-// DB query
-/*
-try {
-    const res = await db.query("SELECT * FROM users");
-    console.log(res.rows);
-} catch (err) {
-    console.error("Error executing query: ", err);
-}
-*/
-
 // Test
 const test = async (body, conversation_id, user_id) => {
     try {
@@ -42,10 +31,10 @@ const test = async (body, conversation_id, user_id) => {
 }
 
 // Add users
-const addUser = async (username, email, password) => {
+const addUser = async (user, email, password) => {
     try {
         // Query for the DB
-        const query = `INSERT INTO users (username, email, password) VALUES ('${username}', '${email}', '${password}')`;
+        const query = `INSERT INTO users (name, email, password) VALUES ('${user}', '${email}', '${password}')`;
 
         // Send message to the DB
         await db.query(query);
@@ -59,5 +48,46 @@ const addUser = async (username, email, password) => {
     }
 }
 
-export { test, addUser as default };
+// Check Email
+const checkEmail = async (email) => {
+    try {
+        // Query for the DB
+        const query = `SELECT * FROM users WHERE email = '${email}'`;
+
+        // Send message to the DB
+        const res = await db.query(query);
+
+        // No se cierra la conexión porque se usa en otro método
+        // db.end();
+
+        // Operador terciario, si la longitud de res.rowCount es mayor a 0, retorna true (existe email), sino false
+        return res.rowCount > 0 ? true : false;
+    } catch (err) {
+        console.error("Error checking email: ", err);
+        db.end();
+        return null;
+    }
+};
+
+// Get User
+const getUser = async (email) => {
+    try {
+        // Query for the DB
+        const query = `SELECT id, email, password FROM users WHERE email = '${email}'`;
+
+        // Send message to the DB
+        const res = await db.query(query);
+
+        db.end();
+
+        // Regresa el primer objeto de la respuesta
+        return res.rows[0];
+    } catch (err) {
+        console.error("Error getting user: ", err);
+        db.end();
+        return null;
+    }
+};
+
+export { addUser, getUser, checkEmail };
 
