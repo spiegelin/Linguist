@@ -4,9 +4,14 @@ import morgan from "morgan";
 import bodyParser from "body-parser";
 import http from 'http';
 import { Server as WebSocketServer } from 'socket.io';
-import bcrypt from "bcrypt";
-import inputValidation from "./auth/error_validation.js";
-import addUser from "./database/db.js";
+//import cors from "cors";
+import cookieParser from 'cookie-parser';
+
+// Importar rutas
+import registerRoute from "./routes/register.js";
+import loginRoute from "./routes/login.js";
+import addRoute from "./routes/add.js";
+import cookieJwtAuth from "./auth/cookieJwtAuth.js";
 
 // Server startup
 const app = express();
@@ -19,11 +24,12 @@ const io = new WebSocketServer(server, {
 const PORT = process.env.APP_PORT || 3002;
 
 // Middlewares (server plug-ins)
-//app.use(cors());
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser(process.env.COOKIE_SECRET));
+//app.use(cors());
 
 // Test endpoint
 app.post('/api/health', async (req, res) => {
@@ -31,35 +37,13 @@ app.post('/api/health', async (req, res) => {
 });
 
 // Registrar usuario
-app.post("/api/register", async (req, res) => {
-    let { username, email, password, confirm_password } = req.body;
+app.post("/api/register", registerRoute);
 
-    // Validation
-    let errors = inputValidation(username, email, password, confirm_password);
+// Iniciar sesión
+app.post("/api/login", loginRoute);
 
-    // If there are errors, return them
-    if (errors.length > 0) {
-        res.json({
-            errors: errors
-        });
-    } else {
-        // Validation passed
-        // Hash password with promises, so it doesn't get stored
-        await bcrypt.hash(password, 5, (err, hash) => {
-            if (err) {
-                console.log(err);
-            }
-            // Se guarda el hash en la base de datos, junto con el username y email
-            console.log(hash);
-            addUser(username, email, hash);
-        });
-
-        res.json({
-            username: username,
-            email: email
-        });
-    }   
-});
+// Ruta Segura para loggear usuarios con sesión activa
+app.post("/api/add", cookieJwtAuth, addRoute);
 
 // Manejar conexiones de Socket.IO
 io.on('connection', (socket) => {
