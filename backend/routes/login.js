@@ -19,10 +19,12 @@ const loginRoute = async (req, res) => {
         // Validation passed
         // Revisar si el usuario existe en la base de datos
         let user = await getUser(email);
+        console.log(user);
         if (!user) {
             res.json({
                 message: "User not found"
             });
+            return;
         }
 
         // Se compara el password con el hash de la base de datos
@@ -43,6 +45,7 @@ const loginRoute = async (req, res) => {
             // El secreto es tu llave privada para la firma digital
             // El token expira en 1 hora
             // SE crea el token con el payload del usuario (que es un objeto con el id, email y password)
+            // express-sessions
             const token = jwt.sign({user_id: user.id, email: user.email, password: user.password}, process.env.JWT_SECRET, {
                 expiresIn: "1h"
             });

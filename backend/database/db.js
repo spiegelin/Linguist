@@ -39,11 +39,11 @@ const addUser = async (user, email, password) => {
         // Send message to the DB
         await db.query(query);
 
-        db.end();
+        // db.end();
         return true;
     } catch (err) {
         console.error("Error adding user: ", err);
-        db.end();
+        // db.end();
         return false;
     }
 }
@@ -64,7 +64,7 @@ const checkEmail = async (email) => {
         return res.rowCount > 0 ? true : false;
     } catch (err) {
         console.error("Error checking email: ", err);
-        db.end();
+        // db.end();
         return null;
     }
 };
@@ -78,13 +78,13 @@ const getUser = async (email) => {
         // Send message to the DB
         const res = await db.query(query);
 
-        db.end();
+        // db.end();
 
         // Regresa el primer objeto de la respuesta
         return res.rows[0];
     } catch (err) {
         console.error("Error getting user: ", err);
-        db.end();
+        //db.end();
         return null;
     }
 };
