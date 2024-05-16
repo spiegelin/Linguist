@@ -1,34 +1,18 @@
-// ChatTheme.jsx
 import styled from 'styled-components';
 
 export const MainContainer = styled.div`
   display: flex;
   flex-direction: row-reverse;
   height: 100vh;
-  background-color: ${({ theme }) => theme.bgtotal}; // Ajuste del fondo del contenedor principal del chat
-`;
-
-
-export const ContactDetails = styled.div`
-  flex: 0.3; // reduce el tamaño de la barra lateral
-  background-color: #ddd; // color de fondo para visualizar el componente
-  padding: 20px; // algo de padding para el contenido
-`;
-
-export const TopBar = styled.div`
-  height: 50px;
-  background-color: #ccc; // color de fondo para visualizar el componente
-  padding: 10px;
-  position: fixed; // fija la barra en la parte superior
-  width: 100%; // hace que la barra ocupe toda la pantalla de ancho
+  background-color: ${({ theme }) => theme.bgtotal}; // Ajuste del fondo del contenedor principal del chat 
 `;
 
 export const ChatContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100vh;
-  width: 70%; // reduce el ancho del chat
+  height: 100%; // Ajusta la altura del ChatContainer al 100% del contenedor principal
+  width: 100%; // reduce el ancho del chat
   padding: 20px;
   box-sizing: border-box;
 `;
@@ -38,7 +22,7 @@ export const MessageList = styled.ul`
   padding: 0;
   margin: 0;
   overflow-y: auto;
-  height: 80%;
+  flex-grow: 1; // Modificación: permite que MessageList ocupe todo el espacio disponible
 `;
 
 export const MessageItem = styled.li`
@@ -54,6 +38,7 @@ export const MessageForm = styled.form`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0; // Modificación: evita que MessageForm se contraiga para que no haya espacio en blanco adicional
 `;
 
 export const MessageInput = styled.input`
