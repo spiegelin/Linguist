@@ -12,7 +12,7 @@ export const Light = {
   bg3: "rgb(230,230,230)",
   primary: "#D885A3",
   bg4: "#9247FC",
-  bgtotal: "white", // Color de fondo del contenedor principal
+  bgtotal: "#fff", // Color de fondo del contenedor principal
   bgtgderecha: "#fff",
   barrascroll: "#a8a7a7",
 
