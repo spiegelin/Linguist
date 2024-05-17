@@ -1,4 +1,4 @@
-//Sidebar.jsx
+// Sidebar.jsx
 import React from "react";
 import styled from "styled-components";
 import logo from "../assets/react.svg";
@@ -33,7 +33,7 @@ export function Sidebar() {
           </NavLink>
         ))}
       </div>
-      <div className="LinksContainer secondaryLinks">
+      <div className="SecondaryLinksContainer"> {/* Nuevo contenedor */}
         {secondarylinksArray.map(({ icon, to }) => (
           <NavLink to={to} className="Link" key={to}>
             {icon}
@@ -86,7 +86,25 @@ const Container = styled.div`
     }
   }
 
-  .secondaryLinks {
-    padding-top: 20px;
+  .SecondaryLinksContainer { /* Estilos para el nuevo contenedor */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 20px;
+
+    .Link {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-decoration: none;
+      color: ${Light.text};
+      height: 50px;
+      width: 100%;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
   }
 `;
