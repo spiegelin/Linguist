@@ -20,34 +20,15 @@ const Content = styled.div`
 
 function App() {
   const themeStyle = Light;
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-  };
 
   return (
-    <>
-      <GlobalStyles /> {/* Usa los estilos globales aquí */}
-      <ThemeContext.Provider value={{ theme: "light" }}>
-        <ThemeProvider theme={themeStyle}>
-          <BrowserRouter>
-            <Container>
-              {isLoggedIn ? (
-                <>
-                  <Sidebar />
-                  <Content>
-                    <MainApp />
-                  </Content>
-                </>
-              ) : (
-                <LoginPage onLogin={handleLogin} />
-              )}
-            </Container>
-          </BrowserRouter>
-        </ThemeProvider>
-      </ThemeContext.Provider>
-    </>
+    <ThemeContext.Provider value={{ theme: "light" }}>
+      <ThemeProvider theme={themeStyle}>
+        <BrowserRouter>
+          <MainApp/>
+        </BrowserRouter>
+      </ThemeProvider>
+    </ThemeContext.Provider>
   );
 }
 

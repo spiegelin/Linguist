@@ -1,8 +1,14 @@
 import styled from "styled-components";
+import {Sidebar} from "../components/Sidebar";
 export function Home() {
-  return (<Container>
-<h1>Home</h1>
-  </Container>);
+  return (
+    <div>
+      <Sidebar/>
+      <Container>
+        <h1>Home Page</h1>
+      </Container>
+    </div>
+  );
 }
 const Container =styled.div`
   height:100vh;

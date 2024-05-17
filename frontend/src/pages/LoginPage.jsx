@@ -1,5 +1,6 @@
 //LoginPage.jsx
 import React, { useState } from "react";
+import axios from "axios";
 import "../styles/loginTheme.css";
 
 export const LoginPage = ({ onLogin }) => {
@@ -16,8 +17,23 @@ export const LoginPage = ({ onLogin }) => {
     // Lógica de inicio de sesión
     // tambien se puede la lógica de validación de credenciales aquí
     //  ejemplo,  "a@a.com" y la contraseña es "1
-    if (email === "a@a.com" && password === "1") {
-      onLogin(); // Llamar a la función onLogin pasada como prop
+    if (email && password) {
+      axios.post('http://localhost:3002/api/login', {
+        email: email,
+        password: password
+      })
+      .then(function (response) {
+        console.log(response);
+        if (response.data.message === "Login successful") {
+          //Cambiar esta logica en un futuro a rutas protegidas, igual la validacion de el responsedatamessage
+          window.location.href = "/Home";
+        } else {
+          alert("Credenciales inválidas");
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     } else {
       alert("Credenciales inválidas");
     }

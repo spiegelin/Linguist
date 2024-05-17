@@ -4,7 +4,7 @@ import morgan from "morgan";
 import bodyParser from "body-parser";
 import http from 'http';
 import { Server as WebSocketServer } from 'socket.io';
-//import cors from "cors";
+import cors from "cors";
 import cookieParser from 'cookie-parser';
 
 // Importar rutas
@@ -30,7 +30,7 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
-//app.use(cors());
+app.use(cors());
 
 // Test endpoint
 app.post('/api/health', async (req, res) => {

@@ -9,7 +9,7 @@ import { NavLink } from "react-router-dom";
 import { Light } from "../styles/Themes";
 
 const linksArray = [
-  { icon: <AiOutlineHome size={24} />, to: "/", id: "home" },
+  { icon: <AiOutlineHome size={24} />, to: "/Home", id: "home" },
   { icon: <MdOutlineNotifications size={24} />, to: "/Notifications", id: "notifications" },
   { icon: <MdOutlinePerson size={24} />, to: "/Profile", id: "profile" },
   { icon: <RiChat3Line size={24} />, to: "/ChatAppScreen", id: "chat" },
