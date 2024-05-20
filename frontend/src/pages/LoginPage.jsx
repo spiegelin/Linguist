@@ -2,8 +2,10 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "../styles/loginTheme.css";
+import Cookies from "universal-cookie";
+const cookies = new Cookies();
 
-export const LoginPage = ({ onLogin }) => {
+export const LoginPage = () => {
   const [isSignInActive, setIsSignInActive] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,30 +14,42 @@ export const LoginPage = ({ onLogin }) => {
     setIsSignInActive(!isSignInActive);
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     // Lógica de inicio de sesión
     // tambien se puede la lógica de validación de credenciales aquí
     //  ejemplo,  "a@a.com" y la contraseña es "1
     if (email && password) {
-      axios.post('http://localhost:3002/api/login', {
+      await axios.post('http://localhost:3002/api/login', {
         email: email,
         password: password
+      }, {
+        withCredentials: true,
+      
       })
       .then(function (response) {
         console.log(response);
-        if (response.data.message === "Login successful") {
-          //Cambiar esta logica en un futuro a rutas protegidas, igual la validacion de el responsedatamessage
-          window.location.href = "/Home";
-        } else {
-          alert("Credenciales inválidas");
+        //console.log("Token:", response.data.token);
+        /*
+        cookies.set("TOKEN", response.data.token, {
+          path: "/",
+        });
+        */
+       console.log("IsLogged: ", response.data.isLogged);
+       //console.log("Token", cookies.get("token"))
+        if (response.data.isLogged){
+          //Esto lo que hace es mandarnos a home, en este momento no "verifica" que este loggeado, solo guarda la cookie en el cliente
+          window.location.href = "/home";
+        }
+        else {
+          alert("Credenciales inválidas 1");
         }
       })
       .catch(function (error) {
         console.log(error);
       });
     } else {
-      alert("Credenciales inválidas");
+      alert("Credenciales inválidas 2");
     }
   };
 
