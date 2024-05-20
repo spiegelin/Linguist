@@ -1,5 +1,4 @@
-// sidebar.jsx
-
+// Sidebar.jsx
 import React from "react";
 import styled from "styled-components";
 import logo from "../assets/react.svg";
@@ -10,40 +9,37 @@ import { NavLink } from "react-router-dom";
 import { Light } from "../styles/Themes";
 
 const linksArray = [
-  { icon: <AiOutlineHome />, to: "/", id: "home" },
-  { icon: <MdOutlineNotifications />, to: "/Notifications", id: "notifications" },
-  { icon: <MdOutlinePerson />, to: "/Profile", id: "Profile" },
-  { icon: <RiChat3Line />, to: "/ChatAppScreen", id: "Chat" },
+  { icon: <AiOutlineHome size={24} />, to: "/Home", id: "home" },
+  { icon: <MdOutlineNotifications size={24} />, to: "/Notifications", id: "notifications" },
+  { icon: <MdOutlinePerson size={24} />, to: "/Profile", id: "profile" },
+  { icon: <RiChat3Line size={24} />, to: "/ChatAppScreen", id: "chat" },
 ];
 
 const secondarylinksArray = [
-  { icon: <AiOutlineSetting />, to: "/ConfigProfile", id: "ConfigProfile" },
-  { icon: <MdLogout />, to: "/null", id: "logout" },
+  { icon: <AiOutlineSetting size={24} />, to: "/ConfigProfile", id: "config" },
+  { icon: <MdLogout size={24} />, to: "/null", id: "logout" },
 ];
 
 export function Sidebar() {
   return (
     <Container>
       <div className="Logocontent">
-        <div className="imgcontent">
-          <img src={logo} alt="Logo" />
-        </div>
+        <img src={logo} alt="Logo" />
       </div>
-      {linksArray.map(({ icon, to, id }) => (
-        <div className={`LinkContainer ${id}`} key={to}>
-          <NavLink to={to} className="Links">
-            <div className="Linkicon">{icon}</div>
+      <div className="LinksContainer">
+        {linksArray.map(({ icon, to }) => (
+          <NavLink to={to} className="Link" key={to}>
+            {icon}
           </NavLink>
-        </div>
-      ))}
-      <div className="Filler" />
-      {secondarylinksArray.map(({ icon, to, id }) => (
-        <div className={`LinkContainer ${id}`} key={to}>
-          <NavLink to={to} className="Links">
-            <div className="Linkicon">{icon}</div>
+        ))}
+      </div>
+      <div className="SecondaryLinksContainer"> {/* Nuevo contenedor */}
+        {secondarylinksArray.map(({ icon, to }) => (
+          <NavLink to={to} className="Link" key={to}>
+            {icon}
           </NavLink>
-        </div>
-      ))}
+        ))}
+      </div>
     </Container>
   );
 }
@@ -51,45 +47,64 @@ export function Sidebar() {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  background: ${Light.body}; // Usando el color de fondo del tema
+  background: ${Light.body};
   position: sticky;
-  padding-top: 20px;
+  top: 0;
+  height: 100vh;
   width: 72px;
-  transition: width 0.3s ease;
   border-top-left-radius: 30px;
   border-bottom-left-radius: 30px;
-  overflow: hidden;
-  
+  overflow-y: auto;
+
   .Logocontent {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-bottom: 20px;
+    padding: 20px 0;
   }
-  .LinkContainer {
-    margin: 8px 0;
-    padding: 0;
+
+  .LinksContainer {
     display: flex;
-    justify-content: center;
-    width: 100%;
-    .Links {
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+    padding-bottom: 20px;
+
+    .Link {
       display: flex;
+      justify-content: center;
       align-items: center;
       text-decoration: none;
       color: ${Light.text};
       height: 50px;
-      .Linkicon {
-        padding: 8px;
-        display: flex;
-        svg {
-          font-size: 25px;
-        }
+      width: 100%;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
       }
     }
   }
-  
-  .Filler {
-    flex-grow: 1;
+
+  .SecondaryLinksContainer { /* Estilos para el nuevo contenedor */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 20px;
+
+    .Link {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-decoration: none;
+      color: ${Light.text};
+      height: 50px;
+      width: 100%;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
   }
 `;

@@ -4,7 +4,7 @@ import morgan from "morgan";
 import bodyParser from "body-parser";
 import http from 'http';
 import { Server as WebSocketServer } from 'socket.io';
-//import cors from "cors";
+import cors from "cors";
 import cookieParser from 'cookie-parser';
 
 // Importar rutas
@@ -12,6 +12,7 @@ import registerRoute from "./routes/register.js";
 import loginRoute from "./routes/login.js";
 import addRoute from "./routes/add.js";
 import cookieJwtAuth from "./auth/cookieJwtAuth.js";
+import handleSocketConnection from "./sockets/socketHandler.js";
 
 // Server startup
 const app = express();
@@ -29,7 +30,12 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
-//app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+  }));
+
+  
 
 // Test endpoint
 app.post('/api/health', async (req, res) => {
@@ -46,22 +52,7 @@ app.post("/api/login", loginRoute);
 app.post("/api/add", cookieJwtAuth, addRoute);
 
 // Manejar conexiones de Socket.IO
-io.on('connection', (socket) => {
-    console.log('A user connected: ' + socket.id);
-    
-    // Manejar el evento de recibir un mensaje del cliente
-    socket.on('message', message => {
-        console.log('Mensaje recibido:', message);
-
-        // Reenviar el mensaje a todos los clientes conectados
-        io.emit('message', message);
-    });
-
-    // Manejar la desconexión del cliente
-    socket.on('disconnect', () => {
-        console.log('User disconnected: ' + socket.id);
-    });
-});
+handleSocketConnection(io);
 
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

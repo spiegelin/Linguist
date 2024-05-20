@@ -54,17 +54,21 @@ const loginRoute = async (req, res) => {
             // Esto sirve para que el browser pueda recordar la sesión del usuario y la mande en requests futuros
             // value (lo que sale en la cookie) es el jwt token
             res.cookie("token", token, {
-                httpOnly: true,
+                httpOnly: false,
                 sameSite: true,
                 signed: true,
                 secure: true,
                 maxAge: 3600000
             });
+            return res.send({
+                message: 'Cookie has been set',
+                isLogged: true
+            });;
+            
+            
 
 
-            res.json({
-                message: "Login successful"
-            });
+            //res.json({message: "Login successful"});
         });
     }
 };
