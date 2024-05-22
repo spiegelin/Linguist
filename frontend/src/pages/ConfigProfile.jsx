@@ -1,9 +1,12 @@
-import styled from "styled-components";
+import React from 'react';
+import MainLayout from '../components/MainLayout';
+
+
 export function ConfigProfile() {
-  return (<Container>
-<h1>ConfigProfile</h1>
-  </Container>);
+  return (
+    <MainLayout>
+      <h1>ConfigProfile</h1>
+    </MainLayout>
+  );
 }
-const Container =styled.div`
-  height:100vh;
-`
+    

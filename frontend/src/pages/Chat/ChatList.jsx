@@ -20,7 +20,7 @@ const ChatList = () => {
             <UserLanguage>French</UserLanguage>
             <p>Frère, viendra le jour où tu ne danseras plus seul</p>
           </ChatDetails>
-          <ChatTime>11:23 am</ChatTime>
+          <ChatTime>11:23 pm</ChatTime>
         </ChatItem>
         {/* Más ChatItems aquí */}
         <ChatItem>
@@ -32,6 +32,19 @@ const ChatList = () => {
             </UserInfo>
             <UserLanguage>Japanese</UserLanguage>
             <p>「心からやれば、できるよ」</p>
+          </ChatDetails>
+          <ChatTime>03:23 pm</ChatTime>
+        </ChatItem>
+        {/* Más ChatItems aquí */}
+        <ChatItem>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Prince.jpg/220px-Prince.jpg" alt="User" />
+          <ChatDetails>
+            <UserInfo>
+              <UserName>Prince Rogers chantilly</UserName>
+              <UserStatus active={true} />
+            </UserInfo>
+            <UserLanguage>English</UserLanguage>
+            <p>Find beauty in every moment and let it inspire you</p>
           </ChatDetails>
           <ChatTime>11:23 am</ChatTime>
         </ChatItem>
@@ -73,6 +86,7 @@ const ChatItem = styled.div`
   padding: 10px;
   cursor: pointer;
   transition: background 0.3s;
+  background-:purple;
 
   &:hover {
     background: #f0f0f0;
