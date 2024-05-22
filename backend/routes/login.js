@@ -49,6 +49,7 @@ const loginRoute = async (req, res) => {
             const token = jwt.sign({user_id: user.id, email: user.email, password: user.password}, process.env.JWT_SECRET, {
                 expiresIn: "1h"
             });
+            console.log("Token del login: ", token);
 
             // Se crea la cookie en el response header para decirle al browser que la guarde en su cache
             // Esto sirve para que el browser pueda recordar la sesión del usuario y la mande en requests futuros
@@ -56,7 +57,7 @@ const loginRoute = async (req, res) => {
             res.cookie("token", token, {
                 httpOnly: false,
                 sameSite: true,
-                signed: true,
+                //signed: true,
                 secure: true,
                 maxAge: 3600000
             });

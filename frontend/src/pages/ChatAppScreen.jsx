@@ -7,8 +7,19 @@ import Messages from "../pages/Chat/Messages";
 import ChatHeader from "../pages/Chat/ChatHeader"; // Cambiado para usar la exportación por defecto
 import MessageInput from "../components/MessageInput";
 import ChatList from "../pages/Chat/ChatList";
+import Cookies from "universal-cookie";
 
-const socket = io("http://localhost:3002");
+const cookies = new Cookies();
+const token = cookies.get('token');
+
+//const encodedToken = encodeURIComponent(token);
+// Ver si la logica de encodearlo es desde el servidor o desde el cliente
+
+const socket = io("http://localhost:3002", {
+  auth: {
+    token: token
+  }
+});
 
 export function ChatAppScreen() {
   const [message, setMessage] = useState("");
@@ -29,9 +40,15 @@ export function ChatAppScreen() {
   }, []);
 
   useEffect(() => {
-    socket.on("message", receiveMessage);
+    console.log(socket)
+    if (socket) {
+      socket.on("message", receiveMessage);
+    }
+
     return () => {
-      socket.off("message", receiveMessage);
+      if (socket) {
+        socket.off("message", receiveMessage);
+      }
     };
   }, [receiveMessage]);
 

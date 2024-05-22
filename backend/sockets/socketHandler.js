@@ -6,15 +6,19 @@ const handleSocketConnection = (io) => {
 
     //REvisar bien la funcion de cookieJwtAuth por que debería ser esta lógica, nadamas sería modificarla
     const socketJwtAuth = (socket, next) => {
-        const token = socket.handshake.headers.auth;
+        const token = socket.handshake.auth.token;
+        const encodedToken = encodeURIComponent(token);
         console.log("sockethandler")
         console.log("Token: ", token);
+        console.log("Encoded Token:", encodedToken);
         if (!token) {
             return next(new Error('Authentication error: Token missing'));
         }
 
         try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            console.log("Entro en el try")
+            const decoded = jwt.verify(encodedToken, process.env.JWT_SECRET);
+            console.log("Decoded: ", decoded);
             socket.user = decoded.user_id; // Almacenar la información del usuario en el objeto de socket
             next();
         } catch (error) {
@@ -33,6 +37,8 @@ const handleSocketConnection = (io) => {
             // Lógica específica del evento...
             // Por ejemplo, aquí podrías guardar el mensaje en la base de datos relacionándolo con el usuario
             // O enviar una respuesta personalizada al usuario, etc.
+            // Aquí simplemente reenviamos el mensaje a todos los usuarios conectados
+            io.emit('message', message)
         });
 
         // Manejar desconexiones de Socket.IO
