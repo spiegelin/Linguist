@@ -55,8 +55,6 @@ export const LoginPage = () => {
 
   return (
     <>
-
-
       <div className={`container ${isSignInActive ? "active" : ""}`}>
         <header></header>
         <div className="form-container sign-up">
@@ -95,10 +93,11 @@ export const LoginPage = () => {
               </a>
             </div>
             <span>or use your email for registration</span>
-            <input type="text" placeholder="Name" />
+            <input type="text" placeholder="First Name" />
+            <input type="text" placeholder="Last Name" />
             <input type="email" placeholder="Email" />
             <input type="password" placeholder="Password" />
-            <input type="Lenguages" placeholder="lenguages" />
+            <input type="text" placeholder="Lenguages" />
             <button>Sign Up</button>
           </form>
         </div>
