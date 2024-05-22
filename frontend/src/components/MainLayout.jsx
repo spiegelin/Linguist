@@ -1,3 +1,4 @@
+//MainLayout.jsx
 import React from 'react';
 import styled from 'styled-components';
 import { Sidebar } from '../components/Sidebar';
@@ -22,7 +23,6 @@ const PageContainer = styled.div`
 
 const ContentContainer = styled.div`
   flex-grow: 1;
-  padding: 20px;
   height: 100vh;
   overflow-y: auto;
 `;

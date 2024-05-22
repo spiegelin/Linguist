@@ -1,9 +1,12 @@
 //ChatAppScreen.jsx
 import React, { useEffect, useState, useCallback } from "react";
 import io from "socket.io-client";
-import { MainContainer, ChatContainer } from '../styles/ChatTheme'; // Ajustar importaciones
-import Messages from "./Chat/Messages"; // Ajustar importación
-import MainLayout from '../components/MainLayout';
+import styled from "styled-components";
+import { Sidebar } from "../components/Sidebar";
+import Messages from "../pages/Chat/Messages";
+import ChatHeader from "../pages/Chat/ChatHeader"; // Cambiado para usar la exportación por defecto
+import MessageInput from "../components/MessageInput";
+import ChatList from "../pages/Chat/ChatList";
 
 const socket = io("http://localhost:3002");
 
@@ -13,13 +16,16 @@ export function ChatAppScreen() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Message desde front: ", message);
-    socket.emit("message", message);
-    setMessage("");
+    if (message.trim() !== "") {
+      console.log("Message desde front: ", message);
+      socket.emit("message", { text: message, isSent: true, time: new Date().toLocaleTimeString() });
+      setMessages((state) => [...state, { text: message, isSent: true, time: new Date().toLocaleTimeString() }]);
+      setMessage("");
+    }
   };
 
   const receiveMessage = useCallback((message) => {
-    setMessages((state) => [...state, message]);
+    setMessages((state) => [...state, { ...message, isSent: false }]);
   }, []);
 
   useEffect(() => {
@@ -30,18 +36,43 @@ export function ChatAppScreen() {
   }, [receiveMessage]);
 
   return (
-    <MainLayout>
+    <PageContainer>
+      <Sidebar />
       <MainContainer>
+        <ChatHeader />
         <ChatContainer>
-          <h1>Linguist</h1>
-          <Messages 
-            messages={messages} 
-            message={message} 
-            setMessage={setMessage} 
-            handleSubmit={handleSubmit} 
-          />
+          <Messages messages={messages} />
+          <MessageInput message={message} setMessage={setMessage} handleSubmit={handleSubmit} />
         </ChatContainer>
       </MainContainer>
-    </MainLayout>
+      <ChatListContainer>
+        <ChatList />
+      </ChatListContainer>
+    </PageContainer>
   );
 }
+
+const PageContainer = styled.div`
+  display: flex;
+  height: 100vh;
+`;
+
+const MainContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  background: #f9f9f9;
+`;
+
+const ChatContainer = styled.div`
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+`;
+
+const ChatListContainer = styled.div`
+  width: 320px; /* Ancho de la barra lateral */
+  border-left: 1px solid #ddd;
+  background: #f0f0f0; /* Color de fondo de la barra lateral */
+  overflow-y: auto;
+`;
