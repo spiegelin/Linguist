@@ -1,12 +1,12 @@
 import bcrypt from "bcrypt";
 import { inputValidationRegister } from "../auth/error_validation.js";
-import { addUser, checkEmail } from "../database/db.js";
+import { addUser, checkEmail } from "../models/registerModel.js";
 
 const registerRoute = async (req, res) => {
-    let { username, email, password, confirm_password } = req.body;
+    let { first_name, last_name, country, contact_num, email, password, confirm_password } = req.body;
 
         // Validation
-        let errors = inputValidationRegister(username, email, password, confirm_password);
+        let errors = inputValidationRegister(first_name, last_name, country, contact_num, email, password, confirm_password);
 
         // If there are errors, return them
         if (errors.length > 0) {
@@ -39,7 +39,7 @@ const registerRoute = async (req, res) => {
                 }
 
                 // Revisar si el usuario fue añadido
-                const userAdded = await addUser(username, email, hash);
+                const userAdded = await addUser(first_name, last_name, country, contact_num, email, hash);
                 if (!userAdded) {
                     res.json({
                         message: "Error adding user"

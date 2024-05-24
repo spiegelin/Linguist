@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { getUser } from '../database/db.js';
+import getUser  from '../models/loginModel.js';
 import { inputValidationLogin } from '../auth/error_validation.js';
 
 const loginRoute = async (req, res) => {

@@ -1,6 +1,6 @@
-const inputValidationRegister = (username, email, password, confirm_password) => {
+const inputValidationRegister = (first_name, last_name, country, contact_num, email, password, confirm_password) => {
     let errors = [];
-    if (!username || !email || !password || !confirm_password) {
+    if (!first_name || !last_name || !country || !contact_num || !email || !password || !confirm_password) {
         errors.push({message : "Please enter all fields"});
     }
 
