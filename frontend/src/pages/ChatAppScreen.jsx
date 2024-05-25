@@ -24,6 +24,8 @@ export function ChatAppScreen() {
   const [messages, setMessages] = useState({});
   const [isTyping, setIsTyping] = useState(false);
   const userProfileImage = "https://scontent-qro1-1.xx.fbcdn.net/v/t39.30808-6/321236782_1336144920477645_1360752776053520884_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=5f2048&_nc_ohc=pslfT2deIN4Q7kNvgFxANPC&_nc_ht=scontent-qro1-1.xx&oh=00_AYBtVzrdfA-4YtuTq_KTC6S4NAw3pxA6ddLRJav4lBkB9A&oe=66532B5E"; 
+  const [room, setRoom] = useState("");
+  const [partnerId, setPartnerId] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,7 +38,8 @@ export function ChatAppScreen() {
           profileImage: userProfileImage
         }
       };
-      socket.emit("message", newMessage);
+      console.log("Mensaje enviado: ", newMessage); //quitar lo de profile image
+      socket.emit("message", { room, message: newMessage, partnerId});
       setMessages((prevMessages) => ({
         ...prevMessages,
         [selectedChat.name]: [...(prevMessages[selectedChat.name] || []), newMessage]
@@ -46,6 +49,8 @@ export function ChatAppScreen() {
   };
 
   const receiveMessage = (message) => {
+    console.log("Mensaje recibido: ", message);
+    /*
     const isDuplicate = messages[selectedChat.name]?.some((msg) => msg.text === message.text);
     const isSelfMessage = message.isSent;
     if (!isDuplicate && !isSelfMessage) {
@@ -54,6 +59,13 @@ export function ChatAppScreen() {
         [selectedChat.name]: [...(prevMessages[selectedChat.name] || []), { ...message, isSent: false }]
       }));
     }
+    */
+
+    setMessages((prevMessages) => ({
+      ...prevMessages,
+      [selectedChat.name]: [...(prevMessages[selectedChat.name] || []), { ...message, isSent: false }]
+    }));
+
   };
 
   const handleTyping = () => {
@@ -61,7 +73,34 @@ export function ChatAppScreen() {
     setTimeout(() => setIsTyping(false), 3000);
   };
 
+  // useEffect para manejar la conexión al room
   useEffect(() => {
+    if (!selectedChat) return;
+    // Emitir evento para unirse a la conversación con partnerId 4
+    if (selectedChat.name == "Mitski"){
+      setPartnerId(4)
+    }else if (selectedChat.name == "Paul Van Lopez"){
+      setPartnerId(5)
+    }
+  
+  }, [selectedChat]);
+
+  useEffect(() => {
+    if (!selectedChat) return; //chance aqui el condicional es con partnerId
+    console.log("Useffect de conexion a room")
+    if (socket) {
+      socket.emit("joinConversation", { partnerId: partnerId }, (response) => {
+        if (response.room) {
+          setRoom(response.room); // Guardar el nombre del room
+        }
+      });
+    }
+  }, [partnerId]);
+
+
+  useEffect(() => {
+    if (!selectedChat) return;
+    console.log("Useffect")
     if (socket) {
       socket.on("message", receiveMessage);
       socket.on("typing", handleTyping);
