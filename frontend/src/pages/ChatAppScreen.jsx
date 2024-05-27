@@ -68,15 +68,11 @@ export function ChatAppScreen() {
   useEffect(() => {
     if (!selectedChat) return;
     // Emitir evento para unirse a la conversación con partnerId 4
-    if (selectedChat.name == "Mitski") {
-      setPartnerId(4)
-    } else if (selectedChat.name == "Paul Van Lopez") {
-      setPartnerId(5)
-    }
+    setPartnerId(selectedChat.id_user);
   }, [selectedChat]);
 
   useEffect(() => {
-    if (!partnerId || !selectedChat) return; // Verificar que partnerId y selectedChat estén definidos
+    if (!partnerId) return; // Verificar que partnerId y selectedChat estén definidos
     console.log("Useffect de conexion a room");
     if (socket) {
       socket.emit("joinConversation", { partnerId: partnerId }, (response) => {
@@ -85,7 +81,7 @@ export function ChatAppScreen() {
         }
       });
     }
-  }, [partnerId, selectedChat]);
+  }, [partnerId]);
 
   useEffect(() => {
     if (!selectedChat) return;

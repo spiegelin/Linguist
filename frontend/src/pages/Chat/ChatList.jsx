@@ -8,6 +8,7 @@ const ChatList = ({ onSelectChat }) => {
 
   const chats = [
     {
+      id_user: 3,
       name: 'Paul Van Lopez',
       active: true,
       language: 'French',
@@ -17,6 +18,7 @@ const ChatList = ({ onSelectChat }) => {
       country: 'Belgica',
     },
     {
+      id_user: 4,
       name: 'Mitski',
       active: false,
       language: 'Japanese',
@@ -26,6 +28,7 @@ const ChatList = ({ onSelectChat }) => {
       country: 'Japan',
     },
     {
+      id_user: 5,
       name: 'Prince Rogers chantilly',
       active: true,
       language: 'English',
