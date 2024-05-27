@@ -1,6 +1,6 @@
 
 import jwt from 'jsonwebtoken';
-import { getUserById, getOrCreateConversation, saveMessage } from '../database/db.js';
+import { getUserById, getOrCreateConversation, saveMessage } from '../models/socketModel.js';
 
 const handleSocketConnection = (io) => {
     // Middleware de autenticación JWT para Socket.IO

@@ -21,9 +21,9 @@ CREATE TABLE languages (
 
 -- Relation with Users and Languages
 CREATE TABLE user_languages (
+    id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
     language_id INT NOT NULL,
-    PRIMARY KEY (user_id, language_id),
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (language_id) REFERENCES languages (id)
 );
@@ -59,4 +59,4 @@ VALUES ('FIAblo', 'HereFIA', 'Afghanistán',  '+52 3323493405', 'fiablo@tec.mx',
 
 -- Insert Test Conversation
 INSERT INTO conversations (user_id1, user_id2, conversation_name)
-VALUES (1, 2, 'test');
+VALUES (1, 2, 'conversation_1'); -- si es la primer conversacion

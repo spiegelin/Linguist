@@ -5,7 +5,7 @@ import { FaSearch } from 'react-icons/fa';
 
 const ChatList = ({ onSelectChat }) => {
   const [selectedChat, setSelectedChat] = useState(null);
-
+  // Dummy data, para que funcione tu tienes que estar loggeado con 2 de esos id en diferentes navegadores
   const chats = [
     {
       id_user: 3,
