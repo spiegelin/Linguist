@@ -1,52 +1,130 @@
-//ChatAppScreen.jsx
-import React, { useEffect, useState, useCallback } from "react";
-import io from "socket.io-client";
+// ChatAppScreen.jsx
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import io from "socket.io-client";
 import { Sidebar } from "../components/Sidebar";
 import Messages from "../pages/Chat/Messages";
-import ChatHeader from "../pages/Chat/ChatHeader"; // Cambiado para usar la exportación por defecto
+import ChatHeader from "../pages/Chat/ChatHeader";
 import MessageInput from "../components/MessageInput";
 import ChatList from "../pages/Chat/ChatList";
+import Cookies from "universal-cookie";
 
-const socket = io("http://localhost:3002");
+const cookies = new Cookies();
+const token = cookies.get('token');
+
+const socket = io("http://localhost:3002", {
+  auth: {
+    token: token
+  }
+});
 
 export function ChatAppScreen() {
+  const [selectedChat, setSelectedChat] = useState(null);
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState({});
+  const [isTyping, setIsTyping] = useState(false);
+  const userProfileImage = "https://scontent-qro1-1.xx.fbcdn.net/v/t39.30808-6/321236782_1336144920477645_1360752776053520884_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=5f2048&_nc_ohc=pslfT2deIN4Q7kNvgFxANPC&_nc_ht=scontent-qro1-1.xx&oh=00_AYBtVzrdfA-4YtuTq_KTC6S4NAw3pxA6ddLRJav4lBkB9A&oe=66532B5E"; 
+  const [room, setRoom] = useState("");
+  const [partnerId, setPartnerId] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!selectedChat) {
+      alert("Por favor selecciona una conversación antes de enviar un mensaje.");
+      return;
+    }
     if (message.trim() !== "") {
-      console.log("Message desde front: ", message);
-      socket.emit("message", { text: message, isSent: true, time: new Date().toLocaleTimeString() });
-      setMessages((state) => [...state, { text: message, isSent: true, time: new Date().toLocaleTimeString() }]);
+      const newMessage = {
+        text: message,
+        isSent: true,
+        time: new Date().toLocaleTimeString(),
+        user: {
+          profileImage: userProfileImage
+        }
+      };
+      console.log("Mensaje enviado: ", newMessage); //quitar lo de profile image
+      socket.emit("message", { room, message: newMessage, partnerId });
+      setMessages((prevMessages) => ({
+        ...prevMessages,
+        [selectedChat.name]: [...(prevMessages[selectedChat.name] || []), newMessage]
+      }));
       setMessage("");
     }
   };
 
-  const receiveMessage = useCallback((message) => {
-    setMessages((state) => [...state, { ...message, isSent: false }]);
-  }, []);
+  const receiveMessage = (message) => {
+    console.log("Mensaje recibido: ", message);
+    setMessages((prevMessages) => ({
+      ...prevMessages,
+      [selectedChat.name]: [...(prevMessages[selectedChat.name] || []), { ...message, isSent: false }]
+    }));
+  };
+
+  const handleTyping = () => {
+    setIsTyping(true);
+    setTimeout(() => setIsTyping(false), 3000);
+  };
 
   useEffect(() => {
-    socket.on("message", receiveMessage);
+    if (!selectedChat) return;
+    // Emitir evento para unirse a la conversación con partnerId 4
+    setPartnerId(selectedChat.id_user);
+  }, [selectedChat]);
+
+  useEffect(() => {
+    if (!partnerId) return; // Verificar que partnerId y selectedChat estén definidos
+    console.log("Useffect de conexion a room");
+    if (socket) {
+      socket.emit("joinConversation", { partnerId: partnerId }, (response) => {
+        if (response.room) {
+          setRoom(response.room); // Guardar el nombre del room
+        }
+      });
+    }
+  }, [partnerId]);
+
+  useEffect(() => {
+    if (!selectedChat) return;
+    console.log("Useffect");
+    if (socket) {
+      socket.on("message", receiveMessage);
+      socket.on("typing", handleTyping);
+    }
+
     return () => {
-      socket.off("message", receiveMessage);
+      if (socket) {
+        socket.off("message", receiveMessage);
+        socket.off("typing", handleTyping);
+      }
     };
-  }, [receiveMessage]);
+  }, [selectedChat]);
 
   return (
     <PageContainer>
       <Sidebar />
       <MainContainer>
-        <ChatHeader />
-        <ChatContainer>
-          <Messages messages={messages} />
-          <MessageInput message={message} setMessage={setMessage} handleSubmit={handleSubmit} />
-        </ChatContainer>
+        {selectedChat ? (
+          <>
+            <ChatHeader selectedChat={selectedChat} />
+            <ChatContainer>
+              <Messages messages={messages[selectedChat.name] || []} isTyping={isTyping} />
+            </ChatContainer>
+            <MessageInputContainer>
+              <MessageInput
+                message={message}
+                setMessage={setMessage}
+                handleSubmit={handleSubmit}
+              />
+            </MessageInputContainer>
+          </>
+        ) : (
+          <EmptyStateContainer>
+            <EmptyStateMessage>Por favor selecciona una conversación.</EmptyStateMessage>
+          </EmptyStateContainer>
+        )}
       </MainContainer>
       <ChatListContainer>
-        <ChatList />
+        <ChatList onSelectChat={setSelectedChat} />
       </ChatListContainer>
     </PageContainer>
   );
@@ -62,17 +140,44 @@ const MainContainer = styled.div`
   flex-direction: column;
   flex-grow: 1;
   background: #f9f9f9;
+  position: relative;
 `;
 
 const ChatContainer = styled.div`
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  padding-bottom: 80px;
 `;
 
 const ChatListContainer = styled.div`
-  width: 320px; /* Ancho de la barra lateral */
+  width: 320px;
   border-left: 1px solid #ddd;
-  background: #f0f0f0; /* Color de fondo de la barra lateral */
+  background: #f0f0f0;
   overflow-y: auto;
+`;
+
+const MessageInputContainer = styled.div`
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+`;
+
+const EmptyStateContainer = styled.div`
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 20px;
+`;
+
+const EmptyStateMessage = styled.div`
+  font-size: 1.5em;
+  color: #777;
 `;

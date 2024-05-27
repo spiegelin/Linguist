@@ -1,25 +1,32 @@
-//ChatHeader.jsx
+// ChatHeader.jsx
 import React from 'react';
 import styled from 'styled-components';
 import { AiOutlinePhone, AiOutlineMail } from 'react-icons/ai';
 
-const ChatHeader = () => {
+const ChatHeader = ({ selectedChat }) => {
   return (
     <HeaderContainer>
-      <UserProfile>
-        <img src="https://scontent-qro1-1.xx.fbcdn.net/v/t39.30808-6/321236782_1336144920477645_1360752776053520884_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=5f2048&_nc_ohc=pslfT2deIN4Q7kNvgFxANPC&_nc_ht=scontent-qro1-1.xx&oh=00_AYBtVzrdfA-4YtuTq_KTC6S4NAw3pxA6ddLRJav4lBkB9A&oe=66532B5E" alt="User" />
-        <div>
-          <h2>Santos Arellano</h2>
-          <p>United States</p>
-        </div>
-      </UserProfile>
-      
+      {selectedChat && (
+        <UserProfile>
+          <img src={selectedChat.image} alt="User" />
+          <UserInfo>
+            <UserName>{selectedChat.name}</UserName>
+            <UserDetails>
+              <DetailLabel>Country:</DetailLabel>
+              <DetailValue>{selectedChat.country}</DetailValue>
+            </UserDetails>
+            <UserDetails>
+              <DetailLabel>Language:</DetailLabel>
+              <DetailValue>{selectedChat.language}</DetailValue>
+            </UserDetails>
+          </UserInfo>
+        </UserProfile>
+      )}
       <ChatActions>
         <button><AiOutlinePhone /></button>
         <button><AiOutlineMail /></button>
       </ChatActions>
     </HeaderContainer>
-    
   );
 };
 
@@ -30,7 +37,7 @@ const HeaderContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background: #fff;
+  background: rgba(186, 50, 125, 0.05);  // Color de fondo con 5% de opacidad
   border-bottom: 1px solid #ddd;
 `;
 
@@ -44,16 +51,37 @@ const UserProfile = styled.div`
     height: 50px;
     margin-right: 10px;
   }
+`;
 
-  h2 {
-    margin: 0;
-    font-size: 1.2em;
-  }
+const UserInfo = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
 
-  p {
-    margin: 0;
-    color: #777;
-  }
+const UserName = styled.h2`
+  margin: 0;
+  font-size: 1.2em;
+  margin-right: 20px;  // Espacio entre el nombre y los detalles
+`;
+
+const UserDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 20px;  // Espacio entre los detalles
+`;
+
+const DetailLabel = styled.p`
+  margin: 0;
+  color: #777;
+  font-size: 0.9em;
+`;
+
+const DetailValue = styled.p`
+  margin: 0;
+  color: #333; // Color más oscuro para los valores
+  font-size: 0.9em;
 `;
 
 const ChatActions = styled.div`
@@ -65,4 +93,3 @@ const ChatActions = styled.div`
     font-size: 1.2em;
   }
 `;
-

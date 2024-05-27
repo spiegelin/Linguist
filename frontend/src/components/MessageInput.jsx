@@ -1,17 +1,26 @@
 //MessageInput.jsx
 import React from 'react';
 import styled from 'styled-components';
+import { IoSend } from 'react-icons/io5';
+import { AiOutlineAudio } from 'react-icons/ai';
+import { SiOpenai } from "react-icons/si";
 
 const MessageInput = ({ message, setMessage, handleSubmit }) => {
   return (
     <InputContainer onSubmit={handleSubmit}>
-      <input
+      <MicrophoneIcon />
+      <Input
         type="text"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         placeholder="Type something"
       />
-      <button type="submit">Send</button>
+      <OpenAIButton>
+        <SiOpenai />
+      </OpenAIButton>
+      <SendButton type="submit">
+        <IoSend />
+      </SendButton>
     </InputContainer>
   );
 };
@@ -20,28 +29,42 @@ export default MessageInput;
 
 const InputContainer = styled.form`
   display: flex;
-  padding: 10px;
+  align-items: center;
   background: #fff;
-  border-top: 1px solid #ddd;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  padding: 5px; /* Reducir el espacio entre el borde y los elementos internos */
+`;
 
-  input {
-    flex-grow: 1;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    margin-right: 10px;
-  }
+const MicrophoneIcon = styled(AiOutlineAudio)`
+  font-size: 1.5em;
+  color: #2F5B20; /* Verde */
+  margin: 5px; /* Añadir un pequeño margen entre el icono y el borde */
+`;
 
-  button {
-    background: #007bff;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
+const Input = styled.input`
+  flex-grow: 1;
+  padding: 5px;
+  border: none;
+  border-radius: 4px;
+  margin: 0 5px; /* Espacio entre el micrófono y el campo de entrada */
+`;
 
-    &:hover {
-      background: #0056b3;
-    }
-  }
+const SendButton = styled.button`
+  background: none;
+  border: none;
+  color: #2F5B20; /* Verde */
+  cursor: pointer;
+  font-size: 1.5em;
+  margin: 5px; /* Añadir un pequeño margen entre el campo de entrada y el botón */
+`;
+
+const OpenAIButton = styled.button`
+  background: none;
+  border: none;
+  color: #2F5B20; /* Verde */
+  cursor: pointer;
+  font-size: 1.5em;
+  margin: 5px; /* Añadir un pequeño margen entre el campo de entrada y el botón */
 `;
