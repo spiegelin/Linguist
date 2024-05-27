@@ -1,9 +1,8 @@
-//Messages.jsx
+//Messages
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
-
-const Messages = ({ messages, isTyping }) => {
+const Messages = React.memo(({ messages, isTyping }) => {
   return (
     <MessagesContainer>
       {messages.map((msg, index) => (
@@ -30,10 +29,11 @@ const Messages = ({ messages, isTyping }) => {
       )}
     </MessagesContainer>
   );
-};
+});
 
 export default Messages;
 
+// Estilos (se mantienen sin cambios)
 const MessagesContainer = styled.div`
   flex-grow: 1;
   padding: 20px;
@@ -41,7 +41,6 @@ const MessagesContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
-
 
 const MessageContainer = styled.div`
   display: flex;
@@ -68,7 +67,6 @@ const MessageContent = styled.div`
   position: relative; /* Añadir posición relativa */
   margin-right: 10px; /* Margen derecho para separar del avatar */
 `;
-
 
 const Timestamp = styled.span`
   font-size: 0.8em;

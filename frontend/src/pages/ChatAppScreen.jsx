@@ -29,6 +29,10 @@ export function ChatAppScreen() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!selectedChat) {
+      alert("Por favor selecciona una conversación antes de enviar un mensaje.");
+      return;
+    }
     if (message.trim() !== "") {
       const newMessage = {
         text: message,
@@ -39,7 +43,7 @@ export function ChatAppScreen() {
         }
       };
       console.log("Mensaje enviado: ", newMessage); //quitar lo de profile image
-      socket.emit("message", { room, message: newMessage, partnerId});
+      socket.emit("message", { room, message: newMessage, partnerId });
       setMessages((prevMessages) => ({
         ...prevMessages,
         [selectedChat.name]: [...(prevMessages[selectedChat.name] || []), newMessage]
@@ -50,22 +54,10 @@ export function ChatAppScreen() {
 
   const receiveMessage = (message) => {
     console.log("Mensaje recibido: ", message);
-    /*
-    const isDuplicate = messages[selectedChat.name]?.some((msg) => msg.text === message.text);
-    const isSelfMessage = message.isSent;
-    if (!isDuplicate && !isSelfMessage) {
-      setMessages((prevMessages) => ({
-        ...prevMessages,
-        [selectedChat.name]: [...(prevMessages[selectedChat.name] || []), { ...message, isSent: false }]
-      }));
-    }
-    */
-
     setMessages((prevMessages) => ({
       ...prevMessages,
       [selectedChat.name]: [...(prevMessages[selectedChat.name] || []), { ...message, isSent: false }]
     }));
-
   };
 
   const handleTyping = () => {
@@ -73,21 +65,19 @@ export function ChatAppScreen() {
     setTimeout(() => setIsTyping(false), 3000);
   };
 
-  // useEffect para manejar la conexión al room
   useEffect(() => {
     if (!selectedChat) return;
     // Emitir evento para unirse a la conversación con partnerId 4
-    if (selectedChat.name == "Mitski"){
+    if (selectedChat.name == "Mitski") {
       setPartnerId(4)
-    }else if (selectedChat.name == "Paul Van Lopez"){
+    } else if (selectedChat.name == "Paul Van Lopez") {
       setPartnerId(5)
     }
-  
   }, [selectedChat]);
 
   useEffect(() => {
-    if (!selectedChat) return; //chance aqui el condicional es con partnerId
-    console.log("Useffect de conexion a room")
+    if (!partnerId || !selectedChat) return; // Verificar que partnerId y selectedChat estén definidos
+    console.log("Useffect de conexion a room");
     if (socket) {
       socket.emit("joinConversation", { partnerId: partnerId }, (response) => {
         if (response.room) {
@@ -95,12 +85,11 @@ export function ChatAppScreen() {
         }
       });
     }
-  }, [partnerId]);
-
+  }, [partnerId, selectedChat]);
 
   useEffect(() => {
     if (!selectedChat) return;
-    console.log("Useffect")
+    console.log("Useffect");
     if (socket) {
       socket.on("message", receiveMessage);
       socket.on("typing", handleTyping);
@@ -118,17 +107,25 @@ export function ChatAppScreen() {
     <PageContainer>
       <Sidebar />
       <MainContainer>
-        <ChatHeader selectedChat={selectedChat} />
-        <ChatContainer>
-          <Messages messages={messages[selectedChat?.name] || []} isTyping={isTyping} />
-        </ChatContainer>
-        <MessageInputContainer>
-          <MessageInput
-            message={message}
-            setMessage={setMessage}
-            handleSubmit={handleSubmit}
-          />
-        </MessageInputContainer>
+        {selectedChat ? (
+          <>
+            <ChatHeader selectedChat={selectedChat} />
+            <ChatContainer>
+              <Messages messages={messages[selectedChat.name] || []} isTyping={isTyping} />
+            </ChatContainer>
+            <MessageInputContainer>
+              <MessageInput
+                message={message}
+                setMessage={setMessage}
+                handleSubmit={handleSubmit}
+              />
+            </MessageInputContainer>
+          </>
+        ) : (
+          <EmptyStateContainer>
+            <EmptyStateMessage>Por favor selecciona una conversación.</EmptyStateMessage>
+          </EmptyStateContainer>
+        )}
       </MainContainer>
       <ChatListContainer>
         <ChatList onSelectChat={setSelectedChat} />
@@ -172,4 +169,19 @@ const MessageInputContainer = styled.div`
   display: flex;
   justify-content: center;
   padding: 10px;
+`;
+
+const EmptyStateContainer = styled.div`
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 20px;
+`;
+
+const EmptyStateMessage = styled.div`
+  font-size: 1.5em;
+  color: #777;
 `;
