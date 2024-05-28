@@ -11,6 +11,7 @@ import cookieParser from 'cookie-parser';
 import registerRoute from "./routes/register.js";
 import loginRoute from "./routes/login.js";
 import addRoute from "./routes/add.js";
+import chatsRoute from "./routes/chat.js";
 import cookieJwtAuth from "./auth/cookieJwtAuth.js";
 import handleSocketConnection from "./sockets/socketHandler.js";
 
@@ -50,6 +51,8 @@ app.post("/api/login", loginRoute);
 
 // Ruta Segura para loggear usuarios con sesión activa
 app.post("/api/add", cookieJwtAuth, addRoute);
+
+app.get("/api/chatsExceptUser", chatsRoute); //REvisar por que el middleware del cookieJwtAuth no está funcando
 
 // Manejar conexiones de Socket.IO
 handleSocketConnection(io);

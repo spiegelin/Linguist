@@ -68,7 +68,7 @@ export function ChatAppScreen() {
   useEffect(() => {
     if (!selectedChat) return;
     // Emitir evento para unirse a la conversación con partnerId 4
-    setPartnerId(selectedChat.id_user);
+    setPartnerId(selectedChat.id);
   }, [selectedChat]);
 
   useEffect(() => {

@@ -9,17 +9,17 @@ const handleSocketConnection = (io) => {
     const socketJwtAuth = (socket, next) => {
         const token = socket.handshake.auth.token;
         const encodedToken = encodeURIComponent(token);
-        console.log("sockethandler")
-        console.log("Token: ", token);
-        console.log("Encoded Token:", encodedToken);
+        //console.log("sockethandler")
+        //console.log("Token: ", token);
+        //console.log("Encoded Token:", encodedToken);
         if (!token) {
             return next(new Error('Authentication error: Token missing'));
         }
 
         try {
-            console.log("Entro en el try")
+            //console.log("Entro en el try")
             const decoded = jwt.verify(encodedToken, process.env.JWT_SECRET);
-            console.log("Decoded: ", decoded);
+            //console.log("Decoded: ", decoded);
             socket.user = decoded.user_id; // Almacenar la información del usuario en el objeto de socket
             next();
         } catch (error) {

@@ -1,11 +1,38 @@
 //ChatList
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import styled from 'styled-components';
 import { FaSearch } from 'react-icons/fa';
+import axios from 'axios';
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
+const token = cookies.get('token');
 
 const ChatList = ({ onSelectChat }) => {
   const [selectedChat, setSelectedChat] = useState(null);
+  const [chats, setChats] = useState([]);
+
+  // Fetch chats
+  useEffect(() => {
+    const fetchChats = async () => {
+      try {
+        const response = await axios.get('http://localhost:3002/api/chatsExceptUser', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        console.log(response)
+        setChats(response.data);
+      } catch (error) {
+        console.error('Error fetching chats:', error);
+      }
+    };
+
+    fetchChats();
+  }, []);
+
   // Dummy data, para que funcione tu tienes que estar loggeado con 2 de esos id en diferentes navegadores
+  /*
   const chats = [
     {
       id_user: 3,
@@ -38,9 +65,10 @@ const ChatList = ({ onSelectChat }) => {
       country: 'United States',
     },
   ];
+  */
 
   const handleChatItemClick = (chat) => {
-    setSelectedChat(chat.name);
+    setSelectedChat(chat.id);
     onSelectChat(chat);
   };
 
@@ -55,15 +83,15 @@ const ChatList = ({ onSelectChat }) => {
           <ChatItem
             key={index}
             onClick={() => handleChatItemClick(chat)}
-            isSelected={selectedChat === chat.name}
+            isSelected={selectedChat === chat.id}
           >
             <img src={chat.image} alt="User" />
-            <ChatDetails isSelected={selectedChat === chat.name}>
+            <ChatDetails isSelected={selectedChat === chat.id}>
               <UserInfo>
-                <UserName>{chat.name}</UserName>
+                <UserName>{chat.first_name + " "+ chat.last_name}</UserName>
                 <UserStatus active={chat.active} />
               </UserInfo>
-              <UserLanguage isSelected={selectedChat === chat.name}>{chat.language}</UserLanguage>
+              <UserLanguage isSelected={selectedChat === chat.id}>{chat.language}</UserLanguage>
               <p>{chat.message}</p>
             </ChatDetails>
             <ChatTime>{chat.time}</ChatTime>
