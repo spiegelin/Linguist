@@ -11,13 +11,13 @@ import './auth/googleAuth.js';
 import session from 'express-session';
 
 // Importar rutas
-import registerRoute from "./routes/register.js";
-import loginRoute from "./routes/login.js";
-import addRoute from "./routes/add.js";
-import chatsRoute from "./routes/chat.js";
-import cookieJwtAuth from "./auth/cookieJwtAuth.js";
 import handleSocketConnection from "./sockets/socketHandler.js";
-import googleAuth from "./routes/googleAuth.js";
+
+// Importar Router
+import thirdPartyAuth from "./routes/third_party_auth.js";
+import localAuth from "./routes/local_auth.js";
+import health from "./routes/health.js";
+import chatsRoute from "./routes/chat.js";
 
 // Server startup
 const app = express();
@@ -67,41 +67,16 @@ app.use(
     })
 );
 
-
+// Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
   
+// Rutas
+app.use('/api/auth', thirdPartyAuth);
+app.use('/api', localAuth);
+app.use('/api/health', health);
+app.use('/api/chats', chatsRoute);
 
-// Test endpoint
-app.post('/api/health', async (req, res) => {
-    res.json({'Status' : 'Server OK'});
-});
-
-app.get('/api/health', async (req, res) => {
-    res.json({'Status' : 'Server OK'});
-});
-
-// Registrar usuario
-app.post("/api/register", registerRoute);
-
-// Iniciar sesión
-app.post("/api/login", loginRoute);
-
-// Ruta Segura para loggear usuarios con sesión activa
-app.post("/api/add", cookieJwtAuth, addRoute);
-
-app.get("/api/chatsExceptUser", chatsRoute); //REvisar por que el middleware del cookieJwtAuth no está funcando
-
-// Ruta para autenticación con Google
-app.get('/api/auth/google', passport.authenticate('google', { 
-    scope: 'profile'})
-);
-
-// Ruta para manejar la redirección de Google después de autenticar al usuario en la ruta anterior
-app.get('/api/auth/google/callback', passport.authenticate('google', { 
-    session: true, }), 
-    googleAuth
-);
 
 // Manejar conexiones de Socket.IO
 handleSocketConnection(io);

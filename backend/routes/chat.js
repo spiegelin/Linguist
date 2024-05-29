@@ -1,7 +1,10 @@
 import { getAllUsersExceptCurrent } from '../models/userModel.js';
 import jwt from 'jsonwebtoken';
+import express from 'express';
 
-const chatsRoute = async (req, res) => {
+const router = express.Router();
+
+router.get('/allUsersExceptUser', async (req, res) => {
 
     const authHeader = req.headers.authorization;
 
@@ -22,6 +25,6 @@ const chatsRoute = async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: 'Internal server error' });
     }
-};
+});
 
-export default chatsRoute;
+export default router;

@@ -1,6 +1,5 @@
 import "dotenv/config"
 import passport from 'passport';
-import jwt from 'jsonwebtoken';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import findOrCreate from "../models/googleAuthModel.js";
 
@@ -15,6 +14,7 @@ passport.use(new GoogleStrategy(
     async (accessToken, refreshToken, profile, done) => {
         // Revisar si el usuario ya existe en la base de datos, si no, crearlo
         // En caso de error, se llama a done con el error
+        //console.log(profile)
         try {
             const user = await findOrCreate(profile);
             console.log(user);

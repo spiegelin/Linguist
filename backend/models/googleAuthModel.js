@@ -10,9 +10,9 @@ const findOrCreate = async (profile) => {
     
     // Si el usuario no existe, se crea y se devuelve
     if (res.rows.length === 0) {
-        query = `INSERT INTO users (google_id, first_name, last_name) VALUES ('${profile.id}', '${profile.name.givenName}', '${profile.name.familyName}')`;
+        query = `INSERT INTO users (google_id, first_name, last_name, email) VALUES ('${profile.id}', '${profile.name.givenName}', '${profile.name.familyName}', '${profile.emails[0].value}') RETURNING *`;
         res = await db.query(query);
-        
+
         console.log('User created')
         return res.rows[0];
     }

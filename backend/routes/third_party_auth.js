@@ -1,6 +1,18 @@
 import jwt from "jsonwebtoken";
+import express from 'express';
+import passport from 'passport';
 
-const googleAuth = (req, res) => {
+
+const router = express.Router();
+
+// Ruta para autenticación con Google
+router.get('/google', passport.authenticate('google', { 
+    scope: ['profile', 'email', 'openid']})
+);
+
+// Ruta para manejar la redirección de Google después de autenticar al usuario en la ruta anterior
+router.get('/google/callback', passport.authenticate('google', { 
+    session: true, }), (req, res) => {
     // Se obtiene el usuario autenticado
     const user = req.user;
         
@@ -24,6 +36,6 @@ const googleAuth = (req, res) => {
         req: user,
         isLogged: true
     });
-}
+});
 
-export default googleAuth;
+export default router;

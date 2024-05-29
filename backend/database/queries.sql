@@ -48,7 +48,8 @@ CREATE TABLE messages (
     FOREIGN KEY (conversation_id) REFERENCES conversations(id),
     FOREIGN KEY (sender_id) REFERENCES users(id),
     body TEXT,
-    sent_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    sent_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    --image TEXT -- Base64
 );
 
 -- Insert Test Users
