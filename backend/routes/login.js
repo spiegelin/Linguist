@@ -64,12 +64,7 @@ const loginRoute = async (req, res) => {
             return res.send({
                 message: 'Cookie has been set',
                 isLogged: true
-            });;
-            
-            
-
-
-            //res.json({message: "Login successful"});
+            });
         });
     }
 };

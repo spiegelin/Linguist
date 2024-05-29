@@ -10,6 +10,7 @@ CREATE TABLE users (
 	country VARCHAR(255), 
 	contact_num VARCHAR(15), 
 	email VARCHAR(255), 
+    google_id VARCHAR(30),
 	password VARCHAR(255)
 );
 
