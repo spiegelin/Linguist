@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { FaSearch } from 'react-icons/fa';
 import axios from 'axios';
 import Cookies from "universal-cookie";
+import logo from "./logo.png"; // Importación del logo
 
 const cookies = new Cookies();
 const token = cookies.get('token');
@@ -30,42 +31,6 @@ const ChatList = ({ onSelectChat }) => {
 
     fetchChats();
   }, []);
-
-  // Dummy data, para que funcione tu tienes que estar loggeado con 2 de esos id en diferentes navegadores
-  /*
-  const chats = [
-    {
-      id_user: 3,
-      name: 'Paul Van Lopez',
-      active: true,
-      language: 'French',
-      message: 'Frère, viendra le jour où tu ne danseras plus',
-      time: '11:23 pm',
-      image: 'https://www.codigonuevo.com/binrepository/775x500/138c0/500d500/none/2283274/WRIS/stromae-music-codigo--930x600_CN137263_MG11268424.jpg',
-      country: 'Belgica',
-    },
-    {
-      id_user: 4,
-      name: 'Mitski',
-      active: false,
-      language: 'Japanese',
-      message: '「心からやれば、できるよ」',
-      time: '03:23 pm',
-      image: 'https://hips.hearstapps.com/hmg-prod/images/mitski-byebruyildiz-heat-lightning-index-1643991665.jpg?crop=0.502xw:1.00xh;0.348xw,0&resize=1200:*',
-      country: 'Japan',
-    },
-    {
-      id_user: 5,
-      name: 'Prince Rogers chantilly',
-      active: true,
-      language: 'English',
-      message: 'Man, live boldly and let your spirit guide you. The world is yours to shape.',
-      time: '11:23 am',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Prince.jpg/220px-Prince.jpg',
-      country: 'United States',
-    },
-  ];
-  */
 
   const handleChatItemClick = (chat) => {
     setSelectedChat(chat.id);
@@ -98,6 +63,7 @@ const ChatList = ({ onSelectChat }) => {
           </ChatItem>
         ))}
       </Chats>
+      <Logo src={logo} alt="Logo" /> {/* Logo en la esquina inferior derecha */}
     </ChatListContainer>
   );
 };
@@ -109,6 +75,7 @@ const ChatListContainer = styled.div`
   border-left: 1px solid #ddd;
   display: flex;
   flex-direction: column;
+  position: relative; /* Añadido para posicionar el logo */
 `;
 
 const SearchContainer = styled.div`
@@ -197,4 +164,12 @@ const UserLanguage = styled.span`
 const ChatTime = styled.div`
   font-size: 0.8em;
   color: #777;
+`;
+
+const Logo = styled.img`
+  position: absolute;
+  bottom: -613px;
+  right: -16px;
+  width: 120px;
+  height: auto;
 `;
