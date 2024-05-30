@@ -8,6 +8,8 @@ import cors from "cors";
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import './auth/googleAuth.js';
+import './auth/facebookAuth.js';
+import './auth/githubAuth.js';
 import session from 'express-session';
 
 // Importar rutas
