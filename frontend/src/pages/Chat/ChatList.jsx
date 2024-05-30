@@ -1,5 +1,5 @@
 //ChatList
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaSearch } from 'react-icons/fa';
 import axios from 'axios';
@@ -50,10 +50,14 @@ const ChatList = ({ onSelectChat }) => {
             onClick={() => handleChatItemClick(chat)}
             isSelected={selectedChat === chat.id}
           >
-            <img src={chat.image} alt="User" />
+            <img
+              src={chat.image}
+              alt="User"
+              onError={(e) => e.target.src = logo} // Manejador de error de imagen
+            />
             <ChatDetails isSelected={selectedChat === chat.id}>
               <UserInfo>
-                <UserName>{chat.first_name + " "+ chat.last_name}</UserName>
+                <UserName>{chat.first_name + " " + chat.last_name}</UserName>
                 <UserStatus active={chat.active} />
               </UserInfo>
               <UserLanguage isSelected={selectedChat === chat.id}>{chat.language}</UserLanguage>

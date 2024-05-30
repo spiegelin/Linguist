@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from "styled-components";
 import { Light } from "./styles/Themes";
 import styled from "styled-components";
 import MainApp from './components/MainApp';
 import GlobalStyles from './styles/GlobalStyles'; // Importa los estilos globales
+import { ProfileProvider } from './pages/ProfileContext'; // Asegúrate de que la ruta sea correcta
 
 export const ThemeContext = React.createContext(null);
 
@@ -20,20 +21,20 @@ function App() {
   const themeStyle = Light;
 
   return (
-    <>
-    <GlobalStyles />
-    <ThemeContext.Provider value={{ theme: "light" }}>
-      <ThemeProvider theme={themeStyle}>
-        <BrowserRouter>
-          <Container>
-            <Content>
-              <MainApp />
-            </Content>
-          </Container>
-        </BrowserRouter>
-      </ThemeProvider>
-    </ThemeContext.Provider>
-    </>
+    <ProfileProvider> {/* Envuelve todo en ProfileProvider */}
+      <GlobalStyles />
+      <ThemeContext.Provider value={{ theme: "light" }}>
+        <ThemeProvider theme={themeStyle}>
+          <BrowserRouter>
+            <Container>
+              <Content>
+                <MainApp />
+              </Content>
+            </Container>
+          </BrowserRouter>
+        </ThemeProvider>
+      </ThemeContext.Provider>
+    </ProfileProvider>
   );
 }
 

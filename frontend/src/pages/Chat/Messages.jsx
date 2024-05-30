@@ -1,24 +1,40 @@
 //Messages
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
+import { ProfileContext } from '../ProfileContext'; // Importa el contexto correcto
 
 const Messages = React.memo(({ messages, isTyping }) => {
+  const { profileImage } = useContext(ProfileContext); // Obtener la foto de perfil del contexto
+
   return (
     <MessagesContainer>
       {messages.map((msg, index) => (
         <MessageContainer key={index} isSent={msg.isSent}>
-          {!msg.isSent && msg.user && <ProfileImage src={msg.user.profileImage} alt="Profile" />}
-          <Message isSent={msg.isSent}>
-            <MessageContent isSent={msg.isSent}>
-              {msg.text}
-            </MessageContent>
-            <Timestamp isSent={msg.isSent}>{msg.time}</Timestamp>
-          </Message>
-          {msg.isSent && msg.user && <ProfileImage src={msg.user.profileImage} alt="Profile" />}
+          {msg.isSent ? (
+            <>
+              <MessageContentContainer isSent={msg.isSent}>
+                <MessageContent isSent={msg.isSent}>
+                  {msg.text}
+                </MessageContent>
+              </MessageContentContainer>
+              <ProfileImage src={profileImage} alt="Profile" /> {/* Agrega la imagen de perfil a la derecha para mensajes enviados */}
+            </>
+          ) : (
+            <>
+              <ProfileImage src={msg.user.profileImage || profileImage} alt="Profile" /> {/* Agrega la imagen de perfil a la izquierda para mensajes recibidos */}
+              <MessageContentContainer isSent={msg.isSent}>
+                <MessageContent isSent={msg.isSent}>
+                  {msg.text}
+                </MessageContent>
+              </MessageContentContainer>
+            </>
+          )}
+          <Timestamp isSent={msg.isSent}>{msg.time}</Timestamp>
         </MessageContainer>
       ))}
       {isTyping && (
         <TypingBubble>
+          <ProfileImage src={profileImage} alt="Profile" />
           <TypingIndicator>
             <TypingDot />
             <TypingDot />
@@ -30,8 +46,6 @@ const Messages = React.memo(({ messages, isTyping }) => {
   );
 });
 
-export default Messages;
-
 const MessagesContainer = styled.div`
   flex-grow: 1;
   padding: 20px;
@@ -42,15 +56,14 @@ const MessagesContainer = styled.div`
 
 const MessageContainer = styled.div`
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: ${props => (props.isSent ? 'flex-end' : 'flex-start')};
   margin-bottom: 10px;
 `;
 
-const Message = styled.div`
+const MessageContentContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: ${props => (props.isSent ? 'flex-end' : 'flex-start')};
+  align-items: center;
 `;
 
 const MessageContent = styled.div`
@@ -104,3 +117,5 @@ const ProfileImage = styled.img`
   border-radius: 50%;
   margin: 0 10px;
 `;
+
+export default Messages;
