@@ -1,10 +1,11 @@
 import { getAllUsersExceptCurrent } from '../models/userModel.js';
 import jwt from 'jsonwebtoken';
 import express from 'express';
+import cookieJwtAuth from '../auth/cookieJwtAuth.js'; //No esta regresando nada el cliente de cookies, revisar logica
 
 const router = express.Router();
 
-router.get('/allUsersExceptUser', async (req, res) => {
+router.get('/chatsExceptUser', async (req, res) => {
 
     const authHeader = req.headers.authorization;
 

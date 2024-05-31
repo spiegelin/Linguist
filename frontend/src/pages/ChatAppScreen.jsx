@@ -60,30 +60,46 @@ export function ChatAppScreen() {
     }));
   };
 
+  useEffect(() => {
+    console.log("Messages updated: ", messages);
+  }, [messages]);
+
   const handleTyping = () => {
     setIsTyping(true);
     setTimeout(() => setIsTyping(false), 3000);
   };
 
+  //El primer useEffect se encarga de actualizar el partnerId cuando se selecciona un chat
   useEffect(() => {
     if (selectedChat) {
       setPartnerId(selectedChat.id);
     }
   }, [selectedChat]);
 
+  //El segundo useEffect se encarga de conectarse a la sala de chat cuando se selecciona un chat
   useEffect(() => {
     if (partnerId) {
       console.log("Useffect de conexion a room");
       if (socket) {
         socket.emit("joinConversation", { partnerId: partnerId }, (response) => {
           if (response.room) {
+            console.log("Room: ", response.room);
             setRoom(response.room);
+            
+            socket.emit("getHistory", { room_name: response.room }, (messages) => {
+              setMessages((prevMessages) => ({
+                ...prevMessages,
+                [response.room]: messages
+              }));
+            });
+            
           }
         });
       }
     }
   }, [partnerId]);
 
+  //El tercer useEffect se encarga de escuchar los mensajes y el typing en la sala de chat
   useEffect(() => {
     if (selectedChat) {
       console.log("Useffect");
@@ -99,7 +115,7 @@ export function ChatAppScreen() {
         }
       };
     }
-  }, [selectedChat]);
+  }, [room]); //Solo se ejecuta cuando el 2ndo useEffect se ejecuta y se selecciona un room, para que la funcion de receiveMessage tenga el contexto del cuarto
 
   return (
     <PageContainer>

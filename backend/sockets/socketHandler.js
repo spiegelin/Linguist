@@ -1,6 +1,7 @@
 
 import jwt from 'jsonwebtoken';
-import { getUserById, getOrCreateConversation, saveMessage } from '../models/socketModel.js';
+import { getUserById, getOrCreateConversation, saveMessage, getMessagesFromConversation } from '../models/socketModel.js';
+import { format, toZonedTime } from 'date-fns-tz';
 
 const handleSocketConnection = (io) => {
     // Middleware de autenticación JWT para Socket.IO
@@ -53,14 +54,38 @@ const handleSocketConnection = (io) => {
             console.log(message)
             console.log(`Mensaje recibido en room ${room}:`, message);
             const conversationId = parseInt(room.split('_')[1], 10);
-            await saveMessage(conversationId, socket.user, message); //ver si le mandamos ese json o el puro text
+            await saveMessage(conversationId, socket.user, message.text); //Ya le mandamos el puro texto, ver si queremos hacer validaciones que si se guardo y manejo de errores
             const recipientSocketId = Array.from(users.keys()).find(key => users.get(key) === partnerId);
             console.log("Sender Socket ID: ", socket.id)
             console.log("Recipient Socket ID: ", recipientSocketId);
             if (recipientSocketId && recipientSocketId !== socket.id) {
-            io.to(recipientSocketId).emit("message", message);
+                //Ver si uso socket.broadcast.emit, al parecer en lugar de io por que io es para todos los sockets incluido el que envia
+                socket.to(room).to(recipientSocketId).emit("message", message);
+                //io.to(recipientSocketId).emit("message", message);
             } else {
             console.log("Usuario no encontrado o desconectado");
+            }
+        });
+
+        socket.on('getHistory', async ({ room_name }, callback) => {
+            try {
+                const messages = await getMessagesFromConversation(room_name);
+                const timeZone = 'America/Mexico_City';
+                const formattedMessages = messages.map(msg => {
+                    const zonedTime = toZonedTime(new Date(msg.sent_time), timeZone);
+                    return {
+                        text: msg.body,
+                        isSent: msg.sender_id === socket.user, // Determina si el mensaje fue enviado por el usuario actual
+                        time: format(zonedTime, 'HH:mm:ss', {timeZone}),
+                        user: {
+                            profileImage: "https://via.placeholder.com/150" // Puedes ajustar esto según cómo manejes las imágenes de perfil
+                        }
+                    };
+                });
+                callback(formattedMessages); // Envíalos de vuelta al cliente
+            } catch (error) {
+                console.error('Error fetching message history:', error);
+                callback([]); // Enviar una lista vacía en caso de error
             }
         });
 

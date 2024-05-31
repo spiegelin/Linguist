@@ -17,7 +17,7 @@ const ChatList = ({ onSelectChat }) => {
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        const response = await axios.get('http://localhost:3002/api/chatsExceptUser', {
+        const response = await axios.get('http://localhost:3002/api/chats/chatsExceptUser', {
           headers: {
             Authorization: `Bearer ${token}`
           }
