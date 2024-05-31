@@ -5,6 +5,10 @@ import { FaSearch } from 'react-icons/fa';
 import axios from 'axios';
 import Cookies from "universal-cookie";
 import logo from "./logo.png"; // Importación del logo
+const appPort = import.meta.env.VITE_APP_PORT;
+const baseApiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = `${baseApiUrl}:${appPort}/api`;
+//console.log(appPort, baseApiUrl, apiUrl)
 
 const cookies = new Cookies();
 const token = cookies.get('token');
@@ -17,7 +21,7 @@ const ChatList = ({ onSelectChat }) => {
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        const response = await axios.get('http://localhost:3002/api/chats/chatsExceptUser', {
+        const response = await axios.get(`${apiUrl}/chats/chatsExceptUser`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

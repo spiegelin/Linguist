@@ -8,11 +8,14 @@ import ChatHeader from "../pages/Chat/ChatHeader";
 import MessageInput from "../components/MessageInput";
 import ChatList from "../pages/Chat/ChatList";
 import Cookies from "universal-cookie";
+const appPort = import.meta.env.VITE_APP_PORT;
+const baseApiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = `${baseApiUrl}:${appPort}`;
 
 const cookies = new Cookies();
 const token = cookies.get('token');
 
-const socket = io("http://localhost:3002", {
+const socket = io(`${apiUrl}`, {
   auth: {
     token: token
   }

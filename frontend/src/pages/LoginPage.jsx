@@ -4,6 +4,10 @@ import axios from "axios";
 import "../styles/loginTheme.css";
 import Cookies from "universal-cookie";
 const cookies = new Cookies();
+const appPort = import.meta.env.VITE_APP_PORT;
+const baseApiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = `${baseApiUrl}:${appPort}/api`;
+//console.log(appPort, baseApiUrl, apiUrl)
 
 export const LoginPage = () => {
   const [isSignInActive, setIsSignInActive] = useState(false);
@@ -20,7 +24,7 @@ export const LoginPage = () => {
     // tambien se puede la lógica de validación de credenciales aquí
     //  ejemplo,  "a@a.com" y la contraseña es "1
     if (email && password) {
-      await axios.post('http://localhost:3002/api/login', {
+      await axios.post(`${apiUrl}/login`, {
         email: email,
         password: password
       }, {
