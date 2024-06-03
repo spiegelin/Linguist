@@ -44,4 +44,31 @@ const saveMessage = async (conversationId, senderId, message) => {
     );
 };
 
-export {getUserById, getOrCreateConversation, saveMessage}
+const getConversationIdByName = async (conversationName) => {
+    const result = await db.query(
+      'SELECT id FROM conversations WHERE conversation_name = $1', 
+      [conversationName]
+    );
+    if (result.rows.length > 0) {
+      return result.rows[0].id;
+    } else {
+      throw new Error('Conversation not found');
+    }
+  };
+  
+
+const getMessagesFromConversation = async (conversationName) => {
+    try {
+        const conversationId = await getConversationIdByName(conversationName);
+        const result = await db.query(
+          'SELECT * FROM messages WHERE conversation_id = $1 ORDER BY sent_time ASC', 
+          [conversationId]
+        );
+        return result.rows;
+    } catch (error) {
+        console.error('Error fetching messages:', error);
+        return []; // En caso de error, devolver una lista vacía
+    }  
+};
+
+export {getUserById, getOrCreateConversation, saveMessage, getMessagesFromConversation}

@@ -1,7 +1,9 @@
 // Sidebar.jsx
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
-import logo from "../assets/react.svg";
+import { FaRegUserCircle } from "react-icons/fa";
+import { ProfileContext } from "../pages/ProfileContext"; // Importa el contexto correcto
+
 import { AiOutlineHome, AiOutlineSetting } from "react-icons/ai";
 import { MdLogout, MdOutlineNotifications, MdOutlinePerson } from "react-icons/md";
 import { RiChat3Line } from "react-icons/ri";
@@ -21,10 +23,16 @@ const secondarylinksArray = [
 ];
 
 export function Sidebar() {
+  const { profileImage } = useContext(ProfileContext); // Obtiene la imagen del contexto
+
   return (
     <Container>
       <div className="Logocontent">
-        <img src={logo} alt="Logo" />
+        {profileImage ? (
+          <ProfileImage src={profileImage} alt="Profile" />
+        ) : (
+          <StyledUserIcon size={32} />
+        )}
       </div>
       <div className="LinksContainer">
         {linksArray.map(({ icon, to }) => (
@@ -89,7 +97,7 @@ const Container = styled.div`
   .SecondaryLinksContainer { /* Estilos para el nuevo contenedor */
     display: flex;
     flex-direction: column;
-    align-items: center;
+   	align-items: center;
     padding-bottom: 20px;
 
     .Link {
@@ -108,3 +116,15 @@ const Container = styled.div`
     }
   }
 `;
+
+// Aplica color verde al ícono de usuario
+const StyledUserIcon = styled(FaRegUserCircle)`
+  color: #2F5B20;
+`;
+
+const ProfileImage = styled.img`
+  max-width: 100%;
+  height: auto;
+`;
+
+export default Sidebar;

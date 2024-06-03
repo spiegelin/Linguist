@@ -24,7 +24,7 @@ const cookieJwtAuth = (req, res, next) => {
     // Se obtiene el token de la cookie (se pone token porque así se definió el nombre en la cookie de login.js)
     //console.log(req);
     //const token = req.cookies.token;
-    const token = req.signedCookies.token;
+    const token = req.cookies.token;
 
     try {
         // Se pasa el token y la llave secreta para verificar la firma digital (es un proceso de encriptación simétrica)

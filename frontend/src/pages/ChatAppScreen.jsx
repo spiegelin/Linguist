@@ -8,11 +8,14 @@ import ChatHeader from "../pages/Chat/ChatHeader";
 import MessageInput from "../components/MessageInput";
 import ChatList from "../pages/Chat/ChatList";
 import Cookies from "universal-cookie";
+const appPort = import.meta.env.VITE_APP_PORT;
+const baseApiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = `${baseApiUrl}:${appPort}`;
 
 const cookies = new Cookies();
 const token = cookies.get('token');
 
-const socket = io("http://localhost:3002", {
+const socket = io(`${apiUrl}`, {
   auth: {
     token: token
   }
@@ -23,7 +26,7 @@ export function ChatAppScreen() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState({});
   const [isTyping, setIsTyping] = useState(false);
-  const userProfileImage = "https://scontent-qro1-1.xx.fbcdn.net/v/t39.30808-6/321236782_1336144920477645_1360752776053520884_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=5f2048&_nc_ohc=pslfT2deIN4Q7kNvgFxANPC&_nc_ht=scontent-qro1-1.xx&oh=00_AYBtVzrdfA-4YtuTq_KTC6S4NAw3pxA6ddLRJav4lBkB9A&oe=66532B5E"; 
+  const userProfileImage = "https://scontent-qro1-1.xx.fbcdn.net/v/t39.30808-6/321236782_1336144920477645_1360752776053520884_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=5f2048&_nc_ohc=pslfT2deIN4Q7kNvgFxANPC&_nc_ht=scontent-qro1-1.xx&oh=00_AYBtVzrdfA-4YtuTq_KTC6S4NAw3pxA6ddLRJav4lBkB9A&oe=66532B5E";
   const [room, setRoom] = useState("");
   const [partnerId, setPartnerId] = useState(null);
 
@@ -42,62 +45,80 @@ export function ChatAppScreen() {
           profileImage: userProfileImage
         }
       };
-      console.log("Mensaje enviado: ", newMessage); //quitar lo de profile image
+      console.log("Mensaje enviado: ", newMessage);
       socket.emit("message", { room, message: newMessage, partnerId });
       setMessages((prevMessages) => ({
         ...prevMessages,
-        [selectedChat.name]: [...(prevMessages[selectedChat.name] || []), newMessage]
+        [room]: [...(prevMessages[room] || []), newMessage]
       }));
       setMessage("");
     }
   };
 
   const receiveMessage = (message) => {
-    console.log("Mensaje recibido: ", message);
+    console.log("Mensaje recibido en room", room + ":", message);
     setMessages((prevMessages) => ({
       ...prevMessages,
-      [selectedChat.name]: [...(prevMessages[selectedChat.name] || []), { ...message, isSent: false }]
+      [room]: [...(prevMessages[room] || []), { ...message, isSent: false }]
     }));
   };
+
+  useEffect(() => {
+    console.log("Messages updated: ", messages);
+  }, [messages]);
 
   const handleTyping = () => {
     setIsTyping(true);
     setTimeout(() => setIsTyping(false), 3000);
   };
 
+  //El primer useEffect se encarga de actualizar el partnerId cuando se selecciona un chat
   useEffect(() => {
-    if (!selectedChat) return;
-    // Emitir evento para unirse a la conversación con partnerId 4
-    setPartnerId(selectedChat.id_user);
+    if (selectedChat) {
+      setPartnerId(selectedChat.id);
+    }
   }, [selectedChat]);
 
+  //El segundo useEffect se encarga de conectarse a la sala de chat cuando se selecciona un chat
   useEffect(() => {
-    if (!partnerId) return; // Verificar que partnerId y selectedChat estén definidos
-    console.log("Useffect de conexion a room");
-    if (socket) {
-      socket.emit("joinConversation", { partnerId: partnerId }, (response) => {
-        if (response.room) {
-          setRoom(response.room); // Guardar el nombre del room
-        }
-      });
+    if (partnerId) {
+      console.log("Useffect de conexion a room");
+      if (socket) {
+        socket.emit("joinConversation", { partnerId: partnerId }, (response) => {
+          if (response.room) {
+            console.log("Room: ", response.room);
+            setRoom(response.room);
+            
+            socket.emit("getHistory", { room_name: response.room }, (messages) => {
+              setMessages((prevMessages) => ({
+                ...prevMessages,
+                [response.room]: messages
+              }));
+            });
+            
+          }
+        });
+      }
     }
   }, [partnerId]);
 
+  //El tercer useEffect se encarga de escuchar los mensajes y el typing en la sala de chat
   useEffect(() => {
-    if (!selectedChat) return;
-    console.log("Useffect");
-    if (socket) {
-      socket.on("message", receiveMessage);
-      socket.on("typing", handleTyping);
-    }
-
-    return () => {
+    if (selectedChat) {
+      console.log("Useffect");
       if (socket) {
-        socket.off("message", receiveMessage);
-        socket.off("typing", handleTyping);
+        socket.on("message", receiveMessage);
+        socket.on("typing", handleTyping);
       }
-    };
-  }, [selectedChat]);
+
+      return () => {
+        if (socket) {
+          socket.off("message", receiveMessage);
+          socket.off("typing", handleTyping);
+        }
+      };
+    }
+  }, [room]); //Solo se ejecuta cuando el 2ndo useEffect se ejecuta y se selecciona un room, para que la funcion de receiveMessage tenga el contexto del cuarto
 
   return (
     <PageContainer>
@@ -107,7 +128,7 @@ export function ChatAppScreen() {
           <>
             <ChatHeader selectedChat={selectedChat} />
             <ChatContainer>
-              <Messages messages={messages[selectedChat.name] || []} isTyping={isTyping} />
+              <Messages messages={messages[room] || []} isTyping={isTyping} />
             </ChatContainer>
             <MessageInputContainer>
               <MessageInput

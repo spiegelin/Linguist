@@ -1,6 +1,8 @@
 -- Description: This file contains the queries to create the tables and insert test data into the database.
 -- If for any reason you want to delete your db
 -- DROP DATABASE db_name;
+-- ALTER TABLE users DROP COLUMN google_id;
+-- ALTER TABLE users ADD COLUMN github_id;
 
 -- Create Users
 CREATE TABLE users (
@@ -10,6 +12,10 @@ CREATE TABLE users (
 	country VARCHAR(255), 
 	contact_num VARCHAR(15), 
 	email VARCHAR(255), 
+    google_id VARCHAR(30),
+    github_id VARCHAR(30),
+    facebook_id VARCHAR(30),
+    linkedin_id VARCHAR(30),
 	password VARCHAR(255)
 );
 
@@ -47,7 +53,8 @@ CREATE TABLE messages (
     FOREIGN KEY (conversation_id) REFERENCES conversations(id),
     FOREIGN KEY (sender_id) REFERENCES users(id),
     body TEXT,
-    sent_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    sent_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    --image TEXT -- Base64
 );
 
 -- Insert Test Users
