@@ -1,33 +1,31 @@
 import "dotenv/config"
 import passport from 'passport';
-import { Strategy as GitHubStrategy } from 'passport-github2';
+import LinkedInStrategy from 'passport-linkedin-oauth2';
 import findOrCreate from "../models/oAuthModel.js";
 
-passport.use(new GitHubStrategy({
-    clientID: process.env.GITHUB_CLIENT_ID,
-    clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: process.env.GITHUB_CALLBACK_URL,
-    scope: ['user:email']
-  },
+passport.use(new LinkedInStrategy(
+{
+    clientID: process.env.LINKEDIN_KEY,
+    clientSecret: process.env.LINKEDIN_SECRET,
+    callbackURL: process.env.LINKEDIN_CALLBACK_URL,
+    scope: ['r_emailaddress', 'r_liteprofile'],
+}, 
   async (accessToken, refreshToken, profile, done) => {
-    try {
-        //console.log(profile)
-        const user = await findOrCreate(profile, "github");
+        try {
+            const user = await findOrCreate(profile, "linkedin");
+            console.log(user);
 
-        console.log(user);
-        
-        done(null, user);
-    }
-    catch (error) {
-        done(error);
-    }
-  }
-));
+            done(null, user);
+        } catch (error) {
+            done(error);
+        }
+    })
+);
+
 
 // Serializar al usuario
 // Lo cual significa que se guarda el ID del usuario en la sesión
 // req.session.passport.user = {id: '...'}
-
 passport.serializeUser((user, done) => {
     done(null, user);
 });
@@ -39,3 +37,4 @@ passport.deserializeUser((user, done) => {
     // Lo que regrese done se guarda en req.user
     done(null, user);
 });
+

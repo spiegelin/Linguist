@@ -1,7 +1,7 @@
 import "dotenv/config"
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import findOrCreate from "../models/googleAuthModel.js";
+import findOrCreate from "../models/oAuthModel.js";
 
 passport.use(new GoogleStrategy(
 {
@@ -16,7 +16,7 @@ passport.use(new GoogleStrategy(
         // En caso de error, se llama a done con el error
         //console.log(profile)
         try {
-            const user = await findOrCreate(profile);
+            const user = await findOrCreate(profile, "google");
             console.log(user);
         
             done(null, user);

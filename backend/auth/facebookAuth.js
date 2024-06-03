@@ -1,7 +1,7 @@
 import "dotenv/config"
 import passport from 'passport';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
-import findOrCreate from "../models/facebookAuthModel.js";
+import findOrCreate from "../models/oAuthModel.js";
 
 // https://developers.facebook.com/apps/2043470932704098/settings/basic/
 passport.use(new FacebookStrategy(
@@ -15,7 +15,7 @@ passport.use(new FacebookStrategy(
     try {
         // Revisar si el usuario ya existe en la base de datos, si no, crearlo
         //console.log(profile)
-        const user = await findOrCreate(profile);
+        const user = await findOrCreate(profile, "facebook");
 
         console.log(user);
         
