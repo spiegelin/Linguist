@@ -22,9 +22,7 @@ const ChatList = ({ onSelectChat }) => {
     const fetchChats = async () => {
       try {
         const response = await axios.get(`${apiUrl}/chats/chatsExceptUser`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+            withCredentials: true
         });
         console.log(response)
         setChats(response.data);

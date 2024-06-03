@@ -19,7 +19,7 @@ import handleSocketConnection from "./sockets/socketHandler.js";
 import thirdPartyAuth from "./routes/third_party_auth.js";
 import localAuth from "./routes/local_auth.js";
 import health from "./routes/health.js";
-import chatsRoute from "./routes/chat.js";
+import chatsRoute from "./routes/chatRoutes.js";
 
 // Server startup
 const app = express();
