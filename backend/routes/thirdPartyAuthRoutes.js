@@ -31,11 +31,8 @@ router.get('/google/callback', passport.authenticate('google', {
         maxAge: 3600000
     });
 
-    // Se envía la información del usuario
-    res.send({
-        req: user,
-        isLogged: true
-    });
+    // Se envía al usuario a la página de Home
+    res.redirect(process.env.FRONTEND_URL + "/Home");
 });
 
 // Ruta para autenticación con Facebook
@@ -64,11 +61,8 @@ router.get('/facebook/callback', passport.authenticate('facebook', {
         maxAge: 3600000
     });
 
-    // Se envía la información del usuario
-    res.send({
-        req: user,
-        isLogged: true
-    });
+    // Se envía al usuario a la página de Home
+    res.redirect(process.env.FRONTEND_URL + "/Home");
 });
 
 // Ruta para autenticación con GitHub
@@ -96,11 +90,9 @@ router.get('/github/callback', passport.authenticate('github', {
         secure: true,
         maxAge: 3600000
     });
-    // Se envía la información del usuario
-    res.send({
-        req: user,
-        isLogged: true
-    });
+    
+    // Se envía al usuario a la página de Home
+    res.redirect(process.env.FRONTEND_URL + "/Home");
 });
 
 

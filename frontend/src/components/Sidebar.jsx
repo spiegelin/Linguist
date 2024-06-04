@@ -10,6 +10,12 @@ import { RiChat3Line } from "react-icons/ri";
 import { NavLink } from "react-router-dom";
 import { Light } from "../styles/Themes";
 
+import axios from 'axios';
+
+const appPort = import.meta.env.VITE_APP_PORT;
+const baseApiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = `${baseApiUrl}:${appPort}/api`;
+
 const linksArray = [
   { icon: <AiOutlineHome size={24} />, to: "/Home", id: "home" },
   { icon: <MdOutlineNotifications size={24} />, to: "/Notifications", id: "notifications" },
@@ -17,9 +23,17 @@ const linksArray = [
   { icon: <RiChat3Line size={24} />, to: "/ChatAppScreen", id: "chat" },
 ];
 
+const handleLogout = () => {
+  try {
+   axios.get(`${apiUrl}/logout`, { withCredentials: true });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const secondarylinksArray = [
   { icon: <AiOutlineSetting size={24} />, to: "/ConfigProfile", id: "config" },
-  { icon: <MdLogout size={24} />, to: "/null", id: "logout" },
+  { icon: <MdLogout onClick={handleLogout} size={24} />, to:"/login", id: "logout" },
 ];
 
 export function Sidebar() {

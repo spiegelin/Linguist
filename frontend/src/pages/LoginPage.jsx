@@ -13,6 +13,7 @@ export const LoginPage = () => {
   const [isSignInActive, setIsSignInActive] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm_password, setConfirmPassword] = useState("");
 
   const toggleSignIn = () => {
     setIsSignInActive(!isSignInActive);
@@ -46,15 +47,64 @@ export const LoginPage = () => {
           window.location.href = "/home";
         }
         else {
-          alert("Credenciales inválidas 1");
+          alert("Credenciales inválidas");
         }
       })
       .catch(function (error) {
         console.log(error);
       });
     } else {
-      alert("Credenciales inválidas 2");
+      alert("Credenciales inválidas");
     }
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    
+    if (email && password && confirm_password) {
+      await axios.post(`${apiUrl}/register`, {
+        email: email,
+        password: password,
+        confirm_password: confirm_password
+      }, {
+        withCredentials: true,
+      
+      })
+      .then((response) => {
+        console.log(response);
+        if (response.data.isRegistered){
+          window.location.href = "/Home";
+        }
+        else {
+          alert("Credenciales inválidas");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    } else {
+      alert("Credenciales inválidas");
+    }
+  };
+
+  // Función para redirigir a la autenticación de Google
+  const googleAuthLogin = () => {
+    window.location.href = `${apiUrl}/auth/google`;
+  };
+
+  // Función para redirigir a la autenticación de Facebook
+  const facebookAuthLogin = () => {
+    window.location.href = `${apiUrl}/auth/facebook`;
+  };
+
+  // Función para redirigir a la autenticación de Github
+  const githubAuthLogin = () => {
+    window.location.href = `${apiUrl}/auth/github`;
+  };
+
+  // Función para redirigir a la autenticación de Linkedin
+  const linkedinAuthLogin = () => {
+    window.location.href = `${apiUrl}/auth/linkedin`;
   };
 
   return (
@@ -80,28 +130,41 @@ export const LoginPage = () => {
               height="100%"
             />
           </div>
-          <form>
+          <form onSubmit={handleRegister}>
             <h1>Create Account</h1>
             <div className="social-icons">
-              <a href="#" className="icon">
+              <a href="#" onClick={googleAuthLogin} className="icon">
                 <i className="fa-brands fa-google-plus-g" />
               </a>
-              <a href="#" className="icon">
+              <a href="#" onClick={facebookAuthLogin} className="icon">
                 <i className="fa-brands fa-facebook-f" />
               </a>
-              <a href="#" className="icon">
+              <a href="#" onClick={githubAuthLogin} className="icon">
                 <i className="fa-brands fa-github" />
               </a>
-              <a href="#" className="icon">
+              <a href="#" onClick={linkedinAuthLogin} className="icon">
                 <i className="fa-brands fa-linkedin-in" />
               </a>
             </div>
             <span>or use your email for registration</span>
-            <input type="text" placeholder="First Name" />
-            <input type="text" placeholder="Last Name" />
-            <input type="email" placeholder="Email" />
-            <input type="password" placeholder="Password" />
-            <input type="text" placeholder="Lenguages" />
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              value={confirm_password}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
             <button>Sign Up</button>
           </form>
         </div>
@@ -121,16 +184,16 @@ export const LoginPage = () => {
           <form onSubmit={handleLogin}>
             <h1>Sign In</h1>
             <div className="social-icons">
-              <a href="#" className="icon">
+              <a href="#" onClick={googleAuthLogin} className="icon">
                 <i className="fa-brands fa-google-plus-g" />
               </a>
-              <a href="#" className="icon">
+              <a href="#" onClick={facebookAuthLogin} className="icon">
                 <i className="fa-brands fa-facebook-f" />
               </a>
-              <a href="#" className="icon">
+              <a href="#" onClick={githubAuthLogin} className="icon">
                 <i className="fa-brands fa-github" />
               </a>
-              <a href="#" className="icon">
+              <a href="#" onClick={linkedinAuthLogin} className="icon">
                 <i className="fa-brands fa-linkedin-in" />
               </a>
             </div>
