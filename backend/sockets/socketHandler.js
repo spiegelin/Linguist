@@ -79,7 +79,8 @@ const handleSocketConnection = (io) => {
                         time: format(zonedTime, 'HH:mm:ss', {timeZone}),
                         user: {
                             profileImage: "https://via.placeholder.com/150" // Puedes ajustar esto según cómo manejes las imágenes de perfil
-                        }
+                        },
+                        message_id: msg.id
                     };
                 });
                 callback(formattedMessages); // Envíalos de vuelta al cliente

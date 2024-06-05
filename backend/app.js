@@ -21,6 +21,7 @@ import localAuth from "./routes/localAuthRoutes.js";
 import health from "./routes/healthRoutes.js";
 import chatsRoute from "./routes/chatRoutes.js";
 import usersRoute from "./routes/usersRoutes.js";
+import llmRoutes from "./routes/llmRoutes.js";
 
 // Server startup
 const app = express();
@@ -80,6 +81,7 @@ app.use('/api', localAuth);
 app.use('/api/health', health);
 app.use('/api/chats', chatsRoute);
 app.use('/api/users', usersRoute);
+app.use('/api/llm', llmRoutes);
 
 
 // Manejar conexiones de Socket.IO

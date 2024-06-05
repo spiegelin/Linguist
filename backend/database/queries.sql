@@ -17,6 +17,8 @@ CREATE TABLE users (
     facebook_id VARCHAR(30),
     linkedin_id VARCHAR(30),
 	password VARCHAR(255)
+    native_language_id INT,
+    FOREIGN KEY (native_language_id) REFERENCES languages(id)
 );
 
 -- Allowed Languages
@@ -39,8 +41,10 @@ CREATE TABLE conversations (
     id SERIAL PRIMARY KEY,
     user_id1 INT,
     user_id2 INT,
+    language_learning_id INT,
     FOREIGN KEY (user_id1) REFERENCES users(id),
     FOREIGN KEY (user_id2) REFERENCES users(id),
+    FOREIGN KEY (language_learning_id) REFERENCES languages(id),
     conversation_name VARCHAR(250),
     creation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -55,6 +59,23 @@ CREATE TABLE messages (
     body TEXT,
     sent_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     --image TEXT -- Base64
+);
+
+-- Create Translations Table
+CREATE TABLE translations (
+    id SERIAL PRIMARY KEY,
+    translated_body TEXT,
+    translation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create Message_Translations Relationship
+CREATE TABLE message_translations (
+    id SERIAL PRIMARY KEY,
+    message_id INT NOT NULL,
+    translation_id INT NOT NULL,
+    priority INT,
+    FOREIGN KEY (message_id) REFERENCES messages(id),
+    FOREIGN KEY (translation_id) REFERENCES translations(id)
 );
 
 -- Insert Test Users
