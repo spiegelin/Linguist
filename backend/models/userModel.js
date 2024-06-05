@@ -2,7 +2,7 @@ import db from "../database/db.js";
 
 const getAllUsersExceptCurrent = async (userId) => {
   try {
-    const res = await db.query(`SELECT * FROM users WHERE id = '${userId}'`);
+    const res = await db.query(`SELECT * FROM users WHERE id != '${userId}'`);
     return res.rows;
   } catch (err) {
     console.error('Error fetching users:', err);
