@@ -11,10 +11,10 @@ const router = express.Router();
 
 // Registrar usuario
 router.post("/register", async (req, res) => {
-    let { first_name, last_name, country, contact_num, email, password, confirm_password } = req.body;
+    let { email, password, confirm_password } = req.body;
 
         // Validation
-        let errors = inputValidationRegister(first_name, last_name, country, contact_num, email, password, confirm_password);
+        let errors = inputValidationRegister(email, password, confirm_password);
 
         // If there are errors, return them
         if (errors.length > 0) {
@@ -47,17 +47,33 @@ router.post("/register", async (req, res) => {
                 }
 
                 // Revisar si el usuario fue añadido
-                const userAdded = await addUser(first_name, last_name, country, contact_num, email, hash);
+                const userAdded = await addUser(email, hash);
                 if (!userAdded) {
                     res.json({
                         message: "Error adding user"
                     });
                     return;
                 }
+                
+                // Creación del Token JWT y de la cookie
+                let user = await getUser(email);
+                const token = jwt.sign({user_id: user.id, email: user.email, password: user.password}, process.env.JWT_SECRET, {
+                    expiresIn: "1h"
+                });
+                console.log("Token del login: ", token);
+    
+                res.cookie("token", token, {
+                    httpOnly: false,
+                    sameSite: true,
+                    //signed: true,
+                    secure: true,
+                    maxAge: 3600000
+                });
 
                 // Si todo sale bien se regresa un mensaje de éxito
                 res.json({
-                    message: "User registered"
+                    message: "User registered",
+                    isRegistered: true
                 });
             });
         }   
@@ -133,9 +149,14 @@ router.post("/login", async (req, res) => {
 // Ruta Segura para loggear usuarios con sesión activa
 // Básicamente esto nos redirige a la pantalla inicial del chat porque en teoría el token de sesión sigue activo
 router.post("/add", cookieJwtAuth, async (req, res) => {
-    res.json({
-        message: "Session active - Redirecting to chat..."
-    });
+    res.redirect(process.env.FRONTEND_URL + "/Home");
+});
+
+// Ruta para el logout
+router.get('/logout', (req, res) => {
+  res.clearCookie('token'); // Elimina la cookie llamada 'token'
+
+  res.redirect(process.env.FRONTEND_URL + "/login") // Redirige a la página de login
 });
 
 

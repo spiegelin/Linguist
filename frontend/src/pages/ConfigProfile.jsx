@@ -1,28 +1,32 @@
 //ConfigProfile.jsx
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 import styled from "styled-components";
 import { ProfileContext } from "../pages/ProfileContext"; // Importa el contexto
 import MainLayout from '../components/MainLayout';
 import "../styles/configProfile.css";
+import axios from "axios";
+const appPort = import.meta.env.VITE_APP_PORT;
+const baseApiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = `${baseApiUrl}:${appPort}/api`;
 
 const languageOptions = () => (
   <>
-    <option value="english">English</option>
-    <option value="spanish">Spanish</option>
-    <option value="french">French</option>
-    <option value="german">German</option>
-    <option value="portuguese">Portuguese</option>
-    <option value="italian">Italian</option>
-    <option value="chinese">Chinese</option>
-    <option value="japanese">Japanese</option>
-    <option value="korean">Korean</option>
-    <option value="hindi">Hindi</option>
-    <option value="russian">Russian</option>
-    <option value="arabic">Arabic</option>
-    <option value="swedish">Swedish</option>
-    <option value="norwegian">Norwegian</option>
-    <option value="hebrew">Hebrew</option>
-    <option value="finnish">Finnish</option>
+    <option value="English">English</option>
+    <option value="Spanish">Spanish</option>
+    <option value="French">French</option>
+    <option value="German">German</option>
+    <option value="Portuguese">Portuguese</option>
+    <option value="Italian">Italian</option> 
+    <option value="Chinese">Chinese</option> 
+    <option value="Japanese">Japanese</option>
+    <option value="Korean">Korean</option> 
+    <option value="Hindi">Hindi</option>
+    <option value="Russian">Russian</option> 
+    <option value="Arabic">Arabic</option> 
+    <option value="Swedish">Swedish</option>
+    <option value="Norwegian">Norwegian</option> 
+    <option value="Hebrew">Hebrew</option> 
+    <option value="Finnish">Finnish</option> 
   </>
 );
 
@@ -32,6 +36,65 @@ export function ConfigProfile() {
   const fileInputRef = useRef(null);
   const [image, setImage] = useState("");
   const [currentView, setCurrentView] = useState("profile");
+
+  // Estados para cambiar los campos del formulario predefinidos que vienen del backend
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [country, setCountry] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
+  const [firstLanguage, setFirstLanguage] = useState("");
+  const [secondLanguage, setSecondLanguage] = useState("");
+  const [thirdLanguage, setThirdLanguage] = useState("");
+
+  // Estado para el valor del input cuando el usuario escribe algo que quiere cambiar
+  const [inputFirstName, setInputFirstName] = useState("");
+  const [inputLastName, setInputLastName] = useState("");
+  const [inputCountry, setInputCountry] = useState("");
+  const [inputContactNumber, setInputContactNumber] = useState("");
+  const [selectedFirstLanguage, setSelectedFirstLanguage] = useState("");
+  const [selectedSecondLanguage, setSelectedSecondLanguage] = useState("");
+  const [selectedThirdLanguage, setSelectedThirdLanguage] = useState("");
+
+  useEffect(() => {
+    // Obtiene la información del perfil del usuario desde el backend
+    axios.get(`${apiUrl}/users/edit-profile`, {
+      withCredentials: true,
+    })
+      .then((response) => {
+        setFirstName(response.data.first_name);
+        setLastName(response.data.last_name);
+        setEmail(response.data.email);
+        setCountry(response.data.country);
+        setContactNumber(response.data.contact_num);
+        setSelectedFirstLanguage(response.data.language1);
+        setSelectedSecondLanguage(response.data.language2);
+        setSelectedThirdLanguage(response.data.language3);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }, [apiUrl]);
+
+  const handleButtonClick = (firstName, lastName, country, contactNumber, firstLanguage, secondLanguage, thirdLanguage) => {
+    event.preventDefault();
+
+    axios.post(`${apiUrl}/users/edit-profile`, {
+      first_name: firstName,
+      last_name: lastName,
+      country: country,
+      contact_num: contactNumber,
+      newLanguages: [firstLanguage, secondLanguage, thirdLanguage]
+    }, {
+      withCredentials: true,
+    })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -69,7 +132,7 @@ export function ConfigProfile() {
             {currentView === "profile" ? (
               <div>
                 <h1>Edit Profile</h1>
-                <form onSubmit={handleSubmit} onReset={handleReset}>
+                <form onReset={handleReset}>
                   <div className="divContiene">
                     <div className="user-img">
                       <img src={image || placeholder} alt="Profile" id="photo" onError={(e) => { e.target.src = placeholder; }}/>
@@ -78,43 +141,42 @@ export function ConfigProfile() {
                     </div>
                     <div className="namess">
                       <label htmlFor="firstName">First Name:</label>
-                      <input type="text" id="firstName" name="firstName" required />
+                      <input type="text" id="firstName" name="firstName" value={inputFirstName} onChange={(e) => setInputFirstName(e.target.value)} placeholder={firstName} required />
                       <br />
                       <label htmlFor="lastName">Last Name:</label>
-                      <input type="text" id="lastName" name="lastName" required />
+                      <input type="text" id="lastName" name="lastName" value={inputLastName} onChange={(e) => setInputLastName(e.target.value)} placeholder={lastName} required />
                       <br />
                     </div>
                     <label htmlFor="email">Email:</label>
-                    <input type="email" id="email" name="email" required />
+                    <input type="email" id="email" name="email" placeholder={email} disabled />
                     <br />
                     <label htmlFor="country">Country:</label>
-                    <input type="text" id="country" name="country" required />
+                    <input type="text" id="country" name="country" value={inputCountry} onChange={(e) => setInputCountry(e.target.value)} placeholder={country} required />
                     <br />            
                     <label htmlFor="contactNumber">Contact Number:</label>
-                    <input type="text" id="contactNumber" name="contactNumber" required />
+                    <input type="text" id="contactNumber" name="contactNumber" value={inputContactNumber} onChange={(e) => setInputContactNumber(e.target.value)} placeholder={contactNumber} required />
                     <br />
                     <div className="languages">
                       <label htmlFor="firstLanguage">First language:</label>
-                      <select name="firstLanguage" id="firstLanguage" required>
+                      <select name="firstLanguage" id="firstLanguage" value={selectedFirstLanguage} onChange={(e) => setSelectedFirstLanguage(e.target.value)} required>
                         {languageOptions()}
                       </select>
                       <br />
                       <label htmlFor="secondLanguage">Second language:</label>
-                      <select name="secondLanguage" id="secondLanguage" required>
+                      <select name="secondLanguage" id="secondLanguage" value={selectedSecondLanguage} onChange={(e) => setSelectedSecondLanguage(e.target.value)} required>
                         {languageOptions()}
                       </select>
                       <br />
                       <label htmlFor="thirdLanguage">Third language:</label>
-                      <select name="thirdLanguage" id="thirdLanguage" required>
+                      <select name="thirdLanguage" id="thirdLanguage" value={selectedThirdLanguage} onChange={(e) => setSelectedThirdLanguage(e.target.value)} required>
                         {languageOptions()}
                       </select>
                       <br />
                     </div>
-                    <label htmlFor="age">Age:</label>
-                    <input type="number" id="age" name="age" min="10" max="120" required />
+              
                     <br />
                   </div>
-                  <button className="boton" type="submit">Save</button>
+                  <button className="boton" type="submit" onClick={(e) => {handleButtonClick(inputFirstName, inputLastName, inputCountry, inputContactNumber, selectedFirstLanguage, selectedSecondLanguage, selectedThirdLanguage)}}>Save</button>
                   <button className="boton" type="reset">Reset</button>
                 </form>
               </div>

@@ -16,10 +16,11 @@ import session from 'express-session';
 import handleSocketConnection from "./sockets/socketHandler.js";
 
 // Importar Router
-import thirdPartyAuth from "./routes/third_party_auth.js";
-import localAuth from "./routes/local_auth.js";
-import health from "./routes/health.js";
-import chatsRoute from "./routes/chat.js";
+import thirdPartyAuth from "./routes/thirdPartyAuthRoutes.js";
+import localAuth from "./routes/localAuthRoutes.js";
+import health from "./routes/healthRoutes.js";
+import chatsRoute from "./routes/chatRoutes.js";
+import usersRoute from "./routes/usersRoutes.js";
 
 // Server startup
 const app = express();
@@ -78,6 +79,7 @@ app.use('/api/auth', thirdPartyAuth);
 app.use('/api', localAuth);
 app.use('/api/health', health);
 app.use('/api/chats', chatsRoute);
+app.use('/api/users', usersRoute);
 
 
 // Manejar conexiones de Socket.IO

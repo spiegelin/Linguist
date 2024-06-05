@@ -1,19 +1,23 @@
 //Profile.jsx
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
 import MainLayout from '../components/MainLayout';
 import { FaUserCircle } from "react-icons/fa"; // Importa el ícono FaUserCircle
 import { ProfileContext } from "./ProfileContext"; // Importa el contexto correcto
 import "../styles/profile.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+const appPort = import.meta.env.VITE_APP_PORT;
+const baseApiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = `${baseApiUrl}:${appPort}/api`;
 
 export function Profile() {
   const { profileImage } = useContext(ProfileContext); // Obtén la imagen de perfil del contexto
-  const [firstName, setFirstName] = useState("Marcela");
-  const [lastName, setLastName] = useState("De la Rosa");
-  const [firstLanguage, setFirstLanguage] = useState("English");
-  const [secondLanguage, setSecondLanguage] = useState("Spanish");
-  const [thirdLanguage, setThirdLanguage] = useState("French");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [firstLanguage, setFirstLanguage] = useState("");
+  const [secondLanguage, setSecondLanguage] = useState("");
+  const [thirdLanguage, setThirdLanguage] = useState("");
   const navigate = useNavigate();
   const toLanguagePage = () => {
     navigate("/Lenguaje_Page");
@@ -21,6 +25,23 @@ export function Profile() {
   const toNotifPage = () => {
     navigate("/Notifications");
   };
+
+  // Obtiene la información del perfil del usuario desde el backend
+  useEffect(() => {
+  axios.get(`${apiUrl}/users/profile-info`, {
+    withCredentials: true,
+  })
+    .then((response) => {
+      setFirstName(response.data.first_name);
+      setLastName(response.data.last_name);
+      setFirstLanguage(response.data.language1);
+      setSecondLanguage(response.data.language2);
+      setThirdLanguage(response.data.language3);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }, [apiUrl]);
 
   return (
     <MainLayout>

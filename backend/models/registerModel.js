@@ -1,10 +1,10 @@
 import db from "../database/db.js";
 
 // Add users
-const addUser = async (first_name, last_name, country, contact_num, email, password) => {
+const addUser = async (email, password) => {
     try {
         // Query for the DB
-        const query = `INSERT INTO users (first_name, last_name, country, contact_num, email, password) VALUES ('${first_name}', '${last_name}', '${country}', '${contact_num}', '${email}', '${password}')`;
+        const query = `INSERT INTO users (email, password) VALUES ('${email}', '${password}')`;
 
         // Send message to the DB
         await db.query(query);
