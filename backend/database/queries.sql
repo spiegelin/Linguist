@@ -18,6 +18,7 @@ CREATE TABLE users (
     linkedin_id VARCHAR(30),
 	password VARCHAR(255)
     native_language_id INT,
+    profile_image bytea, -- Almacena datos binarios de la imagen,
     FOREIGN KEY (native_language_id) REFERENCES languages(id)
 );
 

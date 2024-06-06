@@ -2,7 +2,7 @@ import db from "../database/db.js";
 
 const getAllUsersExceptCurrent = async (userId) => {
   try {
-    const res = await db.query(`SELECT * FROM users WHERE id != '${userId}'`);
+    const res = await db.query(`SELECT * FROM users WHERE id != $1`, [userId]);
     return res.rows;
   } catch (err) {
     console.error('Error fetching users:', err);
@@ -10,10 +10,51 @@ const getAllUsersExceptCurrent = async (userId) => {
   }
 };
 
+// Get users with the same languages as the current user
+const getUsersWithSameLanguage = async (userId) => {
+  try {
+    // Obtain users with the same languages
+    const query = `
+      SELECT u.id, u.first_name, u.last_name, u.country, l.language_name
+      FROM users u
+      JOIN user_languages ul ON u.id = ul.user_id
+      JOIN languages l ON ul.language_id = l.id
+      WHERE ul.language_id IN (
+        SELECT language_id
+        FROM user_languages
+        WHERE user_id = $1
+      )
+      AND u.id != $1
+      ORDER BY l.language_name;`;
+
+    const res = await db.query(query, [userId]);
+
+    // Create a dictionary with users grouped by language
+    // { language_: [ { id, first_name, last_name, country }, ... ], ... }
+    const usersByLanguage = res.rows.reduce((acc, user) => {
+      if (!acc[user.language_name]) {
+        acc[user.language_name] = [];
+      }
+      acc[user.language_name].push({
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        country: user.country,
+      });
+      return acc;
+    }, {});
+
+    return usersByLanguage;
+  } catch (err) {
+    console.error('Error fetching users with same language:', err);
+    throw err;
+  }
+};
+
 // Get user by the ID retrieved from the cookie
 const getUserById = async (userId) => {
   try {
-    // Obtener el usuario y sus lenguajes en una sola consulta cada uno
+    // Obtain the user and their languages in a single query each
     const userQuery = `SELECT * FROM users WHERE id = $1`;
     const userResult = await db.query(userQuery, [userId]);
 
@@ -93,5 +134,29 @@ const editUser = async (userId, firstName, lastName, country, contactNum, newLan
   }
 };
 
+const editProfileImage = async (userId, imageBuffer) => {
+  try {
+    const query = `UPDATE users SET profile_image = $1 WHERE id = $2`;
+    await db.query(query, [imageBuffer, userId]);
+  
+    return true;
+  } catch (err) {
+    console.error('Error editing profile image:', err);
+    return false;
+  }
+};
 
-export { getAllUsersExceptCurrent, getUserById, editUser };
+const getProfileImage = async (userId) => {
+  try {
+    const result = await db.query(
+      'SELECT profile_image FROM users WHERE id = $1',
+      [userId]
+    );
+    return result;
+  } catch (error) {
+    console.error('Error fetching profile image:', error);
+    res.status(500).send({ message: 'Internal server error' });
+  }
+};
+
+export { getAllUsersExceptCurrent, getUsersWithSameLanguage, getUserById, editUser, editProfileImage, getProfileImage };
