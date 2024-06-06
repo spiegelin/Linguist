@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import express from 'express';
 import passport from 'passport';
+import e from "express";
 
 
 const router = express.Router();
@@ -32,7 +33,11 @@ router.get('/google/callback', passport.authenticate('google', {
     });
 
     // Se envía al usuario a la página de Home
-    res.redirect(process.env.FRONTEND_URL + "/Home");
+    if (user.isNew) {
+        res.redirect(process.env.FRONTEND_URL + "/ConfigProfile");
+    } else {
+        res.redirect(process.env.FRONTEND_URL + "/Home");
+    }
 });
 
 // Ruta para autenticación con Facebook

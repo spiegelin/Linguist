@@ -38,23 +38,20 @@ export function ConfigProfile() {
   const [currentView, setCurrentView] = useState("profile");
 
   // Estados para cambiar los campos del formulario predefinidos que vienen del backend
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [country, setCountry] = useState("");
-  const [contactNumber, setContactNumber] = useState("");
-  const [firstLanguage, setFirstLanguage] = useState("");
-  const [secondLanguage, setSecondLanguage] = useState("");
-  const [thirdLanguage, setThirdLanguage] = useState("");
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [country, setCountry] = useState('');
+  const [contactNumber, setContactNumber] = useState('');
 
   // Estado para el valor del input cuando el usuario escribe algo que quiere cambiar
-  const [inputFirstName, setInputFirstName] = useState("");
-  const [inputLastName, setInputLastName] = useState("");
-  const [inputCountry, setInputCountry] = useState("");
-  const [inputContactNumber, setInputContactNumber] = useState("");
-  const [selectedFirstLanguage, setSelectedFirstLanguage] = useState("");
-  const [selectedSecondLanguage, setSelectedSecondLanguage] = useState("");
-  const [selectedThirdLanguage, setSelectedThirdLanguage] = useState("");
+  const [inputFirstName, setInputFirstName] = useState('');
+  const [inputLastName, setInputLastName] = useState('');
+  const [inputCountry, setInputCountry] = useState('');
+  const [inputContactNumber, setInputContactNumber] = useState('');
+  const [selectedFirstLanguage, setSelectedFirstLanguage] = useState('');
+  const [selectedSecondLanguage, setSelectedSecondLanguage] = useState('');
+  const [selectedThirdLanguage, setSelectedThirdLanguage] = useState('');
 
   useEffect(() => {
     // Obtiene la información del perfil del usuario desde el backend
@@ -63,10 +60,19 @@ export function ConfigProfile() {
     })
       .then((response) => {
         setFirstName(response.data.first_name);
+        setInputFirstName(response.data.first_name);
+
         setLastName(response.data.last_name);
+        setInputLastName(response.data.last_name);
+
         setEmail(response.data.email);
+
         setCountry(response.data.country);
+        setInputCountry(response.data.country);
+
         setContactNumber(response.data.contact_num);
+        setInputContactNumber(response.data.contact_num);
+
         setSelectedFirstLanguage(response.data.language1);
         setSelectedSecondLanguage(response.data.language2);
         setSelectedThirdLanguage(response.data.language3);
@@ -77,8 +83,7 @@ export function ConfigProfile() {
   }, [apiUrl]);
 
   const handleButtonClick = (firstName, lastName, country, contactNumber, firstLanguage, secondLanguage, thirdLanguage) => {
-    event.preventDefault();
-
+    //e.preventDefault(); //Por alguna razón previene que el required se ejecute 
     axios.post(`${apiUrl}/users/edit-profile`, {
       first_name: firstName,
       last_name: lastName,
@@ -98,12 +103,42 @@ export function ConfigProfile() {
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
+
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => setImage(e.target.result);
+      reader.onload = (e) => {
+        const imageBase64 = e.target.result.split(',')[1]; // Elimina el encabezado data:image/...;base64,
+        console.log('Image base64 length:', imageBase64.length); // Añade este log para depuración
+        // Envía la imagen al backend
+        axios.post(`${apiUrl}/users/upload-profile-image`, {
+          imageBase64
+        }, {
+          withCredentials: true
+        }).then((response) => {
+          console.log(response.data.message);
+          setImage(e.target.result); // Actualiza la imagen en el estado
+        }).catch((error) => {
+          console.error('Error uploading profile image:', error);
+        });
+      };
       reader.readAsDataURL(file);
     }
   };
+
+  useEffect(() => {
+    // Obtén la imagen de perfil desde el backend
+    axios.get(`${apiUrl}/users/profile-image`, {
+      withCredentials: true
+    })
+      .then(response => {
+        const imageBase64 = response.data.imageBase64;
+        const imageUrl = `data:image/jpeg;base64,${imageBase64}`;
+        setImage(imageUrl);
+      })
+      .catch(error => {
+        console.error('Error fetching profile image:', error);
+      });
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -132,7 +167,7 @@ export function ConfigProfile() {
             {currentView === "profile" ? (
               <div>
                 <h1>Edit Profile</h1>
-                <form onReset={handleReset}>
+                <form onReset={handleReset} onSubmit={() => {handleButtonClick(firstName, lastName, country, contactNumber, selectedFirstLanguage, selectedSecondLanguage, selectedThirdLanguage)}}>
                   <div className="divContiene">
                     <div className="user-img">
                       <img src={image || placeholder} alt="Profile" id="photo" onError={(e) => { e.target.src = placeholder; }}/>
@@ -141,20 +176,20 @@ export function ConfigProfile() {
                     </div>
                     <div className="namess">
                       <label htmlFor="firstName">First Name:</label>
-                      <input type="text" id="firstName" name="firstName" value={inputFirstName} onChange={(e) => setInputFirstName(e.target.value)} placeholder={firstName} required />
+                      <input type="text" id="firstName" name="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder={inputFirstName} required />
                       <br />
                       <label htmlFor="lastName">Last Name:</label>
-                      <input type="text" id="lastName" name="lastName" value={inputLastName} onChange={(e) => setInputLastName(e.target.value)} placeholder={lastName} required />
+                      <input type="text" id="lastName" name="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder={inputLastName} required />
                       <br />
                     </div>
                     <label htmlFor="email">Email:</label>
                     <input type="email" id="email" name="email" placeholder={email} disabled />
                     <br />
                     <label htmlFor="country">Country:</label>
-                    <input type="text" id="country" name="country" value={inputCountry} onChange={(e) => setInputCountry(e.target.value)} placeholder={country} required />
+                    <input type="text" id="country" name="country" value={country} onChange={(e) => setCountry(e.target.value)} placeholder={inputCountry} required />
                     <br />            
                     <label htmlFor="contactNumber">Contact Number:</label>
-                    <input type="text" id="contactNumber" name="contactNumber" value={inputContactNumber} onChange={(e) => setInputContactNumber(e.target.value)} placeholder={contactNumber} required />
+                    <input type="text" id="contactNumber" name="contactNumber" value={contactNumber} onChange={(e) => setContactNumber(e.target.value)} placeholder={inputContactNumber} required />
                     <br />
                     <div className="languages">
                       <label htmlFor="firstLanguage">First language:</label>
@@ -176,7 +211,7 @@ export function ConfigProfile() {
               
                     <br />
                   </div>
-                  <button className="boton" type="submit" onClick={(e) => {handleButtonClick(inputFirstName, inputLastName, inputCountry, inputContactNumber, selectedFirstLanguage, selectedSecondLanguage, selectedThirdLanguage)}}>Save</button>
+                  <button className="boton" type="submit" >Save</button>
                   <button className="boton" type="reset">Reset</button>
                 </form>
               </div>

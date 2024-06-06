@@ -148,8 +148,9 @@ router.post("/login", async (req, res) => {
 
 // Ruta Segura para loggear usuarios con sesión activa
 // Básicamente esto nos redirige a la pantalla inicial del chat porque en teoría el token de sesión sigue activo
-router.post("/add", cookieJwtAuth, async (req, res) => {
-    res.redirect(process.env.FRONTEND_URL + "/Home");
+router.get("/add", cookieJwtAuth, async (req, res) => {
+    res.json({isLogged: true});
+    //res.redirect(process.env.FRONTEND_URL + "/Home");
 });
 
 // Ruta para el logout

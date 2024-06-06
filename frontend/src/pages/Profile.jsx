@@ -13,6 +13,7 @@ const apiUrl = `${baseApiUrl}:${appPort}/api`;
 
 export function Profile() {
   const { profileImage } = useContext(ProfileContext); // Obtén la imagen de perfil del contexto
+  const [image, setImage] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [firstLanguage, setFirstLanguage] = useState("");
@@ -43,6 +44,22 @@ export function Profile() {
     });
   }, [apiUrl]);
 
+  useEffect(() => {
+    // Obtén la imagen de perfil desde el backend
+    axios.get(`${apiUrl}/users/profile-image`, {
+      withCredentials: true
+    })
+      .then(response => {
+        const imageBase64 = response.data.imageBase64;
+        const imageUrl = `data:image/jpeg;base64,${imageBase64}`;
+        setImage(imageUrl);
+      })
+      .catch(error => {
+        console.error('Error fetching profile image:', error);
+      });
+  }, []);
+
+
   return (
     <MainLayout>
       <Container className="fondo">
@@ -55,8 +72,8 @@ export function Profile() {
           <div className="nami">
             <h1 className="profile">{firstName}{" "}{lastName}</h1>
             <div className="pic">
-              {profileImage ? (
-                <ProfileImage src={profileImage} alt="Profile" />
+              {image ? (
+                <img src={image} alt="Profile" id="photo"  />
               ) : (
                 <FaUserCircle size={120} color="#970E59" /> 
               )}
