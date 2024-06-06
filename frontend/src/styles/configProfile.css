@@ -62,13 +62,13 @@ button:hover{
     margin-top: -30px;
     margin-right: 10px;
 }
-.column-left{
+.column-left {
     padding-top: 15px;
     padding-left: 20px;
     height: 100vh;
     background: #f0f0f0;
     float: left;
-    width: 15%;
+    width: 20%; /* Ajusta el ancho */
 }
 .column-center{
     height: 100vh;
@@ -78,13 +78,13 @@ button:hover{
     border-left: 5px solid #970E5A;
     top: 0;
 }
-.column-right{
+.column-right {
     padding-top: 15px;
     padding-left: 10px;
     height: 100vh;
     background: #f0f0f0;
     float: right;
-    width: 80%;
+    width: 75%; /* Ajusta el ancho */
 }
 li{
     list-style: none;

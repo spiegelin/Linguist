@@ -1,3 +1,4 @@
+// translationModel.js
 import db from "../database/db.js";
 
 const saveTranslationToDB = async (translatedText) => {

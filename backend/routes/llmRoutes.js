@@ -23,6 +23,7 @@ router.post('/traductiondummy', async (req, res) => {
 
 router.post('/messageTraduction', async (req, res) => {
     const { messageId } = req.body;
+    console.log(messageId)
 
     if (!messageId) {
         return res.status(400).json({ error: 'MessageId is required' });

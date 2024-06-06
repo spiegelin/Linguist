@@ -1,14 +1,39 @@
 //MessageInput.jsx
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { IoSend } from 'react-icons/io5';
 import { AiOutlineAudio } from 'react-icons/ai';
 import { SiOpenai } from "react-icons/si";
+import { FaRegImages } from "react-icons/fa";
 
-const MessageInput = ({ message, setMessage, handleSubmit }) => {
+
+const MessageInput = ({ message, setMessage, handleSubmit, handleImageSubmit }) => {
+  const [image, setImage] = useState(null);
+  const imageInputRef = useRef(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result);
+        handleImageSubmit(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleImageIconClick = () => {
+    imageInputRef.current.click();
+  };
+
   return (
     <InputContainer onSubmit={handleSubmit}>
       <MicrophoneIcon />
+      <ImageIconContainer onClick={handleImageIconClick}>
+        <ImageInput ref={imageInputRef} type="file" accept="image/*" onChange={handleImageChange} />
+        <ImageIcon />
+      </ImageIconContainer>
       <Input
         type="text"
         value={message}
@@ -34,13 +59,30 @@ const InputContainer = styled.form`
   border-radius: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
-  padding: 5px; /* Reducir el espacio entre el borde y los elementos internos */
+  padding: 5px;
 `;
 
 const MicrophoneIcon = styled(AiOutlineAudio)`
   font-size: 1.5em;
-  color: #2F5B20; /* Verde */
-  margin: 5px; /* Añadir un pequeño margen entre el icono y el borde */
+  color: #2F5B20;
+  margin: 5px;
+`;
+
+const ImageIconContainer = styled.div`
+  margin-left: 5px;
+  margin-right: 5px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+`;
+
+const ImageIcon = styled(FaRegImages)`
+  font-size: 1.5em;
+  color: #2F5B20;
+`;
+
+const ImageInput = styled.input`
+  display: none;
 `;
 
 const Input = styled.input`
@@ -48,23 +90,23 @@ const Input = styled.input`
   padding: 5px;
   border: none;
   border-radius: 4px;
-  margin: 0 5px; /* Espacio entre el micrófono y el campo de entrada */
+  margin: 0 5px;
 `;
 
 const SendButton = styled.button`
   background: none;
   border: none;
-  color: #2F5B20; /* Verde */
+  color: #2F5B20;
   cursor: pointer;
   font-size: 1.5em;
-  margin: 5px; /* Añadir un pequeño margen entre el campo de entrada y el botón */
+  margin: 5px;
 `;
 
 const OpenAIButton = styled.button`
   background: none;
   border: none;
-  color: #2F5B20; /* Verde */
+  color: #2F5B20;
   cursor: pointer;
   font-size: 1.5em;
-  margin: 5px; /* Añadir un pequeño margen entre el campo de entrada y el botón */
+  margin: 5px;
 `;
