@@ -45,7 +45,7 @@ const findOrCreate = async (profile, provider) => {
                 }
                 res = await db.query(query);
     
-                console.log('User created')
+                //console.log('User created')
                 return {
                     ...res.rows[0],
                     isNew: true
@@ -57,7 +57,7 @@ const findOrCreate = async (profile, provider) => {
         }
     
         // Regresa el primer objeto de la respuesta
-        console.log('User login')
+        //console.log('User login')
         return {
             ...res.rows[0],
             isNew: false

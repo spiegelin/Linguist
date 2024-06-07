@@ -49,6 +49,7 @@ export function ConfigProfile() {
   const [inputLastName, setInputLastName] = useState('');
   const [inputCountry, setInputCountry] = useState('');
   const [inputContactNumber, setInputContactNumber] = useState('');
+  const [selectedNativeLanguage, setSelectedNativeLanguage] = useState('');
   const [selectedFirstLanguage, setSelectedFirstLanguage] = useState('');
   const [selectedSecondLanguage, setSelectedSecondLanguage] = useState('');
   const [selectedThirdLanguage, setSelectedThirdLanguage] = useState('');
@@ -73,23 +74,26 @@ export function ConfigProfile() {
         setContactNumber(response.data.contact_num);
         setInputContactNumber(response.data.contact_num);
 
+        setSelectedNativeLanguage(response.data.native_language);
         setSelectedFirstLanguage(response.data.language1);
         setSelectedSecondLanguage(response.data.language2);
         setSelectedThirdLanguage(response.data.language3);
+
+        console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
       })
   }, [apiUrl]);
 
-  const handleButtonClick = (firstName, lastName, country, contactNumber, firstLanguage, secondLanguage, thirdLanguage) => {
+  const handleButtonClick = (firstName, lastName, country, contactNumber, native_language, firstLanguage, secondLanguage, thirdLanguage) => {
     //e.preventDefault(); //Por alguna razón previene que el required se ejecute 
     axios.post(`${apiUrl}/users/edit-profile`, {
       first_name: firstName,
       last_name: lastName,
       country: country,
       contact_num: contactNumber,
-      newLanguages: [firstLanguage, secondLanguage, thirdLanguage]
+      newLanguages: [native_language, firstLanguage, secondLanguage, thirdLanguage]
     }, {
       withCredentials: true,
     })
@@ -167,7 +171,7 @@ export function ConfigProfile() {
             {currentView === "profile" ? (
               <div>
                 <h1>Edit Profile</h1>
-                <form onReset={handleReset} onSubmit={() => {handleButtonClick(firstName, lastName, country, contactNumber, selectedFirstLanguage, selectedSecondLanguage, selectedThirdLanguage)}}>
+                <form onReset={handleReset} onSubmit={() => {handleButtonClick(firstName, lastName, country, contactNumber, selectedNativeLanguage, selectedFirstLanguage, selectedSecondLanguage, selectedThirdLanguage)}}>
                   <div className="divContiene">
                     <div className="user-img">
                       <img src={image || placeholder} alt="Profile" id="photo" onError={(e) => { e.target.src = placeholder; }}/>
@@ -192,6 +196,11 @@ export function ConfigProfile() {
                     <input type="text" id="contactNumber" name="contactNumber" value={contactNumber} onChange={(e) => setContactNumber(e.target.value)} placeholder={inputContactNumber} required />
                     <br />
                     <div className="languages">
+                    <label htmlFor="nativeLanguage">Native language:</label>
+                      <select name="nativeLanguage" id="nativeLanguage" value={selectedNativeLanguage} onChange={(e) => setSelectedNativeLanguage(e.target.value)} required>
+                        {languageOptions()}
+                      </select>
+                      <br />
                       <label htmlFor="firstLanguage">First language:</label>
                       <select name="firstLanguage" id="firstLanguage" value={selectedFirstLanguage} onChange={(e) => setSelectedFirstLanguage(e.target.value)} required>
                         {languageOptions()}

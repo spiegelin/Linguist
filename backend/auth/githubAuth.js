@@ -14,7 +14,7 @@ passport.use(new GitHubStrategy({
         //console.log(profile)
         const user = await findOrCreate(profile, "github");
 
-        console.log(user);
+        //console.log(user);
         
         done(null, user);
     }
