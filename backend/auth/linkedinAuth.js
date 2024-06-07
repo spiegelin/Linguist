@@ -13,7 +13,7 @@ passport.use(new LinkedInStrategy(
   async (accessToken, refreshToken, profile, done) => {
         try {
             const user = await findOrCreate(profile, "linkedin");
-            console.log(user);
+            //console.log(user);
 
             done(null, user);
         } catch (error) {

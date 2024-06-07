@@ -31,7 +31,7 @@ const getUsersWithSameLanguage = async (userId) => {
     const res = await db.query(query, [userId]);
 
     // Create a dictionary with users grouped by language
-    // { language_: [ { id, first_name, last_name, country }, ... ], ... }
+    // { language: [ { id, first_name, last_name, country, language }, ... ], ... }
     const usersByLanguage = res.rows.reduce((acc, user) => {
       if (!acc[user.language_name]) {
         acc[user.language_name] = [];
@@ -41,11 +41,21 @@ const getUsersWithSameLanguage = async (userId) => {
         first_name: user.first_name,
         last_name: user.last_name,
         country: user.country,
+        language: user.language_name
       });
       return acc;
     }, {});
 
-    return usersByLanguage;
+    // Make the dictionary an object indexed by numbers
+    // { 1: [ { id, first_name, last_name, country, language }, ... ], ... }
+    const result = {};
+    let index = 1;
+    for (const language in usersByLanguage) {
+      result[index] = usersByLanguage[language];
+      index++;
+    }
+
+    return result;
   } catch (err) {
     console.error('Error fetching users with same language:', err);
     throw err;
@@ -68,6 +78,11 @@ const getUserById = async (userId) => {
     const userLanguagesResult = await db.query(userLanguagesQuery, [userId]);
 
     const user = userResult.rows[0];
+    // Add the native language to the user object
+    if (user.native_language_id) {
+      const native_language = await db.query(`SELECT language_name FROM languages WHERE id = $1`, [user.native_language_id]);
+      user.native_language = native_language.rows[0].language_name;
+    }
     const languages = userLanguagesResult.rows.map(row => row.language_name);
 
     // Rellenar con undefined si el usuario tiene menos de 3 lenguajes
@@ -87,19 +102,23 @@ const getUserById = async (userId) => {
 // Edit all possible fields of a user (expects all fields to be filled)
 const editUser = async (userId, firstName, lastName, country, contactNum, newLanguages) => {
   try {
-    const [language1, language2, language3] = newLanguages;
+    const [native_language, language1, language2, language3] = newLanguages;
 
-    // Update the user's fields
-    let query = `UPDATE users SET first_name = $1, last_name = $2, country = $3, contact_num = $4 WHERE id = $5`;
-    await db.query(query, [firstName, lastName, country, contactNum, userId]);
-
-    // Map the languages to their IDs
-    const getLanguageId = async (languageName) => {
+     // Map the languages to their IDs
+     const getLanguageId = async (languageName) => {
       const result = await db.query(`SELECT id FROM languages WHERE language_name = $1`, [languageName]);
       return result.rows[0] ? result.rows[0].id : null;
     };
 
+    // Get the IDs of the languages (or null if the language is empty)
+    // We use Promise.all to run the queries in parallel
     const languageIds = await Promise.all([getLanguageId(language1), getLanguageId(language2), getLanguageId(language3)]);
+    const nativeLanguageId = await getLanguageId(native_language);
+
+    // Update the user's fields
+    let query = `UPDATE users SET first_name = $1, last_name = $2, country = $3, contact_num = $4, native_language_id = $5 WHERE id = $6`;
+    await db.query(query, [firstName, lastName, country, contactNum, nativeLanguageId, userId]);
+    
 
     // Verify if the user already has languages
     query = `SELECT * FROM user_languages WHERE user_id = $1`;

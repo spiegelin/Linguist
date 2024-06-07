@@ -21,6 +21,35 @@ const ChatList = ({ onSelectChat }) => {
   const [filteredChats, setFilteredChats] = useState([]);
   const [showOptions, setShowOptions] = useState(false); // Estado para mostrar u ocultar las opciones de filtro
 
+  // Estados para los lenguajes del usuario (para el filtro)
+  const [firstLanguage, setFirstLanguage] = useState("");
+  const [secondLanguage, setSecondLanguage] = useState("");
+  const [thirdLanguage, setThirdLanguage] = useState("");
+
+  // Estados para los usuarios con el mismo lenguaje
+  const [firstLanguageUserId, setFirstLanguageUserId] = useState("");
+  const [secondLanguageUserId, setSecondLanguageUserId] = useState("");
+  const [thirdLanguageUserId, setThirdLanguageUserId] = useState("");
+
+  // Obtener usuarios con mismo lenguaje
+  useEffect(() => {
+    axios.get(`${apiUrl}/chats/chats-with-same-language`, {
+      withCredentials: true,
+    })
+      .then((response) => {
+        // Mapeamos los datos para obtener solo los IDs de usuarios según el idioma que comparten
+        const userIds1 = response.data[1] ? response.data[1].map(user => user.id) : [];
+        const userIds2 = response.data[2] ? response.data[2].map(user => user.id) : [];
+        const userIds3 = response.data[3] ? response.data[3].map(user => user.id) : [];
+        setFirstLanguageUserId(userIds1);
+        setSecondLanguageUserId(userIds2);
+        setThirdLanguageUserId(userIds3);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }, [apiUrl]);
+
   // Fetch chats
   useEffect(() => {
     const fetchChats = async () => {
@@ -29,7 +58,7 @@ const ChatList = ({ onSelectChat }) => {
           {
             withCredentials:true
           });
-        console.log(response);
+        
         setChats(response.data);
         setFilteredChats(response.data); // Inicialmente, establece los chats filtrados como todos los chats
       } catch (error) {
@@ -40,12 +69,28 @@ const ChatList = ({ onSelectChat }) => {
     fetchChats();
   }, []);
 
+  // Obtener lenguajes del usuario
+  useEffect(() => {
+    axios.get(`${apiUrl}/users/profile-info`, {
+      withCredentials: true,
+    })
+      .then((response) => {
+        setFirstLanguage(response.data.language1);
+        setSecondLanguage(response.data.language2);
+        setThirdLanguage(response.data.language3);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }, [apiUrl]);
+
+
   // Función para filtrar los chats por lenguaje
-  const handleFilterByLanguage = (language) => {
+  const handleFilterByLanguage = (language, userIds) => {
     if (language === "all") {
       setFilteredChats(chats); // Si se selecciona "todos", muestra todos los chats
     } else {
-      const filtered = chats.filter(chat => chat.language === language);
+      const filtered = chats.filter(chat => userIds.includes(chat.id));
       setFilteredChats(filtered);
     }
     setShowOptions(false); // Oculta las opciones de filtro después de seleccionar una opción
@@ -67,8 +112,9 @@ const ChatList = ({ onSelectChat }) => {
         {showOptions && ( // Muestra las opciones de filtro si showOptions es true
           <FilterOptions>
             <p onClick={() => handleFilterByLanguage("all")}>All</p>
-            <p onClick={() => handleFilterByLanguage("english")}>English</p>
-            <p onClick={() => handleFilterByLanguage("spanish")}>Spanish</p>
+            <p onClick={() => handleFilterByLanguage(firstLanguage, firstLanguageUserId)}>{firstLanguage}</p>
+            <p onClick={() => handleFilterByLanguage(secondLanguage, secondLanguageUserId)}>{secondLanguage}</p>
+            <p onClick={() => handleFilterByLanguage(thirdLanguage, thirdLanguageUserId)}>{thirdLanguage}</p>
             {/* Agrega más opciones de filtro según sea necesario */}
           </FilterOptions>
         )}
@@ -81,7 +127,7 @@ const ChatList = ({ onSelectChat }) => {
             isSelected={selectedChat === chat.id}
           >
             <img
-              src={chat.image}
+              src={chat.profile_image ? chat.profile_image : chat.img}
               alt="User"
               onError={(e) => e.target.src = logo} // Manejador de error de imagen
             />

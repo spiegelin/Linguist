@@ -1,6 +1,7 @@
 import express from 'express';
-import { getUserById, editUser, getUsersWithSameLanguage, editProfileImage, getProfileImage } from "../models/userModel.js";
+import { getUserById, editUser, editProfileImage, getProfileImage } from "../models/userModel.js";
 import cookieJwtAuth from '../auth/cookieJwtAuth.js';
+
 
 const router = express.Router();
 
@@ -12,7 +13,7 @@ router.get('/profile-info', cookieJwtAuth, async (req, res) => {
     res.send({ first_name : user[0].first_name ? user[0].first_name : "", 
         // If the user has no last name, return an empty string
         last_name : user[0].last_name ? user[0].last_name : "", 
-        language1 : user[1]? user[1] : "", 
+        language1 : user[1] ? user[1] : "", 
         language2 : user[2] ? user[2] : "", 
         language3 : user[3] ? user[3] : ""} );
 });
@@ -30,6 +31,7 @@ router.get('/edit-profile', cookieJwtAuth, async (req, res) => {
         email: user[0].email ? user[0].email : "",
         country : user[0].country ? user[0].country : "",
         contact_num : user[0].contact_num ? user[0].contact_num : "",
+        native_language : user[0].native_language ? user[0].native_language : "",
         language1 : user[1] ? user[1] : "", 
         language2 : user[2] ? user[2] : "", 
         language3 : user[3] ? user[3] : ""
@@ -64,7 +66,7 @@ router.post('/upload-profile-image', cookieJwtAuth, async (req, res) => {
   
     try {
       await editProfileImage(userId, imageBuffer);
-      console.log('Profile image updated successfully');
+      //console.log('Profile image updated successfully');
       res.status(200).send({ message: 'Profile image updated successfully' });
     } catch (error) {
       console.error('Error updating profile image:', error);
@@ -92,10 +94,23 @@ router.get('/profile-image', cookieJwtAuth, async (req, res) => {
     }
   });
 
-router.get('/chats-with-same-language', cookieJwtAuth, async (req, res) => {
-    const userId = req.user.user_id;
-    const users = await getUsersWithSameLanguage(userId);
-    res.send(users);
-});
+router.get('/profile-image/:id', async (req, res) => {
+    const userId = req.params.id;
+  
+    try {
+        const result = await getProfileImage(userId);
+  
+      if (result.rows.length > 0 && result.rows[0].profile_image) {
+        const imageBuffer = result.rows[0].profile_image;
+        const imageBase64 = imageBuffer.toString('base64');
+        res.send({ imageBase64 });
+      } else {
+        res.status(404).send({ message: 'Profile image not found' });
+      }
+    } catch (error) {
+      console.error('Error fetching profile image:', error);
+      res.status(500).send({ message: 'Internal server error' });
+    }
+  });
 
 export default router;

@@ -1,6 +1,7 @@
 
 import jwt from 'jsonwebtoken';
 import { getUserById, getOrCreateConversation, saveMessage, getMessagesFromConversation } from '../models/socketModel.js';
+import { getProfileImage } from '../models/userModel.js';
 import { format, toZonedTime } from 'date-fns-tz';
 
 const handleSocketConnection = (io) => {
@@ -71,24 +72,49 @@ const handleSocketConnection = (io) => {
             try {
                 const messages = await getMessagesFromConversation(room_name);
                 const timeZone = 'America/Mexico_City';
-                const formattedMessages = messages.map(msg => {
+                const userId = socket.user; // Id del usuario actual que está solicitando el historial
+        
+                // Función para obtener la imagen de perfil en base64 de un usuario específico
+                const getProfileImageBase64 = async (userId) => {
+                    try {
+                        const result = await getProfileImage(userId);
+                        if (result.rows.length > 0 && result.rows[0].profile_image) {
+                            const imageBuffer = result.rows[0].profile_image;
+                            return imageBuffer.toString('base64');
+                        }
+                        return null;
+                    } catch (error) {
+                        console.error('Error fetching profile image:', error);
+                        return null;
+                    }
+                };
+        
+                const formattedMessages = await Promise.all(messages.map(async msg => {
                     const zonedTime = toZonedTime(new Date(msg.sent_time), timeZone);
+                    const isSent = msg.sender_id === userId; // Determina si el mensaje fue enviado por el usuario actual
+        
+                    // Obtener la imagen de perfil del usuario que envió el mensaje
+                    const senderId = isSent ? userId : msg.sender_id;
+                    const profileImage = await getProfileImageBase64(senderId);
+        
                     return {
                         text: msg.body,
-                        isSent: msg.sender_id === socket.user, // Determina si el mensaje fue enviado por el usuario actual
-                        time: format(zonedTime, 'HH:mm:ss', {timeZone}),
+                        isSent: isSent,
+                        time: format(zonedTime, 'HH:mm:ss', { timeZone }),
                         user: {
-                            profileImage: "https://via.placeholder.com/150" // Puedes ajustar esto según cómo manejes las imágenes de perfil
+                            profileImage: profileImage
                         },
                         message_id: msg.id
                     };
-                });
-                callback(formattedMessages); // Envíalos de vuelta al cliente
+                }));
+        
+                callback(formattedMessages); // Envía los mensajes formateados de vuelta al cliente
             } catch (error) {
                 console.error('Error fetching message history:', error);
                 callback([]); // Enviar una lista vacía en caso de error
             }
         });
+
 
         // Manejar desconexiones de Socket.IO
         socket.on('disconnect', () => {
@@ -97,5 +123,20 @@ const handleSocketConnection = (io) => {
         });
     });
 };
+
+// Función para obtener la imagen de perfil en base64
+const getProfileImageBase64 = async (userId) => {
+    try {
+      const result = await getProfileImage(userId);
+      if (result.rows.length > 0 && result.rows[0].profile_image) {
+        const imageBuffer = result.rows[0].profile_image;
+        return imageBuffer.toString('base64');
+      }
+      return null;
+    } catch (error) {
+      console.error('Error fetching profile image:', error);
+      return null;
+    }
+  };
 
 export default handleSocketConnection;

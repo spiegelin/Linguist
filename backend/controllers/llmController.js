@@ -74,5 +74,20 @@ async function getUserNativeLanguage(userId) {
     }
 }
 
-export { testResponse, messageTranslation, saveTranslation, getUserNativeLanguage };
+const askOpenAI = async (userInput, nativeLanguage) => {
+    const messages = [
+        { role: 'system', content: `Responde en este idioma ${nativeLanguage}, y responde la pregunta con amabilidad y diciendo que eres "ASISTENTE LINGÜÍST VIRTUAL"` },
+        { role: 'user', content: userInput },
+    ];
+
+    const completion = await openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: messages,
+    });
+
+    const response = completion.choices[0].message.content;
+    return response;
+};
+
+export { testResponse, messageTranslation, saveTranslation, getUserNativeLanguage, askOpenAI };
 

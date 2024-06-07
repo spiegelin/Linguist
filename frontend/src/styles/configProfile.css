@@ -98,8 +98,8 @@ label{
     column-gap: 5%;
 }
 .languages{
-    column-count: 3;
-    column-gap: 20%;
+    column-count: 4;
+    column-gap: 10%;
 }
 input{
     width: 100%;
