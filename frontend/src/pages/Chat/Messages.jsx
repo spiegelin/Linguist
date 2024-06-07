@@ -23,7 +23,7 @@ const Messages = React.memo(({ messages, isTyping }) => {
       }
 
       const response = await axios.post(`${apiUrl}/llm/messageTraduction`, { 
-        messageId: messageId 
+        messageId: messageId
       }, {
         withCredentials: true
       });

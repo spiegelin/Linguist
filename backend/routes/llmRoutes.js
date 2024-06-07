@@ -2,6 +2,8 @@
 import express from 'express';
 import { testResponse, saveTranslation, messageTranslation, getUserNativeLanguage } from '../controllers/llmController.js';
 import { getMessageById } from '../models/translationModel.js';
+import cookieJwtAuth from '../auth/cookieJwtAuth.js';
+
 const router = express.Router();
 
 router.post('/traductiondummy', async (req, res) => {
@@ -20,8 +22,9 @@ router.post('/traductiondummy', async (req, res) => {
     }
 });
 
-router.post('/messageTraduction', async (req, res) => {
-    const { messageId, userId } = req.body;
+router.post('/messageTraduction', cookieJwtAuth, async (req, res) => {
+    const userId = req.user.user_id;
+    const messageId = req.body.messageId;
 
     if (!messageId || !userId) {
         return res.status(400).json({ error: 'MessageId and UserId are required' });

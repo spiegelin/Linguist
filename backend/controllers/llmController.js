@@ -1,7 +1,7 @@
 //llmController.js
 import OpenAI from 'openai';
 import { saveTranslationToDB, createMessageTranslation } from '../models/translationModel.js';
-import { getUserById } from '../models/userModel';
+import { getUserById } from '../models/userModel.js';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -63,8 +63,8 @@ async function saveTranslation(messageId, translatedText) {
 async function getUserNativeLanguage(userId) {
     try {
         const user = await getUserById(userId);
-        if (user && user.native_language_id) {
-            return user.native_language_id;
+        if (user && user[0].native_language_id) {
+            return user[0].native_language_id;
         } else {
             throw new Error('User native language not found');
         }
