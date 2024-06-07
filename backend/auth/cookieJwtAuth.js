@@ -32,7 +32,7 @@ const cookieJwtAuth = (req, res, next) => {
         const user = jwt.verify(token, process.env.JWT_SECRET);
         req.user = user;
 
-        console.log("User: ", user);
+        //console.log("User: ", user);
         next();
     } catch (error) {
         res.clearCookie("token");

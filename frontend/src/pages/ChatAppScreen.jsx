@@ -5,9 +5,10 @@ import io from "socket.io-client";
 import { Sidebar } from "../components/Sidebar";
 import Messages from "../pages/Chat/Messages";
 import ChatHeader from "../pages/Chat/ChatHeader";
-import MessageInput from "../components/MessageInput";
+import MessageInput from "./Chat/MessageInput";
 import ChatList from "../pages/Chat/ChatList";
 import Cookies from "universal-cookie";
+
 const appPort = import.meta.env.VITE_APP_PORT;
 const baseApiUrl = import.meta.env.VITE_API_URL;
 const apiUrl = `${baseApiUrl}:${appPort}`;
@@ -55,6 +56,27 @@ export function ChatAppScreen() {
     }
   };
 
+  const handleImageSubmit = (imageData) => {
+    if (!selectedChat) {
+      alert("Por favor selecciona una conversación antes de enviar una imagen.");
+      return;
+    }
+    const newMessage = {
+      image: imageData,
+      isSent: true,
+      time: new Date().toLocaleTimeString(),
+      user: {
+        profileImage: userProfileImage
+      }
+    };
+    console.log("Imagen enviada: ", newMessage);
+    socket.emit("message", { room, message: newMessage, partnerId });
+    setMessages((prevMessages) => ({
+      ...prevMessages,
+      [room]: [...(prevMessages[room] || []), newMessage]
+    }));
+  };
+
   const receiveMessage = (message) => {
     console.log("Mensaje recibido en room", room + ":", message);
     setMessages((prevMessages) => ({
@@ -72,14 +94,12 @@ export function ChatAppScreen() {
     setTimeout(() => setIsTyping(false), 3000);
   };
 
-  //El primer useEffect se encarga de actualizar el partnerId cuando se selecciona un chat
   useEffect(() => {
     if (selectedChat) {
       setPartnerId(selectedChat.id);
     }
   }, [selectedChat]);
 
-  //El segundo useEffect se encarga de conectarse a la sala de chat cuando se selecciona un chat
   useEffect(() => {
     if (partnerId) {
       console.log("Useffect de conexion a room");
@@ -102,7 +122,6 @@ export function ChatAppScreen() {
     }
   }, [partnerId]);
 
-  //El tercer useEffect se encarga de escuchar los mensajes y el typing en la sala de chat
   useEffect(() => {
     if (selectedChat) {
       console.log("Useffect");
@@ -118,7 +137,7 @@ export function ChatAppScreen() {
         }
       };
     }
-  }, [room]); //Solo se ejecuta cuando el 2ndo useEffect se ejecuta y se selecciona un room, para que la funcion de receiveMessage tenga el contexto del cuarto
+  }, [room]);
 
   return (
     <PageContainer>
@@ -135,6 +154,7 @@ export function ChatAppScreen() {
                 message={message}
                 setMessage={setMessage}
                 handleSubmit={handleSubmit}
+                handleImageSubmit={handleImageSubmit}
               />
             </MessageInputContainer>
           </>
@@ -170,6 +190,8 @@ const ChatContainer = styled.div`
   flex-direction: column;
   overflow-y: auto;
   padding-bottom: 80px;
+  max-width: calc(100vw - 320px); /* Resta el ancho de la ChatListContainer */
+  margin-right: 20px; /* Añade un margen para separar la ChatListContainer */
 `;
 
 const ChatListContainer = styled.div`
@@ -177,7 +199,9 @@ const ChatListContainer = styled.div`
   border-left: 1px solid #ddd;
   background: #f0f0f0;
   overflow-y: auto;
+  flex-shrink: 0; /* Evita que la ChatListContainer se encoja */
 `;
+
 
 const MessageInputContainer = styled.div`
   position: absolute;

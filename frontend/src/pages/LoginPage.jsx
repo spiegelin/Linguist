@@ -2,8 +2,6 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "../styles/loginTheme.css";
-import Cookies from "universal-cookie";
-const cookies = new Cookies();
 const appPort = import.meta.env.VITE_APP_PORT;
 const baseApiUrl = import.meta.env.VITE_API_URL;
 const apiUrl = `${baseApiUrl}:${appPort}/api`;
@@ -44,7 +42,7 @@ export const LoginPage = () => {
        //console.log("Token", cookies.get("token"))
         if (response.data.isLogged){
           //Esto lo que hace es mandarnos a home, en este momento no "verifica" que este loggeado, solo guarda la cookie en el cliente
-          window.location.href = "/home";
+          window.location.href = "/Home";
         }
         else {
           alert("Credenciales inválidas");
@@ -73,7 +71,7 @@ export const LoginPage = () => {
       .then((response) => {
         console.log(response);
         if (response.data.isRegistered){
-          window.location.href = "/Home";
+          window.location.href = "/ConfigProfile";
         }
         else {
           alert("Credenciales inválidas");
@@ -88,22 +86,26 @@ export const LoginPage = () => {
   };
 
   // Función para redirigir a la autenticación de Google
-  const googleAuthLogin = () => {
+  const googleAuthLogin = (e) => {
+    e.preventDefault();
     window.location.href = `${apiUrl}/auth/google`;
   };
 
   // Función para redirigir a la autenticación de Facebook
-  const facebookAuthLogin = () => {
+  const facebookAuthLogin = (e) => {
+    e.preventDefault();
     window.location.href = `${apiUrl}/auth/facebook`;
   };
 
   // Función para redirigir a la autenticación de Github
-  const githubAuthLogin = () => {
+  const githubAuthLogin = (e) => {
+    e.preventDefault();
     window.location.href = `${apiUrl}/auth/github`;
   };
 
   // Función para redirigir a la autenticación de Linkedin
-  const linkedinAuthLogin = () => {
+  const linkedinAuthLogin = (e) => {
+    e.preventDefault();
     window.location.href = `${apiUrl}/auth/linkedin`;
   };
 
@@ -133,16 +135,16 @@ export const LoginPage = () => {
           <form onSubmit={handleRegister}>
             <h1>Create Account</h1>
             <div className="social-icons">
-              <a href="#" onClick={googleAuthLogin} className="icon">
+              <a href="" onClick={googleAuthLogin} className="icon">
                 <i className="fa-brands fa-google-plus-g" />
               </a>
-              <a href="#" onClick={facebookAuthLogin} className="icon">
+              <a href="" onClick={facebookAuthLogin} className="icon">
                 <i className="fa-brands fa-facebook-f" />
               </a>
-              <a href="#" onClick={githubAuthLogin} className="icon">
+              <a href="" onClick={githubAuthLogin} className="icon">
                 <i className="fa-brands fa-github" />
               </a>
-              <a href="#" onClick={linkedinAuthLogin} className="icon">
+              <a href="" onClick={linkedinAuthLogin} className="icon">
                 <i className="fa-brands fa-linkedin-in" />
               </a>
             </div>
@@ -184,16 +186,16 @@ export const LoginPage = () => {
           <form onSubmit={handleLogin}>
             <h1>Sign In</h1>
             <div className="social-icons">
-              <a href="#" onClick={googleAuthLogin} className="icon">
+              <a href="" onClick={googleAuthLogin} className="icon">
                 <i className="fa-brands fa-google-plus-g" />
               </a>
-              <a href="#" onClick={facebookAuthLogin} className="icon">
+              <a href="" onClick={facebookAuthLogin} className="icon">
                 <i className="fa-brands fa-facebook-f" />
               </a>
-              <a href="#" onClick={githubAuthLogin} className="icon">
+              <a href="" onClick={githubAuthLogin} className="icon">
                 <i className="fa-brands fa-github" />
               </a>
-              <a href="#" onClick={linkedinAuthLogin} className="icon">
+              <a href="" onClick={linkedinAuthLogin} className="icon">
                 <i className="fa-brands fa-linkedin-in" />
               </a>
             </div>

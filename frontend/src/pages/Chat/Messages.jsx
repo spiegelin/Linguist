@@ -1,10 +1,50 @@
 //Messages
-import React, { useContext } from 'react';
-import styled from 'styled-components';
-import { ProfileContext } from '../ProfileContext'; // Importa el contexto correcto
+import React, { useContext, useState, useRef } from 'react';
+import styled, { keyframes } from 'styled-components';
+import { ProfileContext } from '../ProfileContext';
+import { LuInfo } from "react-icons/lu";
+import axios from 'axios'; // Importa la biblioteca para realizar solicitudes HTTP
+
+const appPort = import.meta.env.VITE_APP_PORT;
+const baseApiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = `${baseApiUrl}:${appPort}/api`;
 
 const Messages = React.memo(({ messages, isTyping }) => {
-  const { profileImage } = useContext(ProfileContext); // Obtener la foto de perfil del contexto
+  const { profileImage } = useContext(ProfileContext);
+  const [popup, setPopup] = useState({ visible: false, text: '', position: { top: 0, left: 0 }, messageId: null });
+  const infoButtonRef = useRef(null);
+
+  const handleInfoClick = async (messageId) => {
+    try {
+      // Si se hace clic nuevamente en el botón de información del mismo mensaje, ocultamos el popup
+      if (messageId === popup.messageId) {
+        setPopup({ visible: false, text: '', position: { top: 0, left: 0 }, messageId: null });
+        return;
+      }
+
+      const response = await axios.post(`${apiUrl}/llm/messageTraduction`, { 
+        messageId: messageId
+      }, {
+        withCredentials: true
+      });
+      
+      // Obtenemos las coordenadas del botón de información
+      const rect = infoButtonRef.current.getBoundingClientRect();
+      
+      // Ajustamos la posición del popup para que se alinee con el botón de información
+      setPopup({ 
+        visible: true, 
+        text: response.data.response, 
+        position: { 
+          top: rect.top + window.scrollY + rect.height, 
+          left: rect.left + window.scrollX
+        },
+        messageId: messageId
+      });
+    } catch (error) {
+      console.error('Error fetching message translation:', error);
+    }
+  };
 
   return (
     <MessagesContainer>
@@ -17,14 +57,17 @@ const Messages = React.memo(({ messages, isTyping }) => {
                   {msg.text}
                 </MessageContent>
               </MessageContentContainer>
-              <ProfileImage src={profileImage} alt="Profile" /> {/* Agrega la imagen de perfil a la derecha para mensajes enviados */}
+              <ProfileImage src={profileImage} alt="Profile" />
             </>
           ) : (
             <>
-              <ProfileImage src={msg.user.profileImage || profileImage} alt="Profile" /> {/* Agrega la imagen de perfil a la izquierda para mensajes recibidos */}
+              <ProfileImage src={msg.user.profileImage || profileImage} alt="Profile" />
               <MessageContentContainer isSent={msg.isSent}>
                 <MessageContent isSent={msg.isSent}>
                   {msg.text}
+                  <InfoIconContainer ref={infoButtonRef} onClick={() => handleInfoClick(msg.message_id)}>
+                    <LuInfo />
+                  </InfoIconContainer>
                 </MessageContent>
               </MessageContentContainer>
             </>
@@ -41,6 +84,12 @@ const Messages = React.memo(({ messages, isTyping }) => {
             <TypingDot />
           </TypingIndicator>
         </TypingBubble>
+      )}
+      {popup.visible && (
+        <Popup style={{ top: popup.position.top, left: popup.position.left }}>
+          {popup.text.translatedText}
+          <Arrow />
+        </Popup>
       )}
     </MessagesContainer>
   );
@@ -77,6 +126,14 @@ const MessageContent = styled.div`
   overflow-y: auto;
   position: relative;
   margin-right: 10px;
+`;
+
+const InfoIconContainer = styled.div`
+  display: inline-block;
+  margin-left: 8px;
+  vertical-align: middle;
+  color: #777777;
+  cursor: pointer;
 `;
 
 const Timestamp = styled.span`
@@ -118,4 +175,54 @@ const ProfileImage = styled.img`
   margin: 0 10px;
 `;
 
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1);
+    transform: scale(1);
+  }
+`;
+
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+`;
+
+const Popup = styled.div`
+  position: absolute;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 1000;
+  max-width: 200px;
+  animation: ${fadeIn} 0.2s ease-in-out;
+  transform-origin: bottom left;
+  &.fade-out {
+    animation: ${fadeOut} 0.2s ease-in-out;
+  }
+`;
+
+const Arrow = styled.div`
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid #fff;
+  bottom: -10px;
+  left: 10px;
+`;
+
 export default Messages;
+

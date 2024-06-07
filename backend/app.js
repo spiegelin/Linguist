@@ -21,6 +21,7 @@ import localAuth from "./routes/localAuthRoutes.js";
 import health from "./routes/healthRoutes.js";
 import chatsRoute from "./routes/chatRoutes.js";
 import usersRoute from "./routes/usersRoutes.js";
+import llmRoutes from "./routes/llmRoutes.js";
 
 // Server startup
 const app = express();
@@ -34,7 +35,8 @@ const PORT = process.env.APP_PORT || 3002;
 
 // Middlewares (server plug-ins)
 app.use(morgan('dev'));
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
@@ -80,6 +82,7 @@ app.use('/api', localAuth);
 app.use('/api/health', health);
 app.use('/api/chats', chatsRoute);
 app.use('/api/users', usersRoute);
+app.use('/api/llm', llmRoutes);
 
 
 // Manejar conexiones de Socket.IO
