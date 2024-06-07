@@ -1,14 +1,15 @@
-//MessageInput.jsx
+// MessageInput.jsx
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { IoSend } from 'react-icons/io5';
 import { AiOutlineAudio } from 'react-icons/ai';
 import { SiOpenai } from "react-icons/si";
 import { FaRegImages } from "react-icons/fa";
+import OpenAIChatModal from '../../components/OpenAIChatModal';
 
-
-const MessageInput = ({ message, setMessage, handleSubmit, handleImageSubmit }) => {
+const MessageInput = ({ message, setMessage, handleSubmit, handleImageSubmit, conversationContext, userId }) => {
   const [image, setImage] = useState(null);
+  const [isOpenAIChatOpen, setIsOpenAIChatOpen] = useState(false);
   const imageInputRef = useRef(null);
 
   const handleImageChange = (e) => {
@@ -27,26 +28,42 @@ const MessageInput = ({ message, setMessage, handleSubmit, handleImageSubmit }) 
     imageInputRef.current.click();
   };
 
+  const handleOpenAIChatClick = () => {
+    setIsOpenAIChatOpen(true);
+  };
+
+  const handleCloseAIChat = () => {
+    setIsOpenAIChatOpen(false);
+  };
+
   return (
-    <InputContainer onSubmit={handleSubmit}>
-      <MicrophoneIcon />
-      <ImageIconContainer onClick={handleImageIconClick}>
-        <ImageInput ref={imageInputRef} type="file" accept="image/*" onChange={handleImageChange} />
-        <ImageIcon />
-      </ImageIconContainer>
-      <Input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Type something"
+    <>
+      <InputContainer onSubmit={handleSubmit}>
+        <MicrophoneIcon />
+        <ImageIconContainer onClick={handleImageIconClick}>
+          <ImageInput ref={imageInputRef} type="file" accept="image/*" onChange={handleImageChange} />
+          <ImageIcon />
+        </ImageIconContainer>
+        <Input
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Type something"
+        />
+        <OpenAIButton onClick={handleOpenAIChatClick}>
+          <SiOpenai />
+        </OpenAIButton>
+        <SendButton type="submit">
+          <IoSend />
+        </SendButton>
+      </InputContainer>
+      <OpenAIChatModal 
+        isOpen={isOpenAIChatOpen} 
+        onClose={handleCloseAIChat} 
+        conversationContext={conversationContext} 
+        userId={userId} 
       />
-      <OpenAIButton>
-        <SiOpenai />
-      </OpenAIButton>
-      <SendButton type="submit">
-        <IoSend />
-      </SendButton>
-    </InputContainer>
+    </>
   );
 };
 

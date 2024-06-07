@@ -5,7 +5,7 @@ import io from "socket.io-client";
 import { Sidebar } from "../components/Sidebar";
 import Messages from "../pages/Chat/Messages";
 import ChatHeader from "../pages/Chat/ChatHeader";
-import MessageInput from "../components/MessageInput";
+import MessageInput from "./Chat/MessageInput";
 import ChatList from "../pages/Chat/ChatList";
 import Cookies from "universal-cookie";
 

@@ -1,12 +1,12 @@
+//PublicRoute.jsx
 import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import axios from 'axios';
-const appPort = import.meta.env.VITE_APP_PORT;
-const baseApiUrl = import.meta.env.VITE_API_URL;
+
+const appPort = import.meta.env.VITE_APP_PORT || 8000;
+const baseApiUrl = import.meta.env.VITE_API_URL || 'http://localhost';
 const apiUrl = `${baseApiUrl}:${appPort}/api`;
 
-// Lo que hace este componente es verificar si el usuario está autenticado, y si lo está redirige a la página de inicio
-// Este es para el manejar el Login
 const PublicRoute = ({ element }) => {
   const [isLogged, setIsLogged] = useState(null);
 

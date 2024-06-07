@@ -1,3 +1,4 @@
+//UserModel.js
 import db from "../database/db.js";
 
 const getAllUsersExceptCurrent = async (userId) => {

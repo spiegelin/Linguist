@@ -1,12 +1,13 @@
 //llmController.js
 import OpenAI from 'openai';
 import { saveTranslationToDB, createMessageTranslation } from '../models/translationModel.js';
+import { getUserById } from '../models/userModel';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-async function testResponse(userInput){
+async function testResponse(userInput) {
     try {
         const messages = [
             { role: 'system', content: 'Eres un chatbot amigable.' },
@@ -27,10 +28,10 @@ async function testResponse(userInput){
     }
 }
 
-async function messageTranslation(userInput) {
+async function messageTranslation(userInput, nativeLanguage) {
     try {
         const messages = [
-            { role: 'system', content: 'Das la traduccion literal de los mensajes que te llegan, además de un breve contexto de como pueden ser usados en conversaciones' },
+            { role: 'system', content: `Das la traducción literal de los mensajes que te llegan al ${nativeLanguage}, además de un breve contexto de cómo pueden ser usados en conversaciones` },
             { role: 'user', content: userInput },
         ];
 
@@ -59,4 +60,19 @@ async function saveTranslation(messageId, translatedText) {
     }
 }
 
-export { testResponse, messageTranslation, saveTranslation };
+async function getUserNativeLanguage(userId) {
+    try {
+        const user = await getUserById(userId);
+        if (user && user.native_language_id) {
+            return user.native_language_id;
+        } else {
+            throw new Error('User native language not found');
+        }
+    } catch (error) {
+        console.error('Error fetching user native language:', error);
+        throw new Error('Error fetching user native language');
+    }
+}
+
+export { testResponse, messageTranslation, saveTranslation, getUserNativeLanguage };
+
