@@ -15,8 +15,9 @@ const apiUrl = `${baseApiUrl}:${appPort}/api`;
 const cookies = new Cookies();
 const token = cookies.get('token');
 
-const ChatList = ({ onSelectChat }) => {
+const ChatList = ({ onSelectChat, onSelectFilter}) => {
   const [selectedChat, setSelectedChat] = useState(null);
+  const [conversationLanguage, setConversationLanguage] = useState(null)
   const [chats, setChats] = useState([]);
   const [filteredChats, setFilteredChats] = useState([]);
   const [showOptions, setShowOptions] = useState(false); // Estado para mostrar u ocultar las opciones de filtro
@@ -89,6 +90,8 @@ const ChatList = ({ onSelectChat }) => {
   const handleFilterByLanguage = (language, userIds) => {
     if (language === "all") {
       setFilteredChats(chats); // Si se selecciona "todos", muestra todos los chats
+      setConversationLanguage("All")
+      onSelectFilter("All")
     } else {
       const filtered = chats.filter(chat => userIds.includes(chat.id));
       setFilteredChats(filtered);
@@ -100,6 +103,7 @@ const ChatList = ({ onSelectChat }) => {
     setSelectedChat(chat.id);
     onSelectChat(chat);
   };
+  
 
   return (
     <ChatListContainer>
@@ -112,9 +116,15 @@ const ChatList = ({ onSelectChat }) => {
         {showOptions && ( // Muestra las opciones de filtro si showOptions es true
           <FilterOptions>
             <p onClick={() => handleFilterByLanguage("all")}>All</p>
-            <p onClick={() => handleFilterByLanguage(firstLanguage, firstLanguageUserId)}>{firstLanguage}</p>
-            <p onClick={() => handleFilterByLanguage(secondLanguage, secondLanguageUserId)}>{secondLanguage}</p>
-            <p onClick={() => handleFilterByLanguage(thirdLanguage, thirdLanguageUserId)}>{thirdLanguage}</p>
+            <p onClick={() => {handleFilterByLanguage(firstLanguage, firstLanguageUserId)
+            setConversationLanguage(firstLanguage)
+            onSelectFilter(firstLanguage)}}>{firstLanguage}</p>
+            <p onClick={() => {handleFilterByLanguage(secondLanguage, secondLanguageUserId)
+            setConversationLanguage(secondLanguage)
+            onSelectFilter(secondLanguage)}}>{secondLanguage}</p>
+            <p onClick={() => {handleFilterByLanguage(thirdLanguage, thirdLanguageUserId)
+            setConversationLanguage(thirdLanguage)
+            onSelectFilter(thirdLanguage)}}>{thirdLanguage}</p>
             {/* Agrega más opciones de filtro según sea necesario */}
           </FilterOptions>
         )}

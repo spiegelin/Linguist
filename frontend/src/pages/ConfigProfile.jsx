@@ -54,6 +54,11 @@ export function ConfigProfile() {
   const [selectedSecondLanguage, setSelectedSecondLanguage] = useState('');
   const [selectedThirdLanguage, setSelectedThirdLanguage] = useState('');
 
+  // Estados para cambiar la contraseña
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
   useEffect(() => {
     // Obtiene la información del perfil del usuario desde el backend
     axios.get(`${apiUrl}/users/edit-profile`, {
@@ -144,11 +149,30 @@ export function ConfigProfile() {
       });
   }, []);
 
+  /*
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log("Form submitted");
     // Actualiza el contexto con la imagen seleccionada
     setProfileImage(image);
+  };
+  */
+
+  const handleSubmit = (currentPassword, newPassword, confirmPassword) => {
+    //event.preventDefault();
+    axios.post(`${apiUrl}/users/edit-password`, {
+      current_password: currentPassword,
+      new_password: newPassword,
+      confirm_password: confirmPassword
+    }, {
+      withCredentials: true
+    })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const handleReset = () => {
@@ -227,15 +251,15 @@ export function ConfigProfile() {
             ) : (
               <div className="divContiene">
                 <h1>Security</h1>
-                <form onSubmit={handleSubmit} onReset={handleReset}>
+                <form onSubmit={() => handleSubmit(currentPassword, newPassword, confirmPassword)} onReset={handleReset}>
                   <label htmlFor="currentPassword">Current Password:</label>
-                  <input type="password" id="currentPassword" name="currentPassword" required />
+                  <input type="password" id="currentPassword" name="currentPassword" onChange={(e) => setCurrentPassword(e.target.value)} required />
                   <br />
                   <label htmlFor="newPassword">New Password:</label>
-                  <input type="password" id="newPassword" name="newPassword" required />
+                  <input type="password" id="newPassword" name="newPassword" onChange={(e) => setNewPassword(e.target.value)} required />
                   <br />
                   <label htmlFor="confirmPassword">Confirm Password:</label>
-                  <input type="password" id="confirmPassword" name="confirmPassword" required />
+                  <input type="password" id="confirmPassword" name="confirmPassword" onChange={(e) => setConfirmPassword(e.target.value)} required />
                   <br />
                   <button className="boton" type="submit">Save</button>
                   <button className="boton" type="reset">Reset</button>

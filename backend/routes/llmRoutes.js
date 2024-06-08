@@ -1,8 +1,9 @@
 //llmRoutes.js
 import express from 'express';
-import { testResponse, saveTranslation, messageTranslation, getUserNativeLanguage, askOpenAI } from '../controllers/llmController.js';
+import { testResponse, saveTranslation, messageTranslation, askOpenAI } from '../controllers/llmController.js';
 import { getMessageById } from '../models/translationModel.js';
 import cookieJwtAuth from '../auth/cookieJwtAuth.js';
+import { getUserNativeLanguage } from '../models/userModel.js';
 
 const router = express.Router();
 
@@ -49,7 +50,7 @@ router.post('/messageTraduction', cookieJwtAuth, async (req, res) => {
 
 router.post('/ask-openai', cookieJwtAuth, async (req, res) => {
     const userId = req.user.user_id;
-    const { message, conversationContext } = req.body;
+    const { message } = req.body;
 
     if (!message || !userId) {
         return res.status(400).json({ error: 'Message and UserId are required' });

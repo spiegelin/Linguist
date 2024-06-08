@@ -115,6 +115,7 @@ router.post("/login", async (req, res) => {
                 res.json({
                     message: "Login failed"
                 });
+                return;
             } 
 
             // Creación del Token JWT
@@ -138,6 +139,7 @@ router.post("/login", async (req, res) => {
                 secure: true,
                 maxAge: 3600000
             });
+
             return res.send({
                 message: 'Cookie has been set',
                 isLogged: true
