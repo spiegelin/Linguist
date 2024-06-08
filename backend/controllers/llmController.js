@@ -1,7 +1,7 @@
 //llmController.js
 import OpenAI from 'openai';
 import { saveTranslationToDB, createMessageTranslation } from '../models/translationModel.js';
-import { getUserById } from '../models/userModel.js';
+import { getUserById, getUserNativeLanguage } from '../models/userModel.js';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -31,7 +31,7 @@ async function testResponse(userInput) {
 async function messageTranslation(userInput, nativeLanguage) {
     try {
         const messages = [
-            { role: 'system', content: `Das la traducción literal de los mensajes que te llegan al ${nativeLanguage}, además de un breve contexto de cómo pueden ser usados en conversaciones` },
+            { role: 'system', content: `You give the LITERAL AND EXCLUSIVE TRANSLATION of the messages that you receive into *${nativeLanguage}*, as well as a brief context of how they can be used in conversations` },
             { role: 'user', content: userInput },
         ];
 
@@ -60,23 +60,9 @@ async function saveTranslation(messageId, translatedText) {
     }
 }
 
-async function getUserNativeLanguage(userId) {
-    try {
-        const user = await getUserById(userId);
-        if (user && user[0].native_language_id) {
-            return user[0].native_language_id;
-        } else {
-            throw new Error('User native language not found');
-        }
-    } catch (error) {
-        console.error('Error fetching user native language:', error);
-        throw new Error('Error fetching user native language');
-    }
-}
-
 const askOpenAI = async (userInput, nativeLanguage) => {
     const messages = [
-        { role: 'system', content: `Responde en este idioma ${nativeLanguage}, y responde la pregunta con amabilidad y diciendo que eres "ASISTENTE LINGÜÍST VIRTUAL"` },
+        { role: 'system', content: `EXCLUSIVELY ANSWER IN *${nativeLanguage}*. Answer the answer saying you are "LingüístBot"` },
         { role: 'user', content: userInput },
     ];
 

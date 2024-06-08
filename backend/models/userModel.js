@@ -179,4 +179,32 @@ const getProfileImage = async (userId) => {
   }
 };
 
-export { getAllUsersExceptCurrent, getUsersWithSameLanguage, getUserById, editUser, editProfileImage, getProfileImage };
+const getUserNativeLanguage = async (userId) => {
+  try {
+      const query = `
+        SELECT l.language_name 
+        FROM users u
+        JOIN languages l ON u.native_language_id = l.id
+        WHERE u.id = $1
+      `;
+      const res = await db.query(query, [userId]);
+
+      if (res.rows.length > 0) {
+        return res.rows[0].language_name;
+      } else {
+        throw new Error('Native language not found for user');
+      }
+    } catch (error) {
+      console.error('Error fetching user native language:', error);
+      throw new Error('Error fetching user native language');
+    }
+};
+
+const updatePassword = async (userId, hash) => {
+        // Update the user's password
+        let query = `UPDATE users SET password = $1 WHERE id = $2`;
+        await db.query(query, [hash, userId]);
+};
+
+
+export { getAllUsersExceptCurrent, updatePassword, getUsersWithSameLanguage, getUserNativeLanguage, getUserById, editUser, editProfileImage, getProfileImage };

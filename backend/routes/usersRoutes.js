@@ -1,6 +1,8 @@
 import express from 'express';
-import { getUserById, editUser, editProfileImage, getProfileImage } from "../models/userModel.js";
+import { getUserById, editUser, editProfileImage, getProfileImage, updatePassword } from "../models/userModel.js";
 import cookieJwtAuth from '../auth/cookieJwtAuth.js';
+import bcrypt from 'bcrypt';
+
 
 
 const router = express.Router();
@@ -54,6 +56,52 @@ router.post('/edit-profile', cookieJwtAuth, async (req, res) => {
     res.send({ message: 'Profile updated',
         success: true
      });
+});
+
+router.post('/edit-password', cookieJwtAuth, async (req, res) => {
+    const { user_id, email, password } = req.user;
+    const { current_password, new_password, confirm_password } = req.body;
+
+    if (new_password !== confirm_password) {
+        res.status(400).send({ message: 'Passwords do not match' });
+        return;
+    }
+
+    if (new_password.length < 6) {
+        res.status(400).send({ message: 'Password must be at least 6 characters long' });
+        return;
+    }
+
+    // Check if the current_password and real password are correct
+    bcrypt.compare(current_password, password, (err, result) => {
+      if (err) {
+          console.log(err);
+      }
+
+      // Si el resultado es falso, se envía un mensaje de error
+      if (!result) {
+          res.json({
+              message: "Password edit failed"
+          });
+      } 
+
+      // Hash the new password
+      bcrypt.hash(new_password, 5, async (err, hash) => {
+          if (err) {
+              console.log(err);
+          }
+
+          updatePassword(user_id, hash);
+        });
+    });
+
+    res.clearCookie('token'); // Elimina la cookie llamada 'token'
+
+    //res.redirect(process.env.FRONTEND_URL + "/login") // Redirige a la página de login
+
+    res.send({ message: 'Password updated, need to login again next time',
+        success: true
+    });
 });
 
 // Route to upload profile image

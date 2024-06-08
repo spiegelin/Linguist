@@ -3,12 +3,12 @@ import React from 'react';
 import styled from 'styled-components';
 import { AiOutlinePhone, AiOutlineMail } from 'react-icons/ai';
 
-const ChatHeader = ({ selectedChat }) => {
+const ChatHeader = ({ selectedChat, conversationLanguage }) => {
   return (
     <HeaderContainer>
       {selectedChat && (
         <UserProfile>
-          <img src={selectedChat.image} alt="User" />
+          <img src={selectedChat.profile_image} alt="User" />
           <UserInfo>
             <UserName>{selectedChat.name}</UserName>
             <UserDetails>
@@ -17,7 +17,11 @@ const ChatHeader = ({ selectedChat }) => {
             </UserDetails>
             <UserDetails>
               <DetailLabel>Language:</DetailLabel>
-              <DetailValue>{selectedChat.language}</DetailValue>
+              <DetailValue>{selectedChat.native_language}</DetailValue>
+            </UserDetails>
+            <UserDetails>
+              <DetailLabel>Chat Language:</DetailLabel>
+              <DetailValue>{conversationLanguage != "" ? conversationLanguage : "All"}</DetailValue>
             </UserDetails>
           </UserInfo>
         </UserProfile>
