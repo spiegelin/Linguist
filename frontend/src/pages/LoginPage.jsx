@@ -125,7 +125,7 @@ export const LoginPage = () => {
             }}
           >
             <img
-              src="/logo.webp"
+              src="/logo.ico"
               alt="Logo"
               className="logo"
               width="100%"
@@ -176,7 +176,7 @@ export const LoginPage = () => {
             style={{ position: "absolute", top: 0, left: 0 }}
           >
             <img
-              src="/logo.webp"
+              src="/logo.ico"
               alt="Logo"
               className="logo"
               width="130px"

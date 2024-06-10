@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { FaSearch } from 'react-icons/fa';
 import axios from 'axios';
 import Cookies from "universal-cookie";
-import logo from "./logo.png"; // Importación del logo
+import logo from "./logo.ico"; // Importación del logo
 import { IoFilter } from "react-icons/io5";
 
 
