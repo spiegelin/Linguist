@@ -1,4 +1,4 @@
-
+//socketHandler
 import jwt from 'jsonwebtoken';
 import { getUserById, getOrCreateConversation, saveMessage, getMessagesFromConversation } from '../models/socketModel.js';
 import { getProfileImage } from '../models/userModel.js';

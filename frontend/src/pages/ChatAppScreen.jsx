@@ -31,6 +31,7 @@ export function ChatAppScreen() {
   const [room, setRoom] = useState("");
   const [partnerId, setPartnerId] = useState(null);
   const [conversationLanguage, setConversationLanguage] = useState("");
+  const [isOpenAIChatOpen, setIsOpenAIChatOpen] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -54,6 +55,7 @@ export function ChatAppScreen() {
         [room]: [...(prevMessages[room] || []), newMessage]
       }));
       setMessage("");
+      setIsOpenAIChatOpen(false); // Cerrar el modal de OpenAI Chat
     }
   };
 
@@ -76,6 +78,7 @@ export function ChatAppScreen() {
       ...prevMessages,
       [room]: [...(prevMessages[room] || []), newMessage]
     }));
+    setIsOpenAIChatOpen(false); // Cerrar el modal de OpenAI Chat
   };
 
   const receiveMessage = (message) => {
@@ -156,6 +159,8 @@ export function ChatAppScreen() {
                 setMessage={setMessage}
                 handleSubmit={handleSubmit}
                 handleImageSubmit={handleImageSubmit}
+                isOpenAIChatOpen={isOpenAIChatOpen} // Pasar el estado del modal de OpenAI Chat
+                setIsOpenAIChatOpen={setIsOpenAIChatOpen} // Pasar la función para establecer el estado del modal de OpenAI Chat
               />
             </MessageInputContainer>
           </>
@@ -171,6 +176,7 @@ export function ChatAppScreen() {
     </PageContainer>
   );
 }
+
 
 const PageContainer = styled.div`
   display: flex;

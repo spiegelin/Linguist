@@ -1,3 +1,4 @@
+//usersRoutes
 import express from 'express';
 import { getUserById, editUser, editProfileImage, getProfileImage, updatePassword } from "../models/userModel.js";
 import cookieJwtAuth from '../auth/cookieJwtAuth.js';
