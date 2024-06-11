@@ -1,9 +1,8 @@
-//Messages
 import React, { useContext, useState, useRef, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { ProfileContext } from '../ProfileContext';
 import { LuInfo } from "react-icons/lu";
-import axios from 'axios'; // Importa la biblioteca para realizar solicitudes HTTP
+import axios from 'axios';
 
 const appPort = import.meta.env.VITE_APP_PORT;
 const baseApiUrl = import.meta.env.VITE_API_URL;
@@ -16,9 +15,7 @@ const Messages = React.memo(({ messages, isTyping }) => {
   const [popup, setPopup] = useState({ visible: false, text: '', position: { top: 0, left: 0 }, messageId: null });
   const infoButtonRef = useRef(null);
 
-  
   useEffect(() => {
-    // Obtén la imagen de perfil desde el backend
     axios.get(`${apiUrl}/users/profile-image`, {
       withCredentials: true
     })
@@ -31,11 +28,9 @@ const Messages = React.memo(({ messages, isTyping }) => {
         console.error('Error fetching profile image:', error);
       });
   }, []);
-  
 
   const handleInfoClick = async (messageId) => {
     try {
-      // Si se hace clic nuevamente en el botón de información del mismo mensaje, ocultamos el popup
       if (messageId === popup.messageId) {
         setPopup({ visible: false, text: '', position: { top: 0, left: 0 }, messageId: null });
         return;
@@ -46,11 +41,9 @@ const Messages = React.memo(({ messages, isTyping }) => {
       }, {
         withCredentials: true
       });
-      
-      // Obtenemos las coordenadas del botón de información
+
       const rect = infoButtonRef.current.getBoundingClientRect();
-      
-      // Ajustamos la posición del popup para que se alinee con el botón de información
+
       setPopup({ 
         visible: true, 
         text: response.data.response, 
@@ -77,12 +70,10 @@ const Messages = React.memo(({ messages, isTyping }) => {
                 </MessageContent>
               </MessageContentContainer>
               <ProfileImage src={image} alt="Profile" />
-              {/*<ProfileImage src={`data:image/jpeg;base64,${msg.user.profileImage}`} alt="Profile" />*/ }
             </>
           ) : (
             <>
-            {/* Imagen de la otra persona */}
-              <ProfileImage src={`data:image/jpeg;base64,${msg.user.profileImage}` } alt="Profile" />
+              <ProfileImage src={`data:image/jpeg;base64,${msg.user.profileImage}`} alt="Profile" />
               <MessageContentContainer isSent={msg.isSent}>
                 <MessageContent isSent={msg.isSent}>
                   {msg.text}
@@ -115,6 +106,7 @@ const Messages = React.memo(({ messages, isTyping }) => {
     </MessagesContainer>
   );
 });
+
 
 const MessagesContainer = styled.div`
   flex-grow: 1;

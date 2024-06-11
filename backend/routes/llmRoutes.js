@@ -7,6 +7,18 @@ import { getUserNativeLanguage } from '../models/userModel.js';
 
 const router = express.Router();
 
+
+router.get('/users/profile-image', cookieJwtAuth, async (req, res) => {
+    const userId = req.user.user_id;
+    try {
+        const profileImage = await getProfileImage(userId);
+        res.status(200).json({ imageBase64: profileImage.toString('base64') });
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+});
+
+
 router.post('/traductiondummy', async (req, res) => {
     const { message } = req.body;
 
@@ -25,7 +37,7 @@ router.post('/traductiondummy', async (req, res) => {
 
 router.post('/messageTraduction', cookieJwtAuth, async (req, res) => {
     const userId = req.user.user_id;
-    const messageId = req.body.messageId;
+    const { messageId } = req.body;
 
     if (!messageId || !userId) {
         return res.status(400).json({ error: 'MessageId and UserId are required' });
@@ -39,8 +51,9 @@ router.post('/messageTraduction', cookieJwtAuth, async (req, res) => {
             return res.status(404).json({ error: 'Message not found' });
         }
 
-        const response = await messageTranslation(message.body, nativeLanguage);
-        const savedTranslation = await saveTranslation(messageId, response);
+        const translatedText = await messageTranslation(message.body, nativeLanguage);
+        const savedTranslation = await saveTranslation(messageId, translatedText);
+
         res.json({ messageId, response: savedTranslation });
     } catch (error) {
         console.error('Error communicating with OpenAI:', error);
