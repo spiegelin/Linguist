@@ -89,3 +89,15 @@ VALUES ('FIAblo', 'HereFIA', 'Afghanistán',  '+52 3323493405', 'fiablo@tec.mx',
 -- Insert Test Conversation
 INSERT INTO conversations (user_id1, user_id2, conversation_name)
 VALUES (1, 2, 'conversation_1'); -- si es la primer conversacion
+
+
+
+-- Insert Test Languages
+--INSERT INTO languages (language_name)
+--VALUES ('Español'), ('Inglés'), ('Francés');
+
+--INSERT INTO users (first_name, last_name, country, contact_num, email, password, native_language_id)
+--VALUES ('Diego', 'Espejo', 'México', '+52 3312253455', 'espejin@tec.mx', '$2b$05$AxGbE.wgTgMQmTKWs4dCJ.57r.w4qeo4E5qmii.rNvaThIHC4LwMa', 1); -- 123456
+
+--INSERT INTO users (first_name, last_name, country, contact_num, email, password, native_language_id)
+--VALUES ('FIAblo', 'HereFIA', 'Afghanistán',  '+52 3323493405', 'fiablo@tec.mx', '$2b$05$5pL2nDOhZ5G7V/ZGWy6j7ue0cVCuX0wFO8VGQ6qc2l8JUJ37FnVsO', 2); --123456

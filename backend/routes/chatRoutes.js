@@ -1,3 +1,4 @@
+//ChatRoutes
 import { getAllUsersExceptCurrent, getUsersWithSameLanguage, getUserNativeLanguage } from '../models/userModel.js';
 import express from 'express';
 import cookieJwtAuth from '../auth/cookieJwtAuth.js'; //No esta regresando nada el cliente de cookies, revisar logica

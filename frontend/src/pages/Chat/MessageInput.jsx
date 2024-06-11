@@ -36,9 +36,16 @@ const MessageInput = ({ message, setMessage, handleSubmit, handleImageSubmit, co
     setIsOpenAIChatOpen(false);
   };
 
+  const handleSend = (e) => {
+    e.preventDefault();
+    if (message.trim()) {
+      handleSubmit(e);
+    }
+  };
+
   return (
     <>
-      <InputContainer onSubmit={handleSubmit}>
+      <InputContainer onSubmit={handleSend}>
         <MicrophoneIcon />
         <ImageIconContainer onClick={handleImageIconClick}>
           <ImageInput ref={imageInputRef} type="file" accept="image/*" onChange={handleImageChange} />
