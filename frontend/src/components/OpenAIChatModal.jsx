@@ -88,16 +88,15 @@ const OpenAIChatModal = ({ isOpen, onClose, conversationContext = [], userId }) 
       setChatMessages([...chatMessages, userMessage]);
 
       try {
-        const response = await axios.post(`${apiUrl}/llm/messageTraduction`, {
-          messageId: null,
-          userId,
+        const response = await axios.post(`${apiUrl}/llm/ask-openai`, {
           message: input,
-          conversationContext
+          conversationContext,
         }, {
           withCredentials: true
         });
 
-        const aiMessage = { text: response.data.response.translatedText, isSent: false };
+
+        const aiMessage = { text: response.data.response, isSent: false };
         setChatMessages([...chatMessages, userMessage, aiMessage]);
         setInput('');
       } catch (error) {

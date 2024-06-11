@@ -1,5 +1,5 @@
 //Messages
-import React, { useContext, useState, useRef } from 'react';
+import React, { useContext, useState, useRef, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { ProfileContext } from '../ProfileContext';
 import { LuInfo } from "react-icons/lu";
@@ -11,8 +11,27 @@ const apiUrl = `${baseApiUrl}:${appPort}/api`;
 
 const Messages = React.memo(({ messages, isTyping }) => {
   const { profileImage } = useContext(ProfileContext);
+  const [image, setImage] = useState("");
+  const [imageOther, setImageOther] = useState("");
   const [popup, setPopup] = useState({ visible: false, text: '', position: { top: 0, left: 0 }, messageId: null });
   const infoButtonRef = useRef(null);
+
+  
+  useEffect(() => {
+    // Obtén la imagen de perfil desde el backend
+    axios.get(`${apiUrl}/users/profile-image`, {
+      withCredentials: true
+    })
+      .then(response => {
+        const imageBase64 = response.data.imageBase64;
+        const imageUrl = `data:image/jpeg;base64,${imageBase64}`;
+        setImage(imageUrl);
+      })
+      .catch(error => {
+        console.error('Error fetching profile image:', error);
+      });
+  }, []);
+  
 
   const handleInfoClick = async (messageId) => {
     try {
@@ -57,11 +76,13 @@ const Messages = React.memo(({ messages, isTyping }) => {
                   {msg.text}
                 </MessageContent>
               </MessageContentContainer>
-              <ProfileImage src={profileImage} alt="Profile" />
+              <ProfileImage src={image} alt="Profile" />
+              {/*<ProfileImage src={`data:image/jpeg;base64,${msg.user.profileImage}`} alt="Profile" />*/ }
             </>
           ) : (
             <>
-              <ProfileImage src={msg.user.profileImage || profileImage} alt="Profile" />
+            {/* Imagen de la otra persona */}
+              <ProfileImage src={`data:image/jpeg;base64,${msg.user.profileImage}` } alt="Profile" />
               <MessageContentContainer isSent={msg.isSent}>
                 <MessageContent isSent={msg.isSent}>
                   {msg.text}
@@ -77,7 +98,7 @@ const Messages = React.memo(({ messages, isTyping }) => {
       ))}
       {isTyping && (
         <TypingBubble>
-          <ProfileImage src={profileImage} alt="Profile" />
+          <ProfileImage src={`data:image/jpeg;base64,${msg.user.profileImage}`} alt="Profile" />
           <TypingIndicator>
             <TypingDot />
             <TypingDot />

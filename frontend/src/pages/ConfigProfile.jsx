@@ -49,9 +49,15 @@ export function ConfigProfile() {
   const [inputLastName, setInputLastName] = useState('');
   const [inputCountry, setInputCountry] = useState('');
   const [inputContactNumber, setInputContactNumber] = useState('');
+  const [selectedNativeLanguage, setSelectedNativeLanguage] = useState('');
   const [selectedFirstLanguage, setSelectedFirstLanguage] = useState('');
   const [selectedSecondLanguage, setSelectedSecondLanguage] = useState('');
   const [selectedThirdLanguage, setSelectedThirdLanguage] = useState('');
+
+  // Estados para cambiar la contraseña
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   useEffect(() => {
     // Obtiene la información del perfil del usuario desde el backend
@@ -73,23 +79,26 @@ export function ConfigProfile() {
         setContactNumber(response.data.contact_num);
         setInputContactNumber(response.data.contact_num);
 
+        setSelectedNativeLanguage(response.data.native_language);
         setSelectedFirstLanguage(response.data.language1);
         setSelectedSecondLanguage(response.data.language2);
         setSelectedThirdLanguage(response.data.language3);
+
+        console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
       })
   }, [apiUrl]);
 
-  const handleButtonClick = (firstName, lastName, country, contactNumber, firstLanguage, secondLanguage, thirdLanguage) => {
+  const handleButtonClick = (firstName, lastName, country, contactNumber, native_language, firstLanguage, secondLanguage, thirdLanguage) => {
     //e.preventDefault(); //Por alguna razón previene que el required se ejecute 
     axios.post(`${apiUrl}/users/edit-profile`, {
       first_name: firstName,
       last_name: lastName,
       country: country,
       contact_num: contactNumber,
-      newLanguages: [firstLanguage, secondLanguage, thirdLanguage]
+      newLanguages: [native_language, firstLanguage, secondLanguage, thirdLanguage]
     }, {
       withCredentials: true,
     })
@@ -140,11 +149,30 @@ export function ConfigProfile() {
       });
   }, []);
 
+  /*
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log("Form submitted");
     // Actualiza el contexto con la imagen seleccionada
     setProfileImage(image);
+  };
+  */
+
+  const handleSubmit = (currentPassword, newPassword, confirmPassword) => {
+    //event.preventDefault();
+    axios.post(`${apiUrl}/users/edit-password`, {
+      current_password: currentPassword,
+      new_password: newPassword,
+      confirm_password: confirmPassword
+    }, {
+      withCredentials: true
+    })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const handleReset = () => {
@@ -167,7 +195,7 @@ export function ConfigProfile() {
             {currentView === "profile" ? (
               <div>
                 <h1>Edit Profile</h1>
-                <form onReset={handleReset} onSubmit={() => {handleButtonClick(firstName, lastName, country, contactNumber, selectedFirstLanguage, selectedSecondLanguage, selectedThirdLanguage)}}>
+                <form onReset={handleReset} onSubmit={() => {handleButtonClick(firstName, lastName, country, contactNumber, selectedNativeLanguage, selectedFirstLanguage, selectedSecondLanguage, selectedThirdLanguage)}}>
                   <div className="divContiene">
                     <div className="user-img">
                       <img src={image || placeholder} alt="Profile" id="photo" onError={(e) => { e.target.src = placeholder; }}/>
@@ -192,6 +220,11 @@ export function ConfigProfile() {
                     <input type="text" id="contactNumber" name="contactNumber" value={contactNumber} onChange={(e) => setContactNumber(e.target.value)} placeholder={inputContactNumber} required />
                     <br />
                     <div className="languages">
+                    <label htmlFor="nativeLanguage">Native language:</label>
+                      <select name="nativeLanguage" id="nativeLanguage" value={selectedNativeLanguage} onChange={(e) => setSelectedNativeLanguage(e.target.value)} required>
+                        {languageOptions()}
+                      </select>
+                      <br />
                       <label htmlFor="firstLanguage">First language:</label>
                       <select name="firstLanguage" id="firstLanguage" value={selectedFirstLanguage} onChange={(e) => setSelectedFirstLanguage(e.target.value)} required>
                         {languageOptions()}
@@ -218,15 +251,15 @@ export function ConfigProfile() {
             ) : (
               <div className="divContiene">
                 <h1>Security</h1>
-                <form onSubmit={handleSubmit} onReset={handleReset}>
+                <form onSubmit={() => handleSubmit(currentPassword, newPassword, confirmPassword)} onReset={handleReset}>
                   <label htmlFor="currentPassword">Current Password:</label>
-                  <input type="password" id="currentPassword" name="currentPassword" required />
+                  <input type="password" id="currentPassword" name="currentPassword" onChange={(e) => setCurrentPassword(e.target.value)} required />
                   <br />
                   <label htmlFor="newPassword">New Password:</label>
-                  <input type="password" id="newPassword" name="newPassword" required />
+                  <input type="password" id="newPassword" name="newPassword" onChange={(e) => setNewPassword(e.target.value)} required />
                   <br />
                   <label htmlFor="confirmPassword">Confirm Password:</label>
-                  <input type="password" id="confirmPassword" name="confirmPassword" required />
+                  <input type="password" id="confirmPassword" name="confirmPassword" onChange={(e) => setConfirmPassword(e.target.value)} required />
                   <br />
                   <button className="boton" type="submit">Save</button>
                   <button className="boton" type="reset">Reset</button>

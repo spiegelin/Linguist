@@ -30,6 +30,7 @@ export function ChatAppScreen() {
   const userProfileImage = "https://scontent-qro1-1.xx.fbcdn.net/v/t39.30808-6/321236782_1336144920477645_1360752776053520884_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=5f2048&_nc_ohc=pslfT2deIN4Q7kNvgFxANPC&_nc_ht=scontent-qro1-1.xx&oh=00_AYBtVzrdfA-4YtuTq_KTC6S4NAw3pxA6ddLRJav4lBkB9A&oe=66532B5E";
   const [room, setRoom] = useState("");
   const [partnerId, setPartnerId] = useState(null);
+  const [conversationLanguage, setConversationLanguage] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -145,7 +146,7 @@ export function ChatAppScreen() {
       <MainContainer>
         {selectedChat ? (
           <>
-            <ChatHeader selectedChat={selectedChat} />
+            <ChatHeader selectedChat={selectedChat} conversationLanguage={conversationLanguage}/>
             <ChatContainer>
               <Messages messages={messages[room] || []} isTyping={isTyping} />
             </ChatContainer>
@@ -165,7 +166,7 @@ export function ChatAppScreen() {
         )}
       </MainContainer>
       <ChatListContainer>
-        <ChatList onSelectChat={setSelectedChat} />
+        <ChatList onSelectChat={setSelectedChat} onSelectFilter={setConversationLanguage}/>
       </ChatListContainer>
     </PageContainer>
   );
