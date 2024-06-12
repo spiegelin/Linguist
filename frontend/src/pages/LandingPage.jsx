@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import '../styles/LandingPage.css';
-import placeholderImage from '../../public/example.jpg';
 import logo from '../../public/logot.png';
 import france from '../../public/france.svg';
 import japan from '../../public/japan.svg';
