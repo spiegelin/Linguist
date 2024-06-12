@@ -14,6 +14,7 @@ const apiUrl = `${baseApiUrl}:${appPort}/api`;
 
 const cookies = new Cookies();
 const token = cookies.get('token');
+const defaultImage = '/public/placeholder.jpg';
 
 const ChatList = ({ onSelectChat, onSelectFilter}) => {
   const [selectedChat, setSelectedChat] = useState(null);
@@ -28,9 +29,9 @@ const ChatList = ({ onSelectChat, onSelectFilter}) => {
   const [thirdLanguage, setThirdLanguage] = useState("");
 
   // Estados para los usuarios con el mismo lenguaje
-  const [firstLanguageUserId, setFirstLanguageUserId] = useState("");
-  const [secondLanguageUserId, setSecondLanguageUserId] = useState("");
-  const [thirdLanguageUserId, setThirdLanguageUserId] = useState("");
+  const [firstLanguageUserId, setFirstLanguageUserId] = useState([]);
+  const [secondLanguageUserId, setSecondLanguageUserId] = useState([]);
+  const [thirdLanguageUserId, setThirdLanguageUserId] = useState([]);
 
   // Obtener usuarios con mismo lenguaje
   useEffect(() => {
@@ -137,7 +138,7 @@ const ChatList = ({ onSelectChat, onSelectFilter}) => {
             isSelected={selectedChat === chat.id}
           >
             <img
-              src={chat.profile_image ? chat.profile_image : chat.img}
+              src={chat.profile_image ? chat.profile_image : defaultImage}
               alt="User"
               onError={(e) => e.target.src = logo} // Manejador de error de imagen
             />

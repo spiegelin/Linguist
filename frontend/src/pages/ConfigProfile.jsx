@@ -162,7 +162,12 @@ export function ConfigProfile() {
       withCredentials: true
     })
       .then((response) => {
-        console.log(response);
+        if (response.data.success) {
+          alert(response.data.message)
+        } else {
+          alert(response.data.message)
+        }
+        
       })
       .catch((error) => {
         console.log(error);

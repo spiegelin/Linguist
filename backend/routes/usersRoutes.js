@@ -63,12 +63,14 @@ router.post('/edit-password', cookieJwtAuth, async (req, res) => {
     const { current_password, new_password, confirm_password } = req.body;
 
     if (new_password !== confirm_password) {
-        res.status(400).send({ message: 'Passwords do not match' });
+        res.status(400).json({ message: 'Passwords do not match',
+          success: false });
         return;
     }
 
     if (new_password.length < 6) {
-        res.status(400).send({ message: 'Password must be at least 6 characters long' });
+        res.status(400).json({ message: 'Password must be at least 6 characters long',
+          success: false });
         return;
     }
 
@@ -81,8 +83,10 @@ router.post('/edit-password', cookieJwtAuth, async (req, res) => {
       // Si el resultado es falso, se envía un mensaje de error
       if (!result) {
           res.json({
-              message: "Password edit failed"
+              message: "Password is incorrect",
+              success: false
           });
+          return;
       } 
 
       // Hash the new password
@@ -93,15 +97,16 @@ router.post('/edit-password', cookieJwtAuth, async (req, res) => {
 
           updatePassword(user_id, hash);
         });
+        res.send({ message: 'Password updated, need to login again next time',
+          success: true
+      });
     });
 
     res.clearCookie('token'); // Elimina la cookie llamada 'token'
 
     //res.redirect(process.env.FRONTEND_URL + "/login") // Redirige a la página de login
 
-    res.send({ message: 'Password updated, need to login again next time',
-        success: true
-    });
+    
 });
 
 // Route to upload profile image

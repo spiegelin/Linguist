@@ -37,7 +37,7 @@ router.get('/google/callback', passport.authenticate('google', {
     if (user.isNew) {
         res.redirect(process.env.FRONTEND_URL + "/ConfigProfile");
     } else {
-        res.redirect(process.env.FRONTEND_URL + "/Home");
+        res.redirect(process.env.FRONTEND_URL + "/Profile");
     }
 });
 
@@ -68,7 +68,7 @@ router.get('/facebook/callback', passport.authenticate('facebook', {
     });
 
     // Se envía al usuario a la página de Home
-    res.redirect(process.env.FRONTEND_URL + "/Home");
+    res.redirect(process.env.FRONTEND_URL + "/Profile");
 });
 
 // Ruta para autenticación con GitHub
@@ -98,7 +98,7 @@ router.get('/github/callback', passport.authenticate('github', {
     });
     
     // Se envía al usuario a la página de Home
-    res.redirect(process.env.FRONTEND_URL + "/Home");
+    res.redirect(process.env.FRONTEND_URL + "/Profile");
 });
 
 

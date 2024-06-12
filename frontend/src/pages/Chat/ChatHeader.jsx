@@ -3,12 +3,14 @@ import React from 'react';
 import styled from 'styled-components';
 import { AiOutlinePhone, AiOutlineMail } from 'react-icons/ai';
 
+const defaultImage = '/public/placeholder.jpg';
+
 const ChatHeader = ({ selectedChat, conversationLanguage }) => {
   return (
     <HeaderContainer>
       {selectedChat && (
         <UserProfile>
-          <img src={selectedChat.profile_image} alt="User" />
+          <img src={selectedChat.profile_image ?  selectedChat.profile_image : defaultImage} alt="User" />
           <UserInfo>
             <UserName>{selectedChat.name}</UserName>
             <UserDetails>

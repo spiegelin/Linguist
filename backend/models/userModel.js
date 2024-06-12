@@ -54,7 +54,6 @@ const getUsersWithSameLanguage = async (userId) => {
       result[index] = usersByLanguage[language];
       index++;
     }
-
     return result;
   } catch (err) {
     console.error('Error fetching users with same language:', err);
