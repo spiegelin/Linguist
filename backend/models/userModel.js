@@ -166,21 +166,18 @@ const editProfileImage = async (userId, imageBuffer) => {
   }
 };
 
-
 const getProfileImage = async (userId) => {
   try {
-      const result = await db.query('SELECT profile_image FROM users WHERE id = $1', [userId]);
-      if (result.rows.length > 0) {
-          return result.rows[0].profile_image;
-      } else {
-          throw new Error('Profile image not found');
-      }
+    const result = await db.query('SELECT profile_image FROM users WHERE id = $1',[userId]);
+
+    if (result.rows.length > 0) {
+      return result.rows[0].profile_image;
+    }
   } catch (error) {
-      console.error('Error fetching profile image:', error);
-      throw new Error('Internal server error');
+    console.error('Error fetching profile image in DB:', error);
+    res.status(500).send({ message: 'Internal server error' });
   }
 };
-
 
 const getUserNativeLanguage = async (userId) => {
   try {
@@ -202,7 +199,6 @@ const getUserNativeLanguage = async (userId) => {
       throw new Error('Error fetching user native language');
     }
 };
-
 
 const updatePassword = async (userId, hash) => {
         // Update the user's password

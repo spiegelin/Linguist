@@ -2,6 +2,7 @@
 import OpenAI from 'openai';
 import { saveTranslationToDB, createMessageTranslation } from '../models/translationModel.js';
 import { getUserById, getUserNativeLanguage } from '../models/userModel.js';
+import { native } from 'pg';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -31,8 +32,13 @@ async function testResponse(userInput) {
 async function messageTranslation(userInput, nativeLanguage) {
     try {
         const messages = [
-            { role: 'system', content: `You give the LITERAL AND EXCLUSIVE TRANSLATION of the messages that you receive into *${nativeLanguage}*, as well as a brief context of how they can be used in conversations` },
-            { role: 'user', content: userInput },
+            { role: 'system', content: 
+            `You are a friendly chatbot. you are going to help a user translate a message to ${nativeLanguage}.you talk in ${nativeLanguage}.
+            ` },
+            { role: 'user', content: `TRANSLATE the message you receive into *${nativeLanguage}*. IN *${nativeLanguage} give a brief context of what the input you recieve means.
+             The message of the user is: *{userInput}*
+             Dont ask me if I need Anything after, Just transalate the message and give context.
+             ` },
         ];
 
         const completion = await openai.chat.completions.create({

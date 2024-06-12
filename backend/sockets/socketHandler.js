@@ -78,8 +78,8 @@ const handleSocketConnection = (io) => {
                 const getProfileImageBase64 = async (userId) => {
                     try {
                         const result = await getProfileImage(userId);
-                        if (result.rows.length > 0 && result.rows[0].profile_image) {
-                            const imageBuffer = result.rows[0].profile_image;
+                        if (result) {
+                            const imageBuffer = result;
                             return imageBuffer.toString('base64');
                         }
                         return null;
@@ -127,16 +127,17 @@ const handleSocketConnection = (io) => {
 // Función para obtener la imagen de perfil en base64
 const getProfileImageBase64 = async (userId) => {
     try {
-      const result = await getProfileImage(userId);
-      if (result.rows.length > 0 && result.rows[0].profile_image) {
-        const imageBuffer = result.rows[0].profile_image;
-        return imageBuffer.toString('base64');
-      }
-      return null;
+        const result = await getProfileImage(userId);
+        if (result && result.rows && result.rows.length > 0 && result.rows[0].profile_image) {
+            const imageBuffer = result.rows[0].profile_image;
+            return imageBuffer.toString('base64');
+        }
+        return null;
     } catch (error) {
-      console.error('Error fetching profile image:', error);
-      return null;
+        console.error('Error fetching profile image:', error);
+        return null;
     }
-  };
+};
+
 
 export default handleSocketConnection;

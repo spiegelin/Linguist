@@ -1,4 +1,3 @@
-//usersRoutes
 import express from 'express';
 import { getUserById, editUser, editProfileImage, getProfileImage, updatePassword } from "../models/userModel.js";
 import cookieJwtAuth from '../auth/cookieJwtAuth.js';
@@ -130,8 +129,8 @@ router.get('/profile-image', cookieJwtAuth, async (req, res) => {
     try {
         const result = await getProfileImage(userId);
   
-      if (result.rows.length > 0 && result.rows[0].profile_image) {
-        const imageBuffer = result.rows[0].profile_image;
+      if (result) {
+        const imageBuffer = result;
         const imageBase64 = imageBuffer.toString('base64');
         res.send({ imageBase64 });
       } else {

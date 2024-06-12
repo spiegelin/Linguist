@@ -5,6 +5,7 @@ import { ProfileContext } from "../pages/ProfileContext"; // Importa el contexto
 import MainLayout from '../components/MainLayout';
 import "../styles/configProfile.css";
 import axios from "axios";
+
 const appPort = import.meta.env.VITE_APP_PORT;
 const baseApiUrl = import.meta.env.VITE_API_URL;
 const apiUrl = `${baseApiUrl}:${appPort}/api`;
@@ -126,6 +127,7 @@ export function ConfigProfile() {
         }).then((response) => {
           console.log(response.data.message);
           setImage(e.target.result); // Actualiza la imagen en el estado
+          setProfileImage(e.target.result); // Actualiza la imagen en el contexto
         }).catch((error) => {
           console.error('Error uploading profile image:', error);
         });
@@ -143,23 +145,14 @@ export function ConfigProfile() {
         const imageBase64 = response.data.imageBase64;
         const imageUrl = `data:image/jpeg;base64,${imageBase64}`;
         setImage(imageUrl);
+        setProfileImage(imageUrl); // Actualiza la imagen en el contexto
       })
       .catch(error => {
         console.error('Error fetching profile image:', error);
       });
   }, []);
 
-  /*
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log("Form submitted");
-    // Actualiza el contexto con la imagen seleccionada
-    setProfileImage(image);
-  };
-  */
-
   const handleSubmit = (currentPassword, newPassword, confirmPassword) => {
-    //event.preventDefault();
     axios.post(`${apiUrl}/users/edit-password`, {
       current_password: currentPassword,
       new_password: newPassword,
@@ -275,8 +268,18 @@ export function ConfigProfile() {
 
 
 
+
 const Container = styled.div`
   height: 100vh;
 `;
+const Logo = styled.img`
+position: absolute;
+bottom: -10px;
+right: -10px;
+width: 120px;
+height: auto;
+`;
+
+
 
 export default ConfigProfile;

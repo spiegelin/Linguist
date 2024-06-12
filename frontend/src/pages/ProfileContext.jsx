@@ -1,7 +1,7 @@
 // ProfileContext.jsx
 import React, { createContext, useState, useContext } from 'react';
 
-export const ProfileContext = createContext(); // Cambiado el nombre de la constante
+export const ProfileContext = createContext();
 
 export const useProfile = () => useContext(ProfileContext);
 

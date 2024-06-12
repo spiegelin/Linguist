@@ -10,13 +10,13 @@
 -- ALTER TABLE users DROP COLUMN google_id;
 -- ALTER TABLE users ADD COLUMN github_id;
 
--- Allowed Languages
+-- Create Languages table first
 CREATE TABLE languages (
     id SERIAL PRIMARY KEY,
     language_name VARCHAR(100) NOT NULL
 );
 
--- Create Users
+-- Create Users table after Languages table
 CREATE TABLE users (
     id SERIAL PRIMARY KEY, 
     first_name VARCHAR(100), 
@@ -34,7 +34,7 @@ CREATE TABLE users (
     FOREIGN KEY (native_language_id) REFERENCES languages(id)
 );
 
--- Relation with Users and Languages
+-- Create User_Languages table after Users and Languages tables
 CREATE TABLE user_languages (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE user_languages (
     FOREIGN KEY (language_id) REFERENCES languages (id)
 );
 
--- Conversations
+-- Create Conversations table after Users and Languages tables
 CREATE TABLE conversations (
     id SERIAL PRIMARY KEY,
     user_id1 INT,
@@ -56,7 +56,7 @@ CREATE TABLE conversations (
     creation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Messages
+-- Create Messages table after Conversations and Users tables
 CREATE TABLE messages (
     id SERIAL PRIMARY KEY,
     conversation_id INT,
@@ -67,14 +67,14 @@ CREATE TABLE messages (
     sent_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Translations Table
+-- Create Translations table
 CREATE TABLE translations (
     id SERIAL PRIMARY KEY,
     translated_body TEXT,
     translation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Message_Translations Relationship
+-- Create Message_Translations table after Messages and Translations tables
 CREATE TABLE message_translations (
     id SERIAL PRIMARY KEY,
     message_id INT NOT NULL,
@@ -84,17 +84,31 @@ CREATE TABLE message_translations (
     FOREIGN KEY (translation_id) REFERENCES translations(id)
 );
 
--- Insert Test Languages
-INSERT INTO languages (language_name)
-VALUES ('Español'), ('Inglés'), ('Francés');
+-- Insert test data into Languages table first
+INSERT INTO languages (language_name) VALUES ('English');
+INSERT INTO languages (language_name) VALUES ('Spanish');
+INSERT INTO languages (language_name) VALUES ('French');
+INSERT INTO languages (language_name) VALUES ('German');
+INSERT INTO languages (language_name) VALUES ('Portuguese');
+INSERT INTO languages (language_name) VALUES ('Italian');
+INSERT INTO languages (language_name) VALUES ('Chinese');
+INSERT INTO languages (language_name) VALUES ('Japanese');
+INSERT INTO languages (language_name) VALUES ('Korean');
+INSERT INTO languages (language_name) VALUES ('Hindi');
+INSERT INTO languages (language_name) VALUES ('Russian');
+INSERT INTO languages (language_name) VALUES ('Arabic');
+INSERT INTO languages (language_name) VALUES ('Swedish');
+INSERT INTO languages (language_name) VALUES ('Norwegian');
+INSERT INTO languages (language_name) VALUES ('Hebrew');
+INSERT INTO languages (language_name) VALUES ('Finnish');
 
--- Insert Test Users
+-- Insert test data into Users table
 INSERT INTO users (first_name, last_name, country, contact_num, email, password, native_language_id)
 VALUES ('Diego', 'Espejo', 'México', '+52 3312253455', 'espejin@tec.mx', '$2b$05$AxGbE.wgTgMQmTKWs4dCJ.57r.w4qeo4E5qmii.rNvaThIHC4LwMa', 1); -- 123456
 
 INSERT INTO users (first_name, last_name, country, contact_num, email, password, native_language_id)
 VALUES ('FIAblo', 'HereFIA', 'Afghanistán',  '+52 3323493405', 'fiablo@tec.mx', '$2b$05$5pL2nDOhZ5G7V/ZGWy6j7ue0cVCuX0wFO8VGQ6qc2l8JUJ37FnVsO', 2); -- 123456
 
--- Insert Test Conversation
+-- Insert test data into Conversations table
 INSERT INTO conversations (user_id1, user_id2, conversation_name)
 VALUES (1, 2, 'conversation_1'); -- si es la primer conversacion
