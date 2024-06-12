@@ -152,7 +152,8 @@ export function ConfigProfile() {
       });
   }, []);
 
-  const handleSubmit = (currentPassword, newPassword, confirmPassword) => {
+  const handleSubmit = (event, currentPassword, newPassword, confirmPassword) => {
+    event.preventDefault(); // Previene el comportamiento predeterminado del formulario
     axios.post(`${apiUrl}/users/edit-password`, {
       current_password: currentPassword,
       new_password: newPassword,
@@ -188,7 +189,7 @@ export function ConfigProfile() {
             {currentView === "profile" ? (
               <div>
                 <h1>Edit Profile</h1>
-                <form onReset={handleReset} onSubmit={() => {handleButtonClick(firstName, lastName, country, contactNumber, selectedNativeLanguage, selectedFirstLanguage, selectedSecondLanguage, selectedThirdLanguage)}}>
+                <form onReset={handleReset} onSubmit={(e) => {e.preventDefault(); handleButtonClick(firstName, lastName, country, contactNumber, selectedNativeLanguage, selectedFirstLanguage, selectedSecondLanguage, selectedThirdLanguage)}}>
                   <div className="divContiene">
                     <div className="user-img">
                       <img src={image || placeholder} alt="Profile" id="photo" onError={(e) => { e.target.src = placeholder; }}/>
@@ -237,14 +238,14 @@ export function ConfigProfile() {
               
                     <br />
                   </div>
-                  <button className="boton" type="submit" >Save</button>
+                  <button className="boton" type="submit">Save</button>
                   <button className="boton" type="reset">Reset</button>
                 </form>
               </div>
             ) : (
               <div className="divContiene">
                 <h1>Security</h1>
-                <form onSubmit={() => handleSubmit(currentPassword, newPassword, confirmPassword)} onReset={handleReset}>
+                <form onSubmit={(e) => handleSubmit(e, currentPassword, newPassword, confirmPassword)} onReset={handleReset}>
                   <label htmlFor="currentPassword">Current Password:</label>
                   <input type="password" id="currentPassword" name="currentPassword" onChange={(e) => setCurrentPassword(e.target.value)} required />
                   <br />
@@ -266,20 +267,15 @@ export function ConfigProfile() {
   );
 }
 
-
-
-
 const Container = styled.div`
   height: 100vh;
 `;
 const Logo = styled.img`
-position: absolute;
-bottom: -10px;
-right: -10px;
-width: 120px;
-height: auto;
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+  width: 120px;
+  height: auto;
 `;
-
-
 
 export default ConfigProfile;

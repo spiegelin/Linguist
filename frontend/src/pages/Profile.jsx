@@ -8,6 +8,7 @@ import { ProfileContext } from "./ProfileContext";
 import logo from "./logon.ico";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { IoLanguageOutline } from "react-icons/io5"; // Importing a language icon
 
 const appPort = import.meta.env.VITE_APP_PORT;
 const baseApiUrl = import.meta.env.VITE_API_URL;
@@ -88,9 +89,24 @@ export function Profile() {
             </ProfileImageWrapper>
             <ProfileName>{firstName} {lastName}</ProfileName>
             <Languages>
-              <Language>{firstLanguage}</Language>
-              <Language>{secondLanguage}</Language>
-              <Language>{thirdLanguage}</Language>
+              <Language>
+                <LanguageIcon>
+                  <IoLanguageOutline />
+                </LanguageIcon>
+                <LanguageText>{firstLanguage}</LanguageText>
+              </Language>
+              <Language>
+                <LanguageIcon>
+                  <IoLanguageOutline />
+                </LanguageIcon>
+                <LanguageText>{secondLanguage}</LanguageText>
+              </Language>
+              <Language>
+                <LanguageIcon>
+                  <IoLanguageOutline />
+                </LanguageIcon>
+                <LanguageText>{thirdLanguage}</LanguageText>
+              </Language>
             </Languages>
           </ProfileInfo>
           <LearningSection>
@@ -178,17 +194,32 @@ const ProfileName = styled.h1`
 
 const Languages = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  
+  justify-content: center;
+  gap: 20px;
+  margin-top: 10px;
 `;
 
-const Language = styled.h3`
+const Language = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 25px;
   font-weight: 300;
-  margin: 5px 0;
   font-family: "Roboto", sans-serif;
-  
+  background: #fff;
+  padding: 10px 20px;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const LanguageIcon = styled.span`
+  font-size: 28px;
+  color: #970E59; // Adding color to the language icon
+`;
+
+const LanguageText = styled.span`
+  font-size: 25px;
+  font-weight: 300;
 `;
 
 const LearningSection = styled.div`
@@ -200,7 +231,6 @@ const LearningSection = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
 `;
 
 const LearningTitle = styled.h2`
@@ -228,7 +258,10 @@ const LogoWrapper = styled.div`
 `;
 
 const Logo = styled.img`
-  width: 100px;
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+  width: 120px;
   height: auto;
 `;
 

@@ -2,7 +2,6 @@
 import OpenAI from 'openai';
 import { saveTranslationToDB, createMessageTranslation } from '../models/translationModel.js';
 import { getUserById, getUserNativeLanguage } from '../models/userModel.js';
-import { native } from 'pg';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
