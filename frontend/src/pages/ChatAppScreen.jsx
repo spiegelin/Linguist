@@ -31,7 +31,7 @@ export function ChatAppScreen() {
   const [room, setRoom] = useState("");
   const [partnerId, setPartnerId] = useState(null);
   const [conversationLanguage, setConversationLanguage] = useState("");
-  const [isOpenAIChatOpen, setIsOpenAIChatOpen] = useState(false);
+  const [isOpenAIChatOpen, setIsOpenAIChatOpen] = useState(false); //Ver si lo queremos manejar desde este scope o solo desde el messageinput
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -159,8 +159,8 @@ export function ChatAppScreen() {
                 setMessage={setMessage}
                 handleSubmit={handleSubmit}
                 handleImageSubmit={handleImageSubmit}
-                isOpenAIChatOpen={isOpenAIChatOpen} // Pasar el estado del modal de OpenAI Chat
-                setIsOpenAIChatOpen={setIsOpenAIChatOpen} // Pasar la función para establecer el estado del modal de OpenAI Chat
+                //isOpenAIChatOpen={isOpenAIChatOpen} // Pasar el estado del modal de OpenAI Chat
+                //setIsOpenAIChatOpen={setIsOpenAIChatOpen} // Pasar la función para establecer el estado del modal de OpenAI Chat
               />
             </MessageInputContainer>
           </>

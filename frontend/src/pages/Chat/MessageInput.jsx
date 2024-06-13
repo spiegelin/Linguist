@@ -25,10 +25,12 @@ const MessageInput = ({ message, setMessage, handleSubmit, handleImageSubmit, co
   };
 
   const handleImageIconClick = () => {
+    console.log("MAnejo de cmabio de imagen");
     imageInputRef.current.click();
   };
 
   const handleOpenAIChatClick = () => {
+    console.log("Abrir modal de OpenAI Chat");
     setIsOpenAIChatOpen(true);
   };
 
@@ -43,6 +45,14 @@ const MessageInput = ({ message, setMessage, handleSubmit, handleImageSubmit, co
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSend(e);
+    }
+  };
+
+
   return (
     <>
       <InputContainer onSubmit={handleSend}>
@@ -56,6 +66,7 @@ const MessageInput = ({ message, setMessage, handleSubmit, handleImageSubmit, co
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Type something"
+          onKeyDown={handleKeyDown}
         />
         <OpenAIButton onClick={handleOpenAIChatClick}>
           <SiOpenai />

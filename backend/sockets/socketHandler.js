@@ -62,7 +62,7 @@ const handleSocketConnection = (io) => {
             message.message_id = savedMessageID;
             console.log("User: ", socket.user)
             message.user.profileImage = await getProfileImageBase64(socket.user);
-            console.log("Mensaje enviado: ", message);
+            //console.log("Mensaje enviado: ", message);
             if (recipientSocketId && recipientSocketId !== socket.id) {
                 //Ver si uso socket.broadcast.emit, al parecer en lugar de io por que io es para todos los sockets incluido el que envia
                 socket.to(room).to(recipientSocketId).emit("message", message);
