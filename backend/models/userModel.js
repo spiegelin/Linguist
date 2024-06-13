@@ -45,16 +45,22 @@ const getUsersWithSameLanguage = async (userId) => {
       });
       return acc;
     }, {});
+    console.log('Users by language:', usersByLanguage);
+
+    return usersByLanguage;
 
     // Make the dictionary an object indexed by numbers
     // { 1: [ { id, first_name, last_name, country, language }, ... ], ... }
+    /*
     const result = {};
     let index = 1;
     for (const language in usersByLanguage) {
       result[index] = usersByLanguage[language];
       index++;
     }
+    console.log('Users with same language:', result);
     return result;
+    */
   } catch (err) {
     console.error('Error fetching users with same language:', err);
     throw err;

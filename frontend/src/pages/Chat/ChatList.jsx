@@ -40,9 +40,12 @@ const ChatList = ({ onSelectChat, onSelectFilter}) => {
     })
       .then((response) => {
         // Mapeamos los datos para obtener solo los IDs de usuarios según el idioma que comparten
-        const userIds1 = response.data[1] ? response.data[1].map(user => user.id) : [];
-        const userIds2 = response.data[2] ? response.data[2].map(user => user.id) : [];
-        const userIds3 = response.data[3] ? response.data[3].map(user => user.id) : [];
+        const usersByLanguage = response.data;
+        //console.log("Users by language: ", usersByLanguage);
+      
+        const userIds1 = usersByLanguage[firstLanguage] ? usersByLanguage[firstLanguage].map(user => user.id) : [];
+        const userIds2 = usersByLanguage[secondLanguage] ? usersByLanguage[secondLanguage].map(user => user.id) : [];
+        const userIds3 = usersByLanguage[thirdLanguage] ? usersByLanguage[thirdLanguage].map(user => user.id) : [];
         setFirstLanguageUserId(userIds1);
         setSecondLanguageUserId(userIds2);
         setThirdLanguageUserId(userIds3);
@@ -50,7 +53,7 @@ const ChatList = ({ onSelectChat, onSelectFilter}) => {
       .catch((error) => {
         console.log(error);
       });
-    }, [apiUrl]);
+    }, [chats]);
 
   // Fetch chats
   useEffect(() => {
@@ -89,6 +92,8 @@ const ChatList = ({ onSelectChat, onSelectFilter}) => {
 
   // Función para filtrar los chats por lenguaje
   const handleFilterByLanguage = (language, userIds) => {
+    console.log("User IDs: ", userIds)
+    console.log("Chats: ", chats)
     if (language === "all") {
       setFilteredChats(chats); // Si se selecciona "todos", muestra todos los chats
       setConversationLanguage("All")
