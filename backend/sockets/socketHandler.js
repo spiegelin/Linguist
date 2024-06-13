@@ -55,10 +55,14 @@ const handleSocketConnection = (io) => {
             console.log(message)
             console.log(`Mensaje recibido en room ${room}:`, message);
             const conversationId = parseInt(room.split('_')[1], 10);
-            await saveMessage(conversationId, socket.user, message.text); //Ya le mandamos el puro texto, ver si queremos hacer validaciones que si se guardo y manejo de errores
+            const savedMessageID = await saveMessage(conversationId, socket.user, message.text); //Ya le mandamos el puro texto, ver si queremos hacer validaciones que si se guardo y manejo de errores
             const recipientSocketId = Array.from(users.keys()).find(key => users.get(key) === partnerId);
             console.log("Sender Socket ID: ", socket.id)
             console.log("Recipient Socket ID: ", recipientSocketId);
+            message.message_id = savedMessageID;
+            console.log("User: ", socket.user)
+            message.user.profileImage = await getProfileImageBase64(socket.user);
+            console.log("Mensaje enviado: ", message);
             if (recipientSocketId && recipientSocketId !== socket.id) {
                 //Ver si uso socket.broadcast.emit, al parecer en lugar de io por que io es para todos los sockets incluido el que envia
                 socket.to(room).to(recipientSocketId).emit("message", message);
@@ -128,8 +132,8 @@ const handleSocketConnection = (io) => {
 const getProfileImageBase64 = async (userId) => {
     try {
         const result = await getProfileImage(userId);
-        if (result && result.rows && result.rows.length > 0 && result.rows[0].profile_image) {
-            const imageBuffer = result.rows[0].profile_image;
+        if (result) {
+            const imageBuffer = result;
             return imageBuffer.toString('base64');
         }
         return null;

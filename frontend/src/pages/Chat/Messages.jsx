@@ -29,7 +29,7 @@ const Messages = React.memo(({ messages, isTyping }) => {
       });
   }, []);
 
-  const handleInfoClick = async (messageId) => {
+  const handleInfoClick = async (messageId, index) => {
     try {
       if (messageId === popup.messageId) {
         setPopup({ visible: false, text: '', position: { top: 0, left: 0 }, messageId: null });
@@ -42,14 +42,20 @@ const Messages = React.memo(({ messages, isTyping }) => {
         withCredentials: true
       });
 
-      const rect = infoButtonRef.current.getBoundingClientRect();
+      const element = document.querySelector(`#infoButton-${index}`);
+      const rect = element.getBoundingClientRect();
+      console.log('Button rect:', rect);
+      console.log('Scroll positions:', window.scrollY, window.scrollX);
+      console.log(rect.height)
+      console.log('Calculated popup position:', rect.top + rect.height + window.scrollY, rect.left + window.scrollX);
 
       setPopup({ 
         visible: true, 
         text: response.data.response, 
         position: { 
-          top: rect.top + window.scrollY + rect.height, 
-          left: rect.left + window.scrollX
+          //top: rect.top + window.scrollY + rect.height, 
+          left: rect.left + window.scrollX,
+          bottom: rect.bottom + window.scrollY
         },
         messageId: messageId
       });
@@ -77,7 +83,7 @@ const Messages = React.memo(({ messages, isTyping }) => {
               <MessageContentContainer isSent={msg.isSent}>
                 <MessageContent isSent={msg.isSent}>
                   {msg.text}
-                  <InfoIconContainer ref={infoButtonRef} onClick={() => handleInfoClick(msg.message_id)}>
+                  <InfoIconContainer id={`infoButton-${index}`} ref={infoButtonRef} onClick={() => handleInfoClick(msg.message_id, index)}>
                     <LuInfo />
                   </InfoIconContainer>
                 </MessageContent>

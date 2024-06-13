@@ -35,10 +35,12 @@ async function messageTranslation(userInput, nativeLanguage) {
             `You are a friendly chatbot. you are going to help a user translate a message to ${nativeLanguage}.you talk in ${nativeLanguage}.
             ` },
             { role: 'user', content: `TRANSLATE the message you receive into *${nativeLanguage}*. IN *${nativeLanguage} give a brief context of what the input you recieve means.
-             The message of the user is: *{userInput}*
+             The message of the user is: *${userInput}*
              Dont ask me if I need Anything after, Just transalate the message and give context.
              ` },
         ];
+
+        console.log("openai messageTranslation messages", messages);
 
         const completion = await openai.chat.completions.create({
             model: 'gpt-3.5-turbo',
