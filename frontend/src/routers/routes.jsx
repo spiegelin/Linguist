@@ -14,15 +14,15 @@ import PublicRoute from '../components/PublicRoute';
 export const MainRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/Login" />} />
-        <Route path="/Landing" element={<LandingPage/>} />
-        <Route path="/Login" element={<PublicRoute element={<LoginPage />} />} />
-        <Route path="/Home" element={<ProtectedRoute element={<Home />} />} />
-        <Route path="/Profile" element={<ProtectedRoute element={<Profile />} />} />
-        <Route path="/Notifications" element={<ProtectedRoute element={<Notifications />} />} />
-        <Route path="/Lenguaje_Page" element={<ProtectedRoute element={<Lenguaje_Page />} />} />
-        <Route path="/ChatAppScreen" element={<ProtectedRoute element={<ChatAppScreen />} />} />
-        <Route path="/ConfigProfile" element={<ProtectedRoute element={<ConfigProfile />} />} />
-      </Routes>
+      <Route path="/" element={<Navigate to="/Landing" />} />
+      <Route path="/Landing" element={<LandingPage/>} />
+      <Route path="/Login" element={<PublicRoute element={<LoginPage />} />} />
+      <Route path="/Home" element={<ProtectedRoute element={<Home />} />} />
+      <Route path="/Profile" element={<ProtectedRoute element={<Profile />} />} />
+      <Route path="/Notifications" element={<ProtectedRoute element={<Notifications />} />} />
+      <Route path="/Lenguaje_Page" element={<ProtectedRoute element={<Lenguaje_Page />} />} />
+      <Route path="/ChatAppScreen" element={<ProtectedRoute element={<ChatAppScreen />} />} />
+      <Route path="/ConfigProfile" element={<ProtectedRoute element={<ConfigProfile />} />} />
+    </Routes>
   );
 };
