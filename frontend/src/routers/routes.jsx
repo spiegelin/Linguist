@@ -1,6 +1,5 @@
 // routes.jsx
-import { Routes, Route, Navigate} from "react-router-dom";
-import { Home } from "../pages/Home";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Notifications } from "../pages/Notifications";
 import { Profile } from "../pages/Profile";
 import { Lenguaje_Page } from "../pages/Lenguaje_Page";
@@ -15,9 +14,8 @@ export const MainRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/Landing" />} />
-      <Route path="/Landing" element={<LandingPage/>} />
+      <Route path="/Landing" element={<PublicRoute element={<LandingPage />} />} />
       <Route path="/Login" element={<PublicRoute element={<LoginPage />} />} />
-      <Route path="/Home" element={<ProtectedRoute element={<Home />} />} />
       <Route path="/Profile" element={<ProtectedRoute element={<Profile />} />} />
       <Route path="/Notifications" element={<ProtectedRoute element={<Notifications />} />} />
       <Route path="/Lenguaje_Page" element={<ProtectedRoute element={<Lenguaje_Page />} />} />

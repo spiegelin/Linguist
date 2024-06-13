@@ -1,4 +1,4 @@
-//LandingPage.jsx
+// LandingPage.jsx
 import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 import '../styles/LandingPage.css';
@@ -41,12 +41,12 @@ export const LandingPage = () => {
         <div className="brand">
           <img className="logoImg" src={logo} alt="Logo" />
           <div>
-            <h1>Lingüist</h1>
+            <h1>Lingüíst</h1>
           </div>
         </div>
         <div className="nav">
-          <Link className="nav-button" to="/login">Log In</Link>
-          <Link className="nav-button" to="/signup">Sign Up</Link>
+          <Link className="nav-button" to="/Login">Log In</Link>
+          <Link className="nav-button" to="/Login">Sign Up</Link>
         </div>
       </header>
 
@@ -56,7 +56,7 @@ export const LandingPage = () => {
           <div className="main-text">
             <h2>Transform your language learning process</h2>
             <p>Practice with real people, track your progress, and build your personalized dictionary with Lingüist</p>
-            <Link className="cta-button" to="/login">Join</Link>
+            <Link className="cta-button" to="/Login">Join</Link>
           </div>
         </div>
       </section>

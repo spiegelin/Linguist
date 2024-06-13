@@ -153,7 +153,7 @@ router.post("/login", async (req, res) => {
 // Básicamente esto nos redirige a la pantalla inicial del chat porque en teoría el token de sesión sigue activo
 router.get("/add", cookieJwtAuth, async (req, res) => {
     res.json({isLogged: true});
-    //res.redirect(process.env.FRONTEND_URL + "/Home");
+    //res.redirect(process.env.FRONTEND_URL + "/Profile");
 });
 
 // Ruta para el logout

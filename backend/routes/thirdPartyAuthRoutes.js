@@ -33,7 +33,7 @@ router.get('/google/callback', passport.authenticate('google', {
         maxAge: 3600000
     });
 
-    // Se envía al usuario a la página de Home
+    // Se envía al usuario a la página de Profile
     if (user.isNew) {
         res.redirect(process.env.FRONTEND_URL + "/ConfigProfile");
     } else {
@@ -67,7 +67,7 @@ router.get('/facebook/callback', passport.authenticate('facebook', {
         maxAge: 3600000
     });
 
-    // Se envía al usuario a la página de Home
+    // Se envía al usuario a la página de Profile
     res.redirect(process.env.FRONTEND_URL + "/Profile");
 });
 
