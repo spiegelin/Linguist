@@ -33,7 +33,7 @@ const handleLogout = () => {
 
 const secondarylinksArray = [
   { icon: <AiOutlineSetting size={24} />, to: "/ConfigProfile", id: "config" },
-  { icon: <MdLogout onClick={handleLogout} size={24} />, to:"/login", id: "logout" },
+  { icon: <MdLogout onClick={handleLogout} size={24} />, to:"/Landing", id: "logout" },
 ];
 
 export function Sidebar() {

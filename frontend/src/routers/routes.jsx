@@ -14,6 +14,7 @@ export const MainRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/Landing" />} />
+      <Route path="*" element={<Navigate to="/Landing" />} />
       <Route path="/Landing" element={<PublicRoute element={<LandingPage />} />} />
       <Route path="/Login" element={<PublicRoute element={<LoginPage />} />} />
       <Route path="/Profile" element={<ProtectedRoute element={<Profile />} />} />
