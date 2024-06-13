@@ -28,7 +28,7 @@ const PublicRoute = ({ element }) => {
   }
 
   if (isLogged) {
-    return <Navigate to="/Home" />;
+    return <Navigate to="/Profile" />;
   }
 
   return element;

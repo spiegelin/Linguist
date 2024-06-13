@@ -1,3 +1,4 @@
+//localAuthRoutes
 import jwt from "jsonwebtoken";
 import express from 'express';
 import bcrypt from 'bcrypt';
@@ -29,7 +30,7 @@ router.post("/register", async (req, res) => {
                     console.log(err);
                 }
                 // Se guarda el hash en la base de datos, junto con el username y email
-                console.log(hash);
+                //console.log(hash);
 
                 // Checar si el email ya está en uso
                 const emailExists = await checkEmail(email);
@@ -60,7 +61,7 @@ router.post("/register", async (req, res) => {
                 const token = jwt.sign({user_id: user.id, email: user.email, password: user.password}, process.env.JWT_SECRET, {
                     expiresIn: "1h"
                 });
-                console.log("Token del login: ", token);
+                //console.log("Token del login: ", token);
     
                 res.cookie("token", token, {
                     httpOnly: false,
@@ -96,7 +97,7 @@ router.post("/login", async (req, res) => {
         // Validation passed
         // Revisar si el usuario existe en la base de datos
         let user = await getUser(email);
-        console.log(user);
+        //console.log(user);
         if (!user) {
             res.json({
                 message: "User not found"
@@ -115,6 +116,7 @@ router.post("/login", async (req, res) => {
                 res.json({
                     message: "Login failed"
                 });
+                return;
             } 
 
             // Creación del Token JWT
@@ -126,7 +128,7 @@ router.post("/login", async (req, res) => {
             const token = jwt.sign({user_id: user.id, email: user.email, password: user.password}, process.env.JWT_SECRET, {
                 expiresIn: "1h"
             });
-            console.log("Token del login: ", token);
+            //console.log("Token del login: ", token);
 
             // Se crea la cookie en el response header para decirle al browser que la guarde en su cache
             // Esto sirve para que el browser pueda recordar la sesión del usuario y la mande en requests futuros
@@ -138,6 +140,7 @@ router.post("/login", async (req, res) => {
                 secure: true,
                 maxAge: 3600000
             });
+
             return res.send({
                 message: 'Cookie has been set',
                 isLogged: true
@@ -150,7 +153,7 @@ router.post("/login", async (req, res) => {
 // Básicamente esto nos redirige a la pantalla inicial del chat porque en teoría el token de sesión sigue activo
 router.get("/add", cookieJwtAuth, async (req, res) => {
     res.json({isLogged: true});
-    //res.redirect(process.env.FRONTEND_URL + "/Home");
+    //res.redirect(process.env.FRONTEND_URL + "/Profile");
 });
 
 // Ruta para el logout

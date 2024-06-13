@@ -25,10 +25,12 @@ const MessageInput = ({ message, setMessage, handleSubmit, handleImageSubmit, co
   };
 
   const handleImageIconClick = () => {
+    console.log("MAnejo de cmabio de imagen");
     imageInputRef.current.click();
   };
 
   const handleOpenAIChatClick = () => {
+    console.log("Abrir modal de OpenAI Chat");
     setIsOpenAIChatOpen(true);
   };
 
@@ -36,9 +38,24 @@ const MessageInput = ({ message, setMessage, handleSubmit, handleImageSubmit, co
     setIsOpenAIChatOpen(false);
   };
 
+  const handleSend = (e) => {
+    e.preventDefault();
+    if (message.trim()) {
+      handleSubmit(e);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSend(e);
+    }
+  };
+
+
   return (
     <>
-      <InputContainer onSubmit={handleSubmit}>
+      <InputContainer onSubmit={handleSend}>
         <MicrophoneIcon />
         <ImageIconContainer onClick={handleImageIconClick}>
           <ImageInput ref={imageInputRef} type="file" accept="image/*" onChange={handleImageChange} />
@@ -49,6 +66,7 @@ const MessageInput = ({ message, setMessage, handleSubmit, handleImageSubmit, co
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Type something"
+          onKeyDown={handleKeyDown}
         />
         <OpenAIButton onClick={handleOpenAIChatClick}>
           <SiOpenai />

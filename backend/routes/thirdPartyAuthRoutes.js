@@ -1,3 +1,4 @@
+//thirdPartyAuthRoutes
 import jwt from "jsonwebtoken";
 import express from 'express';
 import passport from 'passport';
@@ -21,7 +22,7 @@ router.get('/google/callback', passport.authenticate('google', {
     const token = jwt.sign({user_id: user.id, google_id: user.google_id}, process.env.JWT_SECRET, {
         expiresIn: "1h"
     });
-    console.log("Token del login: ", token);
+    //console.log("Token del login: ", token);
 
     // Se envía el token en una cookie
     res.cookie("token", token, {
@@ -32,11 +33,11 @@ router.get('/google/callback', passport.authenticate('google', {
         maxAge: 3600000
     });
 
-    // Se envía al usuario a la página de Home
+    // Se envía al usuario a la página de Profile
     if (user.isNew) {
         res.redirect(process.env.FRONTEND_URL + "/ConfigProfile");
     } else {
-        res.redirect(process.env.FRONTEND_URL + "/Home");
+        res.redirect(process.env.FRONTEND_URL + "/Profile");
     }
 });
 
@@ -55,7 +56,7 @@ router.get('/facebook/callback', passport.authenticate('facebook', {
     const token = jwt.sign({user_id: user.id, facebook_id: user.facebook_id}, process.env.JWT_SECRET, {
         expiresIn: "1h"
     });
-    console.log("Token del login: ", token);
+    //console.log("Token del login: ", token);
 
     // Se envía el token en una cookie
     res.cookie("token", token, {
@@ -66,8 +67,8 @@ router.get('/facebook/callback', passport.authenticate('facebook', {
         maxAge: 3600000
     });
 
-    // Se envía al usuario a la página de Home
-    res.redirect(process.env.FRONTEND_URL + "/Home");
+    // Se envía al usuario a la página de Profile
+    res.redirect(process.env.FRONTEND_URL + "/Profile");
 });
 
 // Ruta para autenticación con GitHub
@@ -85,7 +86,7 @@ router.get('/github/callback', passport.authenticate('github', {
     const token = jwt.sign({user_id: user.id, facebook_id: user.github_id}, process.env.JWT_SECRET, {
         expiresIn: "1h"
     });
-    console.log("Token del login: ", token);
+    //console.log("Token del login: ", token);
 
     // Se envía el token en una cookie
     res.cookie("token", token, {
@@ -97,7 +98,7 @@ router.get('/github/callback', passport.authenticate('github', {
     });
     
     // Se envía al usuario a la página de Home
-    res.redirect(process.env.FRONTEND_URL + "/Home");
+    res.redirect(process.env.FRONTEND_URL + "/Profile");
 });
 
 

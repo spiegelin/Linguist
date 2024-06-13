@@ -1,6 +1,7 @@
-
+//socketHandler
 import jwt from 'jsonwebtoken';
 import { getUserById, getOrCreateConversation, saveMessage, getMessagesFromConversation } from '../models/socketModel.js';
+import { getProfileImage } from '../models/userModel.js';
 import { format, toZonedTime } from 'date-fns-tz';
 
 const handleSocketConnection = (io) => {
@@ -54,10 +55,14 @@ const handleSocketConnection = (io) => {
             console.log(message)
             console.log(`Mensaje recibido en room ${room}:`, message);
             const conversationId = parseInt(room.split('_')[1], 10);
-            await saveMessage(conversationId, socket.user, message.text); //Ya le mandamos el puro texto, ver si queremos hacer validaciones que si se guardo y manejo de errores
+            const savedMessageID = await saveMessage(conversationId, socket.user, message.text); //Ya le mandamos el puro texto, ver si queremos hacer validaciones que si se guardo y manejo de errores
             const recipientSocketId = Array.from(users.keys()).find(key => users.get(key) === partnerId);
             console.log("Sender Socket ID: ", socket.id)
             console.log("Recipient Socket ID: ", recipientSocketId);
+            message.message_id = savedMessageID;
+            console.log("User: ", socket.user)
+            message.user.profileImage = await getProfileImageBase64(socket.user);
+            //console.log("Mensaje enviado: ", message);
             if (recipientSocketId && recipientSocketId !== socket.id) {
                 //Ver si uso socket.broadcast.emit, al parecer en lugar de io por que io es para todos los sockets incluido el que envia
                 socket.to(room).to(recipientSocketId).emit("message", message);
@@ -71,24 +76,49 @@ const handleSocketConnection = (io) => {
             try {
                 const messages = await getMessagesFromConversation(room_name);
                 const timeZone = 'America/Mexico_City';
-                const formattedMessages = messages.map(msg => {
+                const userId = socket.user; // Id del usuario actual que está solicitando el historial
+        
+                // Función para obtener la imagen de perfil en base64 de un usuario específico
+                const getProfileImageBase64 = async (userId) => {
+                    try {
+                        const result = await getProfileImage(userId);
+                        if (result) {
+                            const imageBuffer = result;
+                            return imageBuffer.toString('base64');
+                        }
+                        return null;
+                    } catch (error) {
+                        console.error('Error fetching profile image:', error);
+                        return null;
+                    }
+                };
+        
+                const formattedMessages = await Promise.all(messages.map(async msg => {
                     const zonedTime = toZonedTime(new Date(msg.sent_time), timeZone);
+                    const isSent = msg.sender_id === userId; // Determina si el mensaje fue enviado por el usuario actual
+        
+                    // Obtener la imagen de perfil del usuario que envió el mensaje
+                    const senderId = isSent ? userId : msg.sender_id;
+                    const profileImage = await getProfileImageBase64(senderId);
+        
                     return {
                         text: msg.body,
-                        isSent: msg.sender_id === socket.user, // Determina si el mensaje fue enviado por el usuario actual
-                        time: format(zonedTime, 'HH:mm:ss', {timeZone}),
+                        isSent: isSent,
+                        time: format(zonedTime, 'HH:mm:ss', { timeZone }),
                         user: {
-                            profileImage: "https://via.placeholder.com/150" // Puedes ajustar esto según cómo manejes las imágenes de perfil
+                            profileImage: profileImage
                         },
                         message_id: msg.id
                     };
-                });
-                callback(formattedMessages); // Envíalos de vuelta al cliente
+                }));
+        
+                callback(formattedMessages); // Envía los mensajes formateados de vuelta al cliente
             } catch (error) {
                 console.error('Error fetching message history:', error);
                 callback([]); // Enviar una lista vacía en caso de error
             }
         });
+
 
         // Manejar desconexiones de Socket.IO
         socket.on('disconnect', () => {
@@ -97,5 +127,21 @@ const handleSocketConnection = (io) => {
         });
     });
 };
+
+// Función para obtener la imagen de perfil en base64
+const getProfileImageBase64 = async (userId) => {
+    try {
+        const result = await getProfileImage(userId);
+        if (result) {
+            const imageBuffer = result;
+            return imageBuffer.toString('base64');
+        }
+        return null;
+    } catch (error) {
+        console.error('Error fetching profile image:', error);
+        return null;
+    }
+};
+
 
 export default handleSocketConnection;

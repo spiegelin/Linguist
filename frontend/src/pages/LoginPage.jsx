@@ -41,8 +41,8 @@ export const LoginPage = () => {
        console.log("IsLogged: ", response.data.isLogged);
        //console.log("Token", cookies.get("token"))
         if (response.data.isLogged){
-          //Esto lo que hace es mandarnos a home, en este momento no "verifica" que este loggeado, solo guarda la cookie en el cliente
-          window.location.href = "/Home";
+          //Esto lo que hace es mandarnos a Profile, en este momento no "verifica" que este loggeado, solo guarda la cookie en el cliente
+          window.location.href = "/Profile";
         }
         else {
           alert("Credenciales inválidas");
@@ -125,7 +125,7 @@ export const LoginPage = () => {
             }}
           >
             <img
-              src="/logo.webp"
+              src="/logo.ico"
               alt="Logo"
               className="logo"
               width="100%"
@@ -176,7 +176,7 @@ export const LoginPage = () => {
             style={{ position: "absolute", top: 0, left: 0 }}
           >
             <img
-              src="/logo.webp"
+              src="/logo.ico"
               alt="Logo"
               className="logo"
               width="130px"

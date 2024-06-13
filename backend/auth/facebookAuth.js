@@ -17,7 +17,7 @@ passport.use(new FacebookStrategy(
         //console.log(profile)
         const user = await findOrCreate(profile, "facebook");
 
-        console.log(user);
+        //console.log(user);
         
         done(null, user);
     } catch (error) {

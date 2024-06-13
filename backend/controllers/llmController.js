@@ -1,7 +1,7 @@
 //llmController.js
 import OpenAI from 'openai';
 import { saveTranslationToDB, createMessageTranslation } from '../models/translationModel.js';
-import { getUserById } from '../models/userModel.js';
+import { getUserById, getUserNativeLanguage } from '../models/userModel.js';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -31,9 +31,16 @@ async function testResponse(userInput) {
 async function messageTranslation(userInput, nativeLanguage) {
     try {
         const messages = [
-            { role: 'system', content: `Das la traducción literal de los mensajes que te llegan al ${nativeLanguage}, además de un breve contexto de cómo pueden ser usados en conversaciones` },
-            { role: 'user', content: userInput },
+            { role: 'system', content: 
+            `You are a friendly chatbot. you are going to help a user translate a message to ${nativeLanguage}.you talk in ${nativeLanguage}.
+            ` },
+            { role: 'user', content: `TRANSLATE the message you receive into *${nativeLanguage}*. IN *${nativeLanguage} give a brief context of what the input you recieve means.
+             The message of the user is: *${userInput}*
+             Dont ask me if I need Anything after, Just transalate the message and give context.
+             ` },
         ];
+
+        console.log("openai messageTranslation messages", messages);
 
         const completion = await openai.chat.completions.create({
             model: 'gpt-3.5-turbo',
@@ -60,19 +67,20 @@ async function saveTranslation(messageId, translatedText) {
     }
 }
 
-async function getUserNativeLanguage(userId) {
-    try {
-        const user = await getUserById(userId);
-        if (user && user[0].native_language_id) {
-            return user[0].native_language_id;
-        } else {
-            throw new Error('User native language not found');
-        }
-    } catch (error) {
-        console.error('Error fetching user native language:', error);
-        throw new Error('Error fetching user native language');
-    }
-}
+const askOpenAI = async (userInput, nativeLanguage) => {
+    const messages = [
+        { role: 'system', content: `EXCLUSIVELY ANSWER IN *${nativeLanguage}*. Answer the answer saying you are "LingüístBot"` },
+        { role: 'user', content: userInput },
+    ];
 
-export { testResponse, messageTranslation, saveTranslation, getUserNativeLanguage };
+    const completion = await openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: messages,
+    });
+
+    const response = completion.choices[0].message.content;
+    return response;
+};
+
+export { testResponse, messageTranslation, saveTranslation, getUserNativeLanguage, askOpenAI };
 

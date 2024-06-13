@@ -23,24 +23,52 @@ Para ejecutar localmente el proyecto, sigue estos pasos:
      ```bash
     git clone https://github.com/Spiegelin/Linguist.git
     ```
-2. Instala las dependencias del cliente y del servidor utilizando npm o yarn:
+2. Instala las dependencias del cliente y del servidor utilizando npm y yarn:
+   1. Si no tienes yarn:
     ```bash
-    cd client
-    npm install
-    cd ../server
-    npm install
+    npm install --global yarn
     ```
-3. Configura la base de datos PostgreSQL y actualiza las credenciales de conexión en el archivo `server/config/db.js`.
-
-4. Ejecuta el servidor y el cliente en terminales separadas:
+   2. Navega a cada carpeta e instala las dependencias
     ```bash
-    # En el directorio 'server'
+    cd backend
+    npm install 
+    cd ../frontend
+    yarn install
+    ```
+
+3. Crea un archivo .env para las variables de entorno:
+    ```bash
+    DB_USER=postgres
+    DB_PASSWORD=_tu_contraseña_
+    DB_PORT=5432
+    APP_PORT=8000
+    JWT_SECRET=agrega_tu_secreto_puede_ser_palabras_random
+    COOKIE_SECRET=mismo_caso_aqui
+    GOOGLE_CLIENT_ID=id_de_google_cloud_console
+    GOOGLE_CLIENT_SECRET=secret_proyecto_de_google_cloud_console
+    GOOGLE_CALLBACK_URL=http://localhost:8000/api/auth/google/callback
+    FACEBOOK_APP_ID=id_facebook_developer
+    FACEBOOK_APP_SECRET=secret_facebook_developr
+    FACEBOOK_CALLBACK_URL=http://localhost:8000/api/auth/facebook/callback
+    GITHUB_CLIENT_ID=ig_github_developer
+    GITHUB_CLIENT_SECRET=secret_github_developer
+    GITHUB_CALLBACK_URL=http://localhost:8000/api/auth/github/callback
+    FRONTEND_URL=http://localhost:5173
+    OPENAI_API_KEY=sk-...
+    ```
+
+4. Configura la base de datos PostgreSQL (usando pgadmin) y actualiza las credenciales de conexión en el archivo `backend/database/db.js`.
+   
+
+5. Ejecuta el servidor y el cliente en terminales separadas:
+    ```bash
+    # En el directorio 'backend'
     npm start
 
-    # En el directorio 'client'
-    npm start
+    # En el directorio 'frontend'
+    npm run dev
     ```
-5. Abre tu navegador web y navega a `http://localhost:3000` para ver la aplicación en funcionamiento.
+6. Abre tu navegador web y navega a `http://localhost:5173` para ver la aplicación en funcionamiento.
 
 ## Contribuir
 

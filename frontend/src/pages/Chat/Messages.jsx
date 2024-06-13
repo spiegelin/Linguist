@@ -1,9 +1,8 @@
-//Messages
-import React, { useContext, useState, useRef } from 'react';
+import React, { useContext, useState, useRef, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { ProfileContext } from '../ProfileContext';
 import { LuInfo } from "react-icons/lu";
-import axios from 'axios'; // Importa la biblioteca para realizar solicitudes HTTP
+import axios from 'axios';
 
 const appPort = import.meta.env.VITE_APP_PORT;
 const baseApiUrl = import.meta.env.VITE_API_URL;
@@ -11,12 +10,27 @@ const apiUrl = `${baseApiUrl}:${appPort}/api`;
 
 const Messages = React.memo(({ messages, isTyping }) => {
   const { profileImage } = useContext(ProfileContext);
+  const [image, setImage] = useState("");
+  const [imageOther, setImageOther] = useState("");
   const [popup, setPopup] = useState({ visible: false, text: '', position: { top: 0, left: 0 }, messageId: null });
   const infoButtonRef = useRef(null);
 
-  const handleInfoClick = async (messageId) => {
+  useEffect(() => {
+    axios.get(`${apiUrl}/users/profile-image`, {
+      withCredentials: true
+    })
+      .then(response => {
+        const imageBase64 = response.data.imageBase64;
+        const imageUrl = `data:image/jpeg;base64,${imageBase64}`;
+        setImage(imageUrl);
+      })
+      .catch(error => {
+        console.error('Error fetching profile image:', error);
+      });
+  }, []);
+
+  const handleInfoClick = async (messageId, index) => {
     try {
-      // Si se hace clic nuevamente en el botón de información del mismo mensaje, ocultamos el popup
       if (messageId === popup.messageId) {
         setPopup({ visible: false, text: '', position: { top: 0, left: 0 }, messageId: null });
         return;
@@ -27,17 +41,21 @@ const Messages = React.memo(({ messages, isTyping }) => {
       }, {
         withCredentials: true
       });
-      
-      // Obtenemos las coordenadas del botón de información
-      const rect = infoButtonRef.current.getBoundingClientRect();
-      
-      // Ajustamos la posición del popup para que se alinee con el botón de información
+
+      const element = document.querySelector(`#infoButton-${index}`);
+      const rect = element.getBoundingClientRect();
+      console.log('Button rect:', rect);
+      console.log('Scroll positions:', window.scrollY, window.scrollX);
+      console.log(rect.height)
+      console.log('Calculated popup position:', rect.top + rect.height + window.scrollY, rect.left + window.scrollX);
+
       setPopup({ 
         visible: true, 
         text: response.data.response, 
         position: { 
-          top: rect.top + window.scrollY + rect.height, 
-          left: rect.left + window.scrollX
+          //top: rect.top + window.scrollY + rect.height, 
+          left: rect.left + window.scrollX,
+          bottom: rect.bottom + window.scrollY
         },
         messageId: messageId
       });
@@ -57,15 +75,15 @@ const Messages = React.memo(({ messages, isTyping }) => {
                   {msg.text}
                 </MessageContent>
               </MessageContentContainer>
-              <ProfileImage src={profileImage} alt="Profile" />
+              <ProfileImage src={image} alt="Profile" />
             </>
           ) : (
             <>
-              <ProfileImage src={msg.user.profileImage || profileImage} alt="Profile" />
+              <ProfileImage src={`data:image/jpeg;base64,${msg.user.profileImage}`} alt="Profile" />
               <MessageContentContainer isSent={msg.isSent}>
                 <MessageContent isSent={msg.isSent}>
                   {msg.text}
-                  <InfoIconContainer ref={infoButtonRef} onClick={() => handleInfoClick(msg.message_id)}>
+                  <InfoIconContainer id={`infoButton-${index}`} ref={infoButtonRef} onClick={() => handleInfoClick(msg.message_id, index)}>
                     <LuInfo />
                   </InfoIconContainer>
                 </MessageContent>
@@ -77,7 +95,7 @@ const Messages = React.memo(({ messages, isTyping }) => {
       ))}
       {isTyping && (
         <TypingBubble>
-          <ProfileImage src={profileImage} alt="Profile" />
+          <ProfileImage src={`data:image/jpeg;base64,${msg.user.profileImage}`} alt="Profile" />
           <TypingIndicator>
             <TypingDot />
             <TypingDot />
@@ -94,6 +112,7 @@ const Messages = React.memo(({ messages, isTyping }) => {
     </MessagesContainer>
   );
 });
+
 
 const MessagesContainer = styled.div`
   flex-grow: 1;

@@ -1,0 +1,278 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+.App {
+  text-align: center;
+  background-color: white;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to right, #D885A3, #2F5B20);
+  color: white;
+  padding: 20px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+}
+
+.logoImg {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.nav .nav-button {
+  margin-left: 10px;
+  padding: 10px 15px;
+  background-color: #ffffff;
+  color: #2F5B20;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.nav .nav-button:hover {
+  background-color: #f0f0f0;
+}
+
+.main-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+}
+
+.main-content {
+  display: flex;
+  align-items: center;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.main-image {
+  width: 50%;
+  max-width: 600px;
+  height: auto;
+  margin-right: 20px;
+  border-radius: 10px;
+}
+
+.main-text {
+  text-align: center;
+  max-width: 600px;
+}
+
+.main-text h2 {
+  font-size: 28px;
+  color: #333;
+}
+
+.main-text p {
+  font-size: 18px;
+  color: #666;
+}
+
+.cta-button {
+  position: relative; /* Añade esta línea */
+  top: 50px; /* Añade esta línea */
+  background-color: #D885A3;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #970E59;
+}
+
+.section-title {
+  font-size: 24px;
+  color: #333;
+  margin: 40px 0 20px;
+}
+
+.features, .benefits, .testimonials {
+  padding: 40px 20px;
+}
+
+.feature {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.feature-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.image-container {
+  flex: 1;
+  height: 400px;
+  background-size: cover;
+}
+
+.image-container.feature1 {
+  background-image: url('../img/feature1.jpg');
+}
+
+.image-container.feature2 {
+  background-image: url('../img/feature2.jpg');
+}
+
+.image-container.feature3 {
+  background-image: url('../img/feature3.jpg');
+}
+
+.text-container {
+  flex: 1;
+  background-color: #970E59;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+  color: white;
+}
+
+.benefits-grid {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+
+.benefit {
+  position: relative;
+  margin: 10px;
+  width: 150px;
+  height: 150px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.benefit img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease;
+}
+
+.benefit-overlay {
+  position: absolute;
+  bottom: -40px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: white;
+  background-color: transparent;
+  transition: bottom 0.3s ease;
+  padding: 5px 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.benefit-overlay.active {
+  bottom: 0;
+  background-color: #D885A3;
+  opacity: 1;
+}
+
+.benefit:hover img {
+  opacity: 0.3;
+}
+
+.benefit:hover .benefit-overlay {
+  bottom: 0;
+}
+
+.testimonials-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.testimonial {
+  position: relative;
+  margin: 10px;
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.testimonial img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.testimonial:hover {
+  transform: scale(1.2);
+}
+
+.testimonial:not(:hover) {
+  transform: scale(0.8);
+}
+
+.testimonial-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 10px;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.testimonial:hover .testimonial-overlay {
+  transform: translateY(0);
+}
+
+.footer {
+  background-color: #2F5B20;
+  padding: 20px;
+  color: white;
+  margin-top: 20px;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.social-icons a {
+  margin: 0 10px;
+}

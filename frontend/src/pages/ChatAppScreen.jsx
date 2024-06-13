@@ -30,6 +30,8 @@ export function ChatAppScreen() {
   const userProfileImage = "https://scontent-qro1-1.xx.fbcdn.net/v/t39.30808-6/321236782_1336144920477645_1360752776053520884_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=5f2048&_nc_ohc=pslfT2deIN4Q7kNvgFxANPC&_nc_ht=scontent-qro1-1.xx&oh=00_AYBtVzrdfA-4YtuTq_KTC6S4NAw3pxA6ddLRJav4lBkB9A&oe=66532B5E";
   const [room, setRoom] = useState("");
   const [partnerId, setPartnerId] = useState(null);
+  const [conversationLanguage, setConversationLanguage] = useState("");
+  const [isOpenAIChatOpen, setIsOpenAIChatOpen] = useState(false); //Ver si lo queremos manejar desde este scope o solo desde el messageinput
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -53,6 +55,7 @@ export function ChatAppScreen() {
         [room]: [...(prevMessages[room] || []), newMessage]
       }));
       setMessage("");
+      setIsOpenAIChatOpen(false); // Cerrar el modal de OpenAI Chat
     }
   };
 
@@ -75,6 +78,7 @@ export function ChatAppScreen() {
       ...prevMessages,
       [room]: [...(prevMessages[room] || []), newMessage]
     }));
+    setIsOpenAIChatOpen(false); // Cerrar el modal de OpenAI Chat
   };
 
   const receiveMessage = (message) => {
@@ -145,7 +149,7 @@ export function ChatAppScreen() {
       <MainContainer>
         {selectedChat ? (
           <>
-            <ChatHeader selectedChat={selectedChat} />
+            <ChatHeader selectedChat={selectedChat} conversationLanguage={conversationLanguage}/>
             <ChatContainer>
               <Messages messages={messages[room] || []} isTyping={isTyping} />
             </ChatContainer>
@@ -155,6 +159,8 @@ export function ChatAppScreen() {
                 setMessage={setMessage}
                 handleSubmit={handleSubmit}
                 handleImageSubmit={handleImageSubmit}
+                //isOpenAIChatOpen={isOpenAIChatOpen} // Pasar el estado del modal de OpenAI Chat
+                //setIsOpenAIChatOpen={setIsOpenAIChatOpen} // Pasar la función para establecer el estado del modal de OpenAI Chat
               />
             </MessageInputContainer>
           </>
@@ -165,11 +171,12 @@ export function ChatAppScreen() {
         )}
       </MainContainer>
       <ChatListContainer>
-        <ChatList onSelectChat={setSelectedChat} />
+        <ChatList onSelectChat={setSelectedChat} onSelectFilter={setConversationLanguage}/>
       </ChatListContainer>
     </PageContainer>
   );
 }
+
 
 const PageContainer = styled.div`
   display: flex;

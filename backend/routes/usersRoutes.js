@@ -1,6 +1,9 @@
 import express from 'express';
-import { getUserById, editUser, getUsersWithSameLanguage, editProfileImage, getProfileImage } from "../models/userModel.js";
+import { getUserById, editUser, editProfileImage, getProfileImage, updatePassword } from "../models/userModel.js";
 import cookieJwtAuth from '../auth/cookieJwtAuth.js';
+import bcrypt from 'bcrypt';
+
+
 
 const router = express.Router();
 
@@ -12,7 +15,7 @@ router.get('/profile-info', cookieJwtAuth, async (req, res) => {
     res.send({ first_name : user[0].first_name ? user[0].first_name : "", 
         // If the user has no last name, return an empty string
         last_name : user[0].last_name ? user[0].last_name : "", 
-        language1 : user[1]? user[1] : "", 
+        language1 : user[1] ? user[1] : "", 
         language2 : user[2] ? user[2] : "", 
         language3 : user[3] ? user[3] : ""} );
 });
@@ -30,6 +33,7 @@ router.get('/edit-profile', cookieJwtAuth, async (req, res) => {
         email: user[0].email ? user[0].email : "",
         country : user[0].country ? user[0].country : "",
         contact_num : user[0].contact_num ? user[0].contact_num : "",
+        native_language : user[0].native_language ? user[0].native_language : "",
         language1 : user[1] ? user[1] : "", 
         language2 : user[2] ? user[2] : "", 
         language3 : user[3] ? user[3] : ""
@@ -54,6 +58,57 @@ router.post('/edit-profile', cookieJwtAuth, async (req, res) => {
      });
 });
 
+router.post('/edit-password', cookieJwtAuth, async (req, res) => {
+    const { user_id, email, password } = req.user;
+    const { current_password, new_password, confirm_password } = req.body;
+
+    if (new_password !== confirm_password) {
+        res.status(400).json({ message: 'Passwords do not match',
+          success: false });
+        return;
+    }
+
+    if (new_password.length < 6) {
+        res.status(400).json({ message: 'Password must be at least 6 characters long',
+          success: false });
+        return;
+    }
+
+    // Check if the current_password and real password are correct
+    bcrypt.compare(current_password, password, (err, result) => {
+      if (err) {
+          console.log(err);
+      }
+
+      // Si el resultado es falso, se envía un mensaje de error
+      if (!result) {
+          res.json({
+              message: "Password is incorrect",
+              success: false
+          });
+          return;
+      } 
+
+      // Hash the new password
+      bcrypt.hash(new_password, 5, async (err, hash) => {
+          if (err) {
+              console.log(err);
+          }
+
+          updatePassword(user_id, hash);
+        });
+        res.send({ message: 'Password updated, need to login again next time',
+          success: true
+      });
+    });
+
+    res.clearCookie('token'); // Elimina la cookie llamada 'token'
+
+    //res.redirect(process.env.FRONTEND_URL + "/login") // Redirige a la página de login
+
+    
+});
+
 // Route to upload profile image
 router.post('/upload-profile-image', cookieJwtAuth, async (req, res) => {
     const userId = req.user.user_id;
@@ -64,7 +119,7 @@ router.post('/upload-profile-image', cookieJwtAuth, async (req, res) => {
   
     try {
       await editProfileImage(userId, imageBuffer);
-      console.log('Profile image updated successfully');
+      //console.log('Profile image updated successfully');
       res.status(200).send({ message: 'Profile image updated successfully' });
     } catch (error) {
       console.error('Error updating profile image:', error);
@@ -75,6 +130,25 @@ router.post('/upload-profile-image', cookieJwtAuth, async (req, res) => {
 // Route to get profile image
 router.get('/profile-image', cookieJwtAuth, async (req, res) => {
     const userId = req.user.user_id;
+  
+    try {
+        const result = await getProfileImage(userId);
+  
+      if (result) {
+        const imageBuffer = result;
+        const imageBase64 = imageBuffer.toString('base64');
+        res.send({ imageBase64 });
+      } else {
+        res.status(404).send({ message: 'Profile image not found' });
+      }
+    } catch (error) {
+      console.error('Error fetching profile image:', error);
+      res.status(500).send({ message: 'Internal server error' });
+    }
+  });
+
+router.get('/profile-image/:id', async (req, res) => {
+    const userId = req.params.id;
   
     try {
         const result = await getProfileImage(userId);
@@ -91,11 +165,5 @@ router.get('/profile-image', cookieJwtAuth, async (req, res) => {
       res.status(500).send({ message: 'Internal server error' });
     }
   });
-
-router.get('/chats-with-same-language', cookieJwtAuth, async (req, res) => {
-    const userId = req.user.user_id;
-    const users = await getUsersWithSameLanguage(userId);
-    res.send(users);
-});
 
 export default router;

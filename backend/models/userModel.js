@@ -31,7 +31,7 @@ const getUsersWithSameLanguage = async (userId) => {
     const res = await db.query(query, [userId]);
 
     // Create a dictionary with users grouped by language
-    // { language_: [ { id, first_name, last_name, country }, ... ], ... }
+    // { language: [ { id, first_name, last_name, country, language }, ... ], ... }
     const usersByLanguage = res.rows.reduce((acc, user) => {
       if (!acc[user.language_name]) {
         acc[user.language_name] = [];
@@ -41,11 +41,26 @@ const getUsersWithSameLanguage = async (userId) => {
         first_name: user.first_name,
         last_name: user.last_name,
         country: user.country,
+        language: user.language_name
       });
       return acc;
     }, {});
+    console.log('Users by language:', usersByLanguage);
 
     return usersByLanguage;
+
+    // Make the dictionary an object indexed by numbers
+    // { 1: [ { id, first_name, last_name, country, language }, ... ], ... }
+    /*
+    const result = {};
+    let index = 1;
+    for (const language in usersByLanguage) {
+      result[index] = usersByLanguage[language];
+      index++;
+    }
+    console.log('Users with same language:', result);
+    return result;
+    */
   } catch (err) {
     console.error('Error fetching users with same language:', err);
     throw err;
@@ -68,6 +83,11 @@ const getUserById = async (userId) => {
     const userLanguagesResult = await db.query(userLanguagesQuery, [userId]);
 
     const user = userResult.rows[0];
+    // Add the native language to the user object
+    if (user.native_language_id) {
+      const native_language = await db.query(`SELECT language_name FROM languages WHERE id = $1`, [user.native_language_id]);
+      user.native_language = native_language.rows[0].language_name;
+    }
     const languages = userLanguagesResult.rows.map(row => row.language_name);
 
     // Rellenar con undefined si el usuario tiene menos de 3 lenguajes
@@ -87,19 +107,23 @@ const getUserById = async (userId) => {
 // Edit all possible fields of a user (expects all fields to be filled)
 const editUser = async (userId, firstName, lastName, country, contactNum, newLanguages) => {
   try {
-    const [language1, language2, language3] = newLanguages;
+    const [native_language, language1, language2, language3] = newLanguages;
 
-    // Update the user's fields
-    let query = `UPDATE users SET first_name = $1, last_name = $2, country = $3, contact_num = $4 WHERE id = $5`;
-    await db.query(query, [firstName, lastName, country, contactNum, userId]);
-
-    // Map the languages to their IDs
-    const getLanguageId = async (languageName) => {
+     // Map the languages to their IDs
+     const getLanguageId = async (languageName) => {
       const result = await db.query(`SELECT id FROM languages WHERE language_name = $1`, [languageName]);
       return result.rows[0] ? result.rows[0].id : null;
     };
 
+    // Get the IDs of the languages (or null if the language is empty)
+    // We use Promise.all to run the queries in parallel
     const languageIds = await Promise.all([getLanguageId(language1), getLanguageId(language2), getLanguageId(language3)]);
+    const nativeLanguageId = await getLanguageId(native_language);
+
+    // Update the user's fields
+    let query = `UPDATE users SET first_name = $1, last_name = $2, country = $3, contact_num = $4, native_language_id = $5 WHERE id = $6`;
+    await db.query(query, [firstName, lastName, country, contactNum, nativeLanguageId, userId]);
+    
 
     // Verify if the user already has languages
     query = `SELECT * FROM user_languages WHERE user_id = $1`;
@@ -149,15 +173,43 @@ const editProfileImage = async (userId, imageBuffer) => {
 
 const getProfileImage = async (userId) => {
   try {
-    const result = await db.query(
-      'SELECT profile_image FROM users WHERE id = $1',
-      [userId]
-    );
-    return result;
+    const result = await db.query('SELECT profile_image FROM users WHERE id = $1',[userId]);
+
+    if (result.rows.length > 0) {
+      return result.rows[0].profile_image;
+    }
   } catch (error) {
-    console.error('Error fetching profile image:', error);
+    console.error('Error fetching profile image in DB:', error);
     res.status(500).send({ message: 'Internal server error' });
   }
 };
 
-export { getAllUsersExceptCurrent, getUsersWithSameLanguage, getUserById, editUser, editProfileImage, getProfileImage };
+const getUserNativeLanguage = async (userId) => {
+  try {
+      const query = `
+        SELECT l.language_name 
+        FROM users u
+        JOIN languages l ON u.native_language_id = l.id
+        WHERE u.id = $1
+      `;
+      const res = await db.query(query, [userId]);
+
+      if (res.rows.length > 0) {
+        return res.rows[0].language_name;
+      } else {
+        throw new Error('Native language not found for user');
+      }
+    } catch (error) {
+      console.error('Error fetching user native language:', error);
+      throw new Error('Error fetching user native language');
+    }
+};
+
+const updatePassword = async (userId, hash) => {
+        // Update the user's password
+        let query = `UPDATE users SET password = $1 WHERE id = $2`;
+        await db.query(query, [hash, userId]);
+};
+
+
+export { getAllUsersExceptCurrent, updatePassword, getUsersWithSameLanguage, getUserNativeLanguage, getUserById, editUser, editProfileImage, getProfileImage };

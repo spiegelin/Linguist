@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { FaSearch } from 'react-icons/fa';
 import axios from 'axios';
 import Cookies from "universal-cookie";
-import logo from "./logo.png"; // Importación del logo
+import logo from "./logo.ico"; // Importación del logo
 import { IoFilter } from "react-icons/io5";
 
 
@@ -14,12 +14,46 @@ const apiUrl = `${baseApiUrl}:${appPort}/api`;
 
 const cookies = new Cookies();
 const token = cookies.get('token');
+const defaultImage = '/public/placeholder.jpg';
 
-const ChatList = ({ onSelectChat }) => {
+const ChatList = ({ onSelectChat, onSelectFilter}) => {
   const [selectedChat, setSelectedChat] = useState(null);
+  const [conversationLanguage, setConversationLanguage] = useState(null)
   const [chats, setChats] = useState([]);
   const [filteredChats, setFilteredChats] = useState([]);
   const [showOptions, setShowOptions] = useState(false); // Estado para mostrar u ocultar las opciones de filtro
+
+  // Estados para los lenguajes del usuario (para el filtro)
+  const [firstLanguage, setFirstLanguage] = useState("");
+  const [secondLanguage, setSecondLanguage] = useState("");
+  const [thirdLanguage, setThirdLanguage] = useState("");
+
+  // Estados para los usuarios con el mismo lenguaje
+  const [firstLanguageUserId, setFirstLanguageUserId] = useState([]);
+  const [secondLanguageUserId, setSecondLanguageUserId] = useState([]);
+  const [thirdLanguageUserId, setThirdLanguageUserId] = useState([]);
+
+  // Obtener usuarios con mismo lenguaje
+  useEffect(() => {
+    axios.get(`${apiUrl}/chats/chats-with-same-language`, {
+      withCredentials: true,
+    })
+      .then((response) => {
+        // Mapeamos los datos para obtener solo los IDs de usuarios según el idioma que comparten
+        const usersByLanguage = response.data;
+        //console.log("Users by language: ", usersByLanguage);
+      
+        const userIds1 = usersByLanguage[firstLanguage] ? usersByLanguage[firstLanguage].map(user => user.id) : [];
+        const userIds2 = usersByLanguage[secondLanguage] ? usersByLanguage[secondLanguage].map(user => user.id) : [];
+        const userIds3 = usersByLanguage[thirdLanguage] ? usersByLanguage[thirdLanguage].map(user => user.id) : [];
+        setFirstLanguageUserId(userIds1);
+        setSecondLanguageUserId(userIds2);
+        setThirdLanguageUserId(userIds3);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }, [chats]);
 
   // Fetch chats
   useEffect(() => {
@@ -29,7 +63,7 @@ const ChatList = ({ onSelectChat }) => {
           {
             withCredentials:true
           });
-        console.log(response);
+        
         setChats(response.data);
         setFilteredChats(response.data); // Inicialmente, establece los chats filtrados como todos los chats
       } catch (error) {
@@ -40,12 +74,32 @@ const ChatList = ({ onSelectChat }) => {
     fetchChats();
   }, []);
 
+  // Obtener lenguajes del usuario
+  useEffect(() => {
+    axios.get(`${apiUrl}/users/profile-info`, {
+      withCredentials: true,
+    })
+      .then((response) => {
+        setFirstLanguage(response.data.language1);
+        setSecondLanguage(response.data.language2);
+        setThirdLanguage(response.data.language3);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }, [apiUrl]);
+
+
   // Función para filtrar los chats por lenguaje
-  const handleFilterByLanguage = (language) => {
+  const handleFilterByLanguage = (language, userIds) => {
+    console.log("User IDs: ", userIds)
+    console.log("Chats: ", chats)
     if (language === "all") {
       setFilteredChats(chats); // Si se selecciona "todos", muestra todos los chats
+      setConversationLanguage("All")
+      onSelectFilter("All")
     } else {
-      const filtered = chats.filter(chat => chat.language === language);
+      const filtered = chats.filter(chat => userIds.includes(chat.id));
       setFilteredChats(filtered);
     }
     setShowOptions(false); // Oculta las opciones de filtro después de seleccionar una opción
@@ -55,6 +109,7 @@ const ChatList = ({ onSelectChat }) => {
     setSelectedChat(chat.id);
     onSelectChat(chat);
   };
+  
 
   return (
     <ChatListContainer>
@@ -67,8 +122,15 @@ const ChatList = ({ onSelectChat }) => {
         {showOptions && ( // Muestra las opciones de filtro si showOptions es true
           <FilterOptions>
             <p onClick={() => handleFilterByLanguage("all")}>All</p>
-            <p onClick={() => handleFilterByLanguage("english")}>English</p>
-            <p onClick={() => handleFilterByLanguage("spanish")}>Spanish</p>
+            <p onClick={() => {handleFilterByLanguage(firstLanguage, firstLanguageUserId)
+            setConversationLanguage(firstLanguage)
+            onSelectFilter(firstLanguage)}}>{firstLanguage}</p>
+            <p onClick={() => {handleFilterByLanguage(secondLanguage, secondLanguageUserId)
+            setConversationLanguage(secondLanguage)
+            onSelectFilter(secondLanguage)}}>{secondLanguage}</p>
+            <p onClick={() => {handleFilterByLanguage(thirdLanguage, thirdLanguageUserId)
+            setConversationLanguage(thirdLanguage)
+            onSelectFilter(thirdLanguage)}}>{thirdLanguage}</p>
             {/* Agrega más opciones de filtro según sea necesario */}
           </FilterOptions>
         )}
@@ -81,7 +143,7 @@ const ChatList = ({ onSelectChat }) => {
             isSelected={selectedChat === chat.id}
           >
             <img
-              src={chat.image}
+              src={chat.profile_image ? chat.profile_image : defaultImage}
               alt="User"
               onError={(e) => e.target.src = logo} // Manejador de error de imagen
             />

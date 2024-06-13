@@ -17,7 +17,7 @@ passport.use(new GoogleStrategy(
         //console.log(profile)
         try {
             const user = await findOrCreate(profile, "google");
-            console.log(user);
+            //console.log(user);
         
             done(null, user);
         } catch (error) {

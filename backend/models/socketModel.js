@@ -38,10 +38,12 @@ const getOrCreateConversation = async (user1Id, user2Id) => {
 };
 
 const saveMessage = async (conversationId, senderId, message) => {
-    await db.query(
-        'INSERT INTO messages (conversation_id, sender_id, body) VALUES ($1, $2, $3)',
+    const result = await db.query(
+        'INSERT INTO messages (conversation_id, sender_id, body) VALUES ($1, $2, $3) RETURNING *',
         [conversationId, senderId, message]
     );
+
+    return result.rows[0].id;
 };
 
 const getConversationIdByName = async (conversationName) => {
