@@ -7,7 +7,7 @@ import { SiOpenai } from "react-icons/si";
 import { FaRegImages } from "react-icons/fa";
 import OpenAIChatModal from '../../components/OpenAIChatModal';
 
-const MessageInput = ({ message, setMessage, handleSubmit, handleImageSubmit, conversationContext, userId }) => {
+const MessageInput = ({ message, setMessage, handleSubmit, handleImageSubmit, conversationRoom, conversationContext, userId }) => {
   const [image, setImage] = useState(null);
   const [isOpenAIChatOpen, setIsOpenAIChatOpen] = useState(false);
   const imageInputRef = useRef(null);
@@ -79,7 +79,8 @@ const MessageInput = ({ message, setMessage, handleSubmit, handleImageSubmit, co
         isOpen={isOpenAIChatOpen} 
         onClose={handleCloseAIChat} 
         conversationContext={conversationContext} 
-        userId={userId} 
+        userId={userId}
+        conversationRoom={conversationRoom} 
       />
     </>
   );

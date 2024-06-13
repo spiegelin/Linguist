@@ -45,7 +45,7 @@ const getUsersWithSameLanguage = async (userId) => {
       });
       return acc;
     }, {});
-    console.log('Users by language:', usersByLanguage);
+    //console.log('Users by language:', usersByLanguage);
 
     return usersByLanguage;
 

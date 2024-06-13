@@ -63,7 +63,7 @@ router.post('/messageTraduction', cookieJwtAuth, async (req, res) => {
 
 router.post('/ask-openai', cookieJwtAuth, async (req, res) => {
     const userId = req.user.user_id;
-    const { message } = req.body;
+    const { message, conversationRoom } = req.body;
 
     if (!message || !userId) {
         return res.status(400).json({ error: 'Message and UserId are required' });
@@ -71,7 +71,7 @@ router.post('/ask-openai', cookieJwtAuth, async (req, res) => {
 
     try {
         const nativeLanguage = await getUserNativeLanguage(userId);        
-        const response = await askOpenAI(message, nativeLanguage);
+        const response = await askOpenAI(message, nativeLanguage, userId, conversationRoom);
         res.json({ response });
     } catch (error) {
         console.error('Error communicating with OpenAI:', error);

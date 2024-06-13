@@ -159,6 +159,7 @@ export function ChatAppScreen() {
                 setMessage={setMessage}
                 handleSubmit={handleSubmit}
                 handleImageSubmit={handleImageSubmit}
+                conversationRoom={room}
                 //isOpenAIChatOpen={isOpenAIChatOpen} // Pasar el estado del modal de OpenAI Chat
                 //setIsOpenAIChatOpen={setIsOpenAIChatOpen} // Pasar la función para establecer el estado del modal de OpenAI Chat
               />

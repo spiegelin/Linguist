@@ -9,7 +9,7 @@ const appPort = import.meta.env.VITE_APP_PORT;
 const baseApiUrl = import.meta.env.VITE_API_URL;
 const apiUrl = `${baseApiUrl}:${appPort}/api`;
 
-const OpenAIChatModal = ({ isOpen, onClose, conversationContext = [], userId }) => {
+const OpenAIChatModal = ({ isOpen, onClose, conversationContext = [], userId, conversationRoom }) => {
   const [input, setInput] = useState('');
   const [chatMessages, setChatMessages] = useState([...conversationContext]);
   const [isDragging, setIsDragging] = useState(false);
@@ -91,6 +91,7 @@ const OpenAIChatModal = ({ isOpen, onClose, conversationContext = [], userId }) 
         const response = await axios.post(`${apiUrl}/llm/ask-openai`, {
           message: input,
           conversationContext,
+          conversationRoom
         }, {
           withCredentials: true
         });

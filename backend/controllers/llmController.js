@@ -2,6 +2,7 @@
 import OpenAI from 'openai';
 import { saveTranslationToDB, createMessageTranslation } from '../models/translationModel.js';
 import { getUserById, getUserNativeLanguage } from '../models/userModel.js';
+import { getMessagesFromConversation } from '../models/socketModel.js';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -67,10 +68,36 @@ async function saveTranslation(messageId, translatedText) {
     }
 }
 
-const askOpenAI = async (userInput, nativeLanguage) => {
+const askOpenAI = async (userInput, nativeLanguage, userId, conversationRoom) => {
+
+    const conversationHistory = await getMessagesFromConversation(conversationRoom);
+    const mappedConversationHistory = conversationHistory.map(message => ({
+        sender_id: message.sender_id,
+        body: message.body
+      }));
+    //console.log("mappedConversationHistory", mappedConversationHistory);
+
+    const input_with_context = `
+    Here is the context of the conversation with the other user so far:
+    ${JSON.stringify(mappedConversationHistory, null, 2)}
+
+    The user who is asking for help has the following details:
+    - ID: ${userId}
+
+    The user's question or inquiry you have to help them resolve is:
+    ${userInput}
+
+    Please assist the user based on the above information.
+    `
+    console.log("input_with_context", input_with_context);
+
     const messages = [
-        { role: 'system', content: `EXCLUSIVELY ANSWER IN *${nativeLanguage}*. Answer the answer saying you are "LingüístBot"` },
-        { role: 'user', content: userInput },
+        { role: 'system', content: `You are LinguistBot, a conversational assistant specialized in helping users with their language learning. 
+        Respond to users in their native language: *${nativeLanguage}* (except when an answer requires something in the language they are learning).
+        Your goal is to provide clear explanations and responses according to the users input/question.
+        Assist users in real-time conversations by suggesting appropriate responses, checking if their messages make sense, and correcting grammar or spelling mistakes.
+        Always display patience and encouragement, and use relevant cultural examples and references whenever possible.` },
+        { role: 'user', content: input_with_context },
     ];
 
     const completion = await openai.chat.completions.create({
