@@ -11,7 +11,7 @@ const openai = new OpenAI({
 async function testResponse(userInput) {
     try {
         const messages = [
-            { role: 'system', content: 'Eres un chatbot amigable.' },
+            { role: 'system', content: 'You are a friendly chatbot.' },
             { role: 'user', content: userInput },
         ];
 
@@ -32,13 +32,8 @@ async function testResponse(userInput) {
 async function messageTranslation(userInput, nativeLanguage) {
     try {
         const messages = [
-            { role: 'system', content: 
-            `You are a friendly chatbot. you are going to help a user translate a message to ${nativeLanguage}.you talk in ${nativeLanguage}.
-            ` },
-            { role: 'user', content: `TRANSLATE the message you receive into *${nativeLanguage}*. IN *${nativeLanguage} give a brief context of what the input you recieve means.
-             The message of the user is: *${userInput}*
-             Dont ask me if I need Anything after, Just transalate the message and give context.
-             ` },
+            { role: 'system', content: `You are a friendly chatbot that helps users translate messages into ${nativeLanguage}. Please communicate in ${nativeLanguage}.` },
+            { role: 'user', content: `Translate the following message into ${nativeLanguage}. Provide a brief context of the message in ${nativeLanguage}. Do not ask any further questions or provide additional information. The user's message is: "${userInput}"` },
         ];
 
         console.log("openai messageTranslation messages", messages);
@@ -69,35 +64,33 @@ async function saveTranslation(messageId, translatedText) {
 }
 
 const askOpenAI = async (userInput, nativeLanguage, userId, conversationRoom) => {
-
     const conversationHistory = await getMessagesFromConversation(conversationRoom);
     const mappedConversationHistory = conversationHistory.map(message => ({
         sender_id: message.sender_id,
         body: message.body
-      }));
-    //console.log("mappedConversationHistory", mappedConversationHistory);
+    }));
 
-    const input_with_context = `
-    Here is the context of the conversation with the other user so far:
-    ${JSON.stringify(mappedConversationHistory, null, 2)}
+    const inputWithContext = `
+        Here is the context of the conversation so far:
+        ${JSON.stringify(mappedConversationHistory, null, 2)}
 
-    The user who is asking for help has the following details:
-    - ID: ${userId}
+        The user asking for help has the following details:
+        - ID: ${userId}
 
-    The user's question or inquiry you have to help them resolve is:
-    ${userInput}
+        The user's question or inquiry is:
+        "${userInput}"
 
-    Please assist the user based on the above information.
-    `
-    console.log("input_with_context", input_with_context);
+        Please assist the user based on the above information.
+    `;
+    console.log("input_with_context", inputWithContext);
 
     const messages = [
         { role: 'system', content: `You are LinguistBot, a conversational assistant specialized in helping users with their language learning. 
-        Respond to users in their native language: *${nativeLanguage}* (except when an answer requires something in the language they are learning).
-        Your goal is to provide clear explanations and responses according to the users input/question.
+        Respond to users in their native language: ${nativeLanguage} (except when an answer requires something in the language they are learning).
+        Your goal is to provide clear explanations and responses according to the user's input/question.
         Assist users in real-time conversations by suggesting appropriate responses, checking if their messages make sense, and correcting grammar or spelling mistakes.
         Always display patience and encouragement, and use relevant cultural examples and references whenever possible.` },
-        { role: 'user', content: input_with_context },
+        { role: 'user', content: inputWithContext },
     ];
 
     const completion = await openai.chat.completions.create({
@@ -110,4 +103,3 @@ const askOpenAI = async (userInput, nativeLanguage, userId, conversationRoom) =>
 };
 
 export { testResponse, messageTranslation, saveTranslation, getUserNativeLanguage, askOpenAI };
-
